@@ -98,8 +98,8 @@ function correctName(name) {
 }
 
 function appendUserAgent(PXID) {
+  console.log('window', window);
   const l = window.location;
-  console.log('l', l);
   console.log('window.navigator.userAgent', window.navigator.userAgent);
   const px = PXID + '|' + window.navigator.userAgent + '|' + l.protocol + '//' + l.host + l.pathname;
   console.log('px', px);
