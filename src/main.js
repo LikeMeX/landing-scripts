@@ -23,7 +23,6 @@
 // ================ example use init =================
 function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
-  console.log('userAgent', userAgent);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
   if (callback) callback();
