@@ -1,25 +1,24 @@
 // ================ example use init script =================
 // (function () {
 //   const arguments = {
-//     clearDataFields: [
-//       'email',
-//       'phone',
-//       'name',
-//       'price',
-//       'course',
-//       'campaign',
-//       'seller',
-//       'px',
-//       'redirect_url',
-//       'callback_url',
-//       'params',
-//       'discountCode',
-//     ],PXID
+//     PXID,
+//     clearDataFields: ['email','phone','name','price','course','campaign','seller','px','redirect_url','callback_url','params','discountCode']
 //   };
-//   const {userAgent, dealId} = init(arguments);
-//   document.querySelector('input[name="px"]').value = userAgent;
-//   document.querySelector('input[name="deal_id"]').value = dealId
-// })();
+//   const {userAgent, dealId} = init(arguments,()=>{
+//     window.dataLayer = window.dataLayer || [];
+//     window.dataLayer.push({'event':'FSInit', 'PXID': PXID});
+//     fbq('init',  PXID);
+//     fbq('track', 'PageView');
+//   });
+//   var dealIdElements =  document.getElementsByName("deal_id")
+//   var pxElements =  document.getElementsByName("px")
+//   for (const dealIdElement of dealIdElements) {
+//     dealIdElement.value = userAgent
+//   }
+//   for (const pxElement of pxElements) {
+//     pxElement.value = userAgent
+//   }
+// })()
 // ================ example use init =================
 function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
