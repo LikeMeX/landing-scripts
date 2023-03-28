@@ -21,7 +21,7 @@
 //   document.querySelector('input[name="deal_id"]').value = dealId
 // })();
 // ================ example use init =================
-function init({clearDataFields}, callback) {
+function init({clearDataFields, PXID}, callback) {
   const userAgent = appendUserAgent(PXID);
   const dealId = genDealId();
   clearDataLocalStorage(clearDataFields);
@@ -97,7 +97,8 @@ function correctName(name) {
 }
 
 function appendUserAgent(PXID) {
-  const l = location;
+  const l = window.location;
   const px = PXID + '|' + navigator.userAgent + '|' + l.protocol + '//' + l.host + l.pathname;
+  console.log('px', px);
   return px;
 }
