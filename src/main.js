@@ -21,11 +21,11 @@
 //   document.querySelector('input[name="deal_id"]').value = dealId
 // })();
 // ================ example use init =================
-function init({clearDataFields, PXID}, callback) {
-  console.log('PXID', PXID);
-  const userAgent = appendUserAgent(PXID);
+function init(arguments, callback) {
+  console.log('arguments', arguments);
+  const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
-  clearDataLocalStorage(clearDataFields);
+  clearDataLocalStorage(arguments.clearDataFields);
   if (callback) callback();
   return {
     userAgent,
