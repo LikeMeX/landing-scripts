@@ -22,6 +22,7 @@
 // })();
 // ================ example use init =================
 function init({clearDataFields, PXID}, callback) {
+  console.log('PXID', PXID);
   const userAgent = appendUserAgent(PXID);
   const dealId = genDealId();
   clearDataLocalStorage(clearDataFields);
@@ -99,6 +100,5 @@ function correctName(name) {
 function appendUserAgent(PXID) {
   const l = window.location;
   const px = PXID + '|' + navigator.userAgent + '|' + l.protocol + '//' + l.host + l.pathname;
-  console.log('px', px);
   return px;
 }
