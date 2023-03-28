@@ -14,15 +14,15 @@
 //       'callback_url',
 //       'params',
 //       'discountCode',
-//     ],
+//     ],PXID
 //   };
 //   const {userAgent, dealId} = init(arguments);
 //   document.querySelector('input[name="px"]').value = userAgent;
 //   document.querySelector('input[name="deal_id"]').value = dealId
-// });
+// })();
 // ================ example use init =================
 function init({clearDataFields}) {
-  const userAgent = appendUserAgent();
+  const userAgent = appendUserAgent(PXID);
   const dealId = genDealId();
   clearDataLocalStorage(clearDataFields);
   return {
@@ -95,7 +95,7 @@ function correctName(name) {
   return name;
 }
 
-function appendUserAgent() {
+function appendUserAgent(PXID) {
   const l = location;
   const px = PXID + '|' + navigator.userAgent + '|' + l.protocol + '//' + l.host + l.pathname;
   return px;
