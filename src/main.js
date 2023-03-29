@@ -10,20 +10,29 @@
 //     fbq('init',  PXID);
 //     fbq('track', 'PageView');
 //   });
-//   var dealIdElements =  document.getElementsByName("deal_id")
-//   var pxElements =  document.getElementsByName("px")
-//   for (const dealIdElement of dealIdElements) {
-//     dealIdElement.value = userAgent
-//   }
-//   for (const pxElement of pxElements) {
-//     pxElement.value = userAgent
-//   }
 // })()
 // ================ example use init =================
+
 function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
+  var dealIdElements = document.getElementsByName('deal_id');
+  var pxElements = document.getElementsByName('px');
+  if (dealIdElements.length) {
+    for (const dealIdElement of dealIdElements) {
+      dealIdElement.value = userAgent;
+    }
+  } else {
+    console.log("input 'deal_id' not define");
+  }
+  if (pxElements.length) {
+    for (const pxElement of pxElements) {
+      pxElement.value = userAgent;
+    }
+  } else {
+    console.log("input 'px' not define");
+  }
   if (callback) callback();
   return {
     userAgent,
