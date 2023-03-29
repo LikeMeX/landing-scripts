@@ -22,7 +22,7 @@ function init(arguments, callback) {
   var pxElements = document.getElementsByName('px');
   if (dealIdElements.length) {
     for (const dealIdElement of dealIdElements) {
-      dealIdElement.value = userAgent;
+      dealIdElement.value = dealId;
     }
   } else {
     console.log('%cinput "deal_id" not define!', 'color: red; font-size: larger');
