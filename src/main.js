@@ -113,7 +113,6 @@ function listenerForm() {
 //=======================================================================
 
 async function submitPayment() {
-  console.log('submitPayment');
   const {ip} = await getIp();
 
   var {
