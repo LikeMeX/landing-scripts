@@ -24,14 +24,14 @@ function init(arguments, callback) {
       dealIdElement.value = userAgent;
     }
   } else {
-    console.log("input 'deal_id' not define");
+    console.log('%cinput "deal_id" not define!', 'color: red; font-size: larger');
   }
   if (pxElements.length) {
     for (const pxElement of pxElements) {
       pxElement.value = userAgent;
     }
   } else {
-    console.log("input 'px' not define");
+    console.log('%cinput "px" not define!', 'color: red; font-size: larger');
   }
   if (callback) callback();
   return {
