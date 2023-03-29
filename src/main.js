@@ -1,4 +1,3 @@
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>;
 // ================ example use init script =================
 // (function () {
 //   const arguments = {
