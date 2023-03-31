@@ -19,6 +19,7 @@ function init(arguments, callback) {
   clearDataLocalStorage(arguments.clearDataFields);
   var dealIdElements = document.getElementsByName('deal_id');
   var pxElements = document.getElementsByName('px');
+  var landingUrls = document.getElementsByName('landing_url');
   if (dealIdElements.length) {
     for (const dealIdElement of dealIdElements) {
       dealIdElement.value = dealId;
@@ -33,13 +34,12 @@ function init(arguments, callback) {
   } else {
     console.log('%cinput "px" not define!', 'color: red; font-size: larger');
   }
-  var landingUrls = document.getElementsByName('landing_url');
   if (landingUrls.length) {
     for (const landingUrl of landingUrls) {
       landingUrl.value = window.location.href;
     }
   } else {
-    console.log('%cinput "deal_id" not define!', 'color: red; font-size: larger');
+    console.log('%cinput "landing_url" not define!', 'color: red; font-size: larger');
   }
   if (callback) callback();
   return {
