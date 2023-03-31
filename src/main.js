@@ -17,7 +17,7 @@ function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
-  var dealIdElements = document.getElementsByName('deal_id');
+  var dealIdElements = document.getElementsByName('deal_id'); // e.target
   var pxElements = document.getElementsByName('px');
   if (dealIdElements.length) {
     for (const dealIdElement of dealIdElements) {
@@ -69,7 +69,7 @@ function validatePhone(phone) {
 
 function correctName(name) {
   name = name
-    .replace(/^(นาย|นางสาว|น.ส.|ด.ช.|นาง|คุณ |เด็กชาย|เด็กหญิง)/g, '')
+    .replace(/^(นาย|นางสาว|น.ส.|ด.ช.|ด.ญ.|นาง|คุณ|เด็กชาย|เด็กหญิง)/g, '')
     .replace(/\s\s+/g, ' ')
     .trim();
   return name;
