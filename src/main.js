@@ -99,13 +99,13 @@ function listenerForm(feildNames) {
           formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
         }
         localStorage.setItem(feildName, formProps[feildName]);
+        console.log(feildName, formProps[feildName] || '');
       } else if (feildName === 'params') {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         localStorage.setItem(feildName, JSON.stringify(params));
       } else {
         localStorage.setItem(feildName, formProps[feildName] || '');
-        console.log(feildName, formProps[feildName] || '');
       }
     }
   });
