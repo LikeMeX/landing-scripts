@@ -103,9 +103,9 @@ function listenerForm(feildNames) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         localStorage.setItem(feildName, JSON.stringify(params));
-        console.log('params');
       } else {
         localStorage.setItem(feildName, formProps[feildName] || '');
+        console.log(feildName, formProps[feildName] || '');
       }
     }
   });
