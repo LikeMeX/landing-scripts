@@ -105,7 +105,7 @@ function listenerForm(feildNames) {
         localStorage.setItem(feildName, JSON.stringify(params));
         console.log('params');
       } else {
-        localStorage.setItem(feildName, formProps[feildName]);
+        localStorage.setItem(feildName, formProps[feildName] || '');
       }
     }
   });
