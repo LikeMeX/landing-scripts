@@ -101,6 +101,8 @@ function listenerForm(feildNames) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         localStorage.setItem(feildName, JSON.stringify(params));
+      } else if (feildName === 'landing_url') {
+        localStorage.setItem(feildName, window.location.href);
       } else {
         localStorage.setItem(feildName, formProps[feildName] || '');
       }
@@ -123,7 +125,7 @@ async function submitPayment(localStorageItems) {
   }).toString();
 
   const courses = dataFromLocalStorage['course'] ? dataFromLocalStorage['course'].split(',') : [];
-  const payload = {userId: undefined, redeem: true, type: dataFromLocalStorage['partner']};
+  const payload = {userId: undefined, redeem: true, type: dataFromLocalStorage['type']};
 
   if (courses.length) {
     const cartItems = courses.map(product => {
