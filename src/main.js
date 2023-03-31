@@ -80,19 +80,20 @@ function listenerForm() {
     event => {
       const formData = new FormData(event.target);
       const formProps = Object.fromEntries(formData);
+
       const name = correctName(formProps.name);
       const course = formProps.course.trim().split('/');
       const info = formProps.info.trim().split('/');
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       const phone = validatePhone(formProps.phone);
-      if (formProps.orderbump && formProps.orderbumpdetail) {
-        course[0] += `,${formProps.orderbumpdetail.trim()}`;
-      }
       if (!phone) {
         alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
         event.preventDefault();
         return false;
+      }
+      if (formProps.orderbump && formProps.orderbumpdetail) {
+        course[0] += `,${formProps.orderbumpdetail.trim()}`;
       }
       localStorage.setItem('email', formProps.email);
       localStorage.setItem('phone', phone);
@@ -112,106 +113,74 @@ function listenerForm() {
 
 //=======================================================================
 
-async function submitPayment() {
+async function submitPayment(localStorageItems) {
   const {ip} = await getIp();
-
-  var {
-    email,
-    tel,
-    fullName,
-    course,
-    seller,
-    campaign,
-    query,
-    dealId,
-    px,
-    redirect_url,
-    discountCode,
-    callback_url,
-    price,
-  } = getDataFromLocalStorage();
-
+  const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
   const redirectQuery = new URLSearchParams({
-    dealId,
-    email,
-    fullName,
-    phone: tel,
-    price,
-    discountCode,
+    dealId: dataFromLocalStorage['dealId'],
+    email: dataFromLocalStorage['email'],
+    fullName: dataFromLocalStorage['fullName'],
+    phone: dataFromLocalStorage['tel'],
+    price: dataFromLocalStorage['price'],
+    discountCode: dataFromLocalStorage['discountCode'],
   }).toString();
 
-  var courses = course ? course.split(',') : [];
+  const courses = dataFromLocalStorage['course'] ? dataFromLocalStorage['course'].split(',') : [];
+  const payload = {userId: undefined, redeem: true, type: dataFromLocalStorage['partner']};
+
   if (courses.length) {
-    var cartItems = courses.map(c => {
+    const cartItems = courses.map(product => {
       return {
-        product: c,
+        product: product,
         quantity: 1,
       };
     });
     var data = {
       cartItems,
       userdata: {
-        email: email,
-        tel: tel || '',
-        fullName: fullName || '',
+        email: dataFromLocalStorage['email'],
+        tel: dataFromLocalStorage['tel'] || '',
+        fullName: dataFromLocalStorage['fullName'] || '',
+        payload: payload,
       },
       cartTracking: {
         convertionId: conversion?.hash || '',
-        campaign: campaign || '',
-        seller: seller || '',
+        campaign: dataFromLocalStorage['campaign'] || '',
+        seller: dataFromLocalStorage['seller'] || '',
         channel: 'SGC',
-        ip,
-        utm_source: query.utm_source || '',
-        utm_medium: query.utm_medium || '',
-        utm_campaign: query.utm_campaign || '',
-        utm_term: query.utm_term || '',
-        utm_content: query.utm_content || '',
-        customField1: dealId,
-        customField2: px,
+        ip: ip,
+        utm_source: dataFromLocalStorage['query']?.utm_source || '',
+        utm_medium: dataFromLocalStorage['query']?.utm_medium || '',
+        utm_campaign: dataFromLocalStorage['query']?.utm_campaign || '',
+        utm_term: dataFromLocalStorage['query']?.utm_term || '',
+        utm_content: dataFromLocalStorage['query']?.utm_content || '',
+        customField1: dataFromLocalStorage['dealId'],
+        customField2: dataFromLocalStorage['px'],
       },
-      paymentSuccessRedirectUrl: `${redirect_url}?${redirectQuery}`,
+      paymentSuccessRedirectUrl: `${dataFromLocalStorage['redirect_url']}?${redirectQuery}`,
     };
 
-    if (callback_url) data.paymentSuccessCallbackUrl = callback_url;
+    if (dataFromLocalStorage['callback_url']) data.paymentSuccessCallbackUrl = dataFromLocalStorage['callback_url'];
 
     var url = await createCart(data);
+    if (dataFromLocalStorage['discountCode']) url = `${url}?discountCode=${dataFromLocalStorage['discountCode']}`;
 
-    if (discountCode) url = `${url}?discountCode=${discountCode}`;
     setTimeout(function () {
       window.location.replace(url);
     }, 1500);
   }
 }
 
-function getDataFromLocalStorage() {
-  var email = localStorage.getItem('email');
-  var tel = localStorage.getItem('phone');
-  var fullName = localStorage.getItem('name');
-  var price = localStorage.getItem('price');
-  var course = localStorage.getItem('course');
-  var seller = localStorage.getItem('seller');
-  var campaign = localStorage.getItem('campaign');
-  var dealId = localStorage.getItem('deal_id');
-  var px = localStorage.getItem('px');
-  var redirect_url = localStorage.getItem('redirect_url');
-  var callback_url = localStorage.getItem('callback_url');
-  var discountCode = localStorage.getItem('discountCode');
-  var query = JSON.parse(localStorage.getItem('params') || {});
-  return {
-    email,
-    tel,
-    fullName,
-    course,
-    seller,
-    campaign,
-    dealId,
-    query,
-    px,
-    redirect_url,
-    price,
-    discountCode,
-    callback_url,
-  };
+function getDataFromLocalStorage(localStorageItems) {
+  const dataFromLocalStorage = {};
+  for (const localStorageItem of localStorageItems) {
+    if (localStorageItem === 'params') {
+      dataFromLocalStorage[localStorageItem] = JSON.parse(localStorage.getItem(localStorageItem) || {});
+    } else {
+      dataFromLocalStorage[localStorageItem] = localStorage.getItem(localStorageItem);
+    }
+  }
+  return dataFromLocalStorage;
 }
 
 async function createCart(cart) {
