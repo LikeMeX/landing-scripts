@@ -17,7 +17,7 @@ function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
-  var dealIdElements = document.getElementsByName('deal_id'); // e.target
+  var dealIdElements = document.getElementsByName('deal_id');
   var pxElements = document.getElementsByName('px');
   if (dealIdElements.length) {
     for (const dealIdElement of dealIdElements) {
@@ -32,6 +32,14 @@ function init(arguments, callback) {
     }
   } else {
     console.log('%cinput "px" not define!', 'color: red; font-size: larger');
+  }
+  var landingUrls = document.getElementsByName('landing_url');
+  if (landingUrls.length) {
+    for (const landingUrl of landingUrls) {
+      landingUrl.value = window.location.href;
+    }
+  } else {
+    console.log('%cinput "deal_id" not define!', 'color: red; font-size: larger');
   }
   if (callback) callback();
   return {
@@ -101,8 +109,6 @@ function listenerForm(feildNames) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         localStorage.setItem(feildName, JSON.stringify(params));
-      } else if (feildName === 'landing_url') {
-        localStorage.setItem(feildName, window.location.href);
       } else {
         localStorage.setItem(feildName, formProps[feildName] || '');
       }
