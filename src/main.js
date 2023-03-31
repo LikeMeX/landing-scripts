@@ -76,9 +76,7 @@ function correctName(name) {
 }
 
 function listenerForm(feildNames) {
-  console.log('listenerForm');
   document.body.addEventListener('submit', event => {
-    console.log('addEventListener');
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
     for (const feildName of feildNames) {
@@ -99,7 +97,6 @@ function listenerForm(feildNames) {
           formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
         }
         localStorage.setItem(feildName, formProps[feildName]);
-        console.log(feildName, formProps[feildName] || '');
       } else if (feildName === 'params') {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
