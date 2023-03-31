@@ -81,50 +81,33 @@ function listenerForm(feildNames) {
     event => {
       const formData = new FormData(event.target);
       const formProps = Object.fromEntries(formData);
-      for (const feildName of feildNames) {
-        if (feildName === 'name') {
-          const name = correctName(formProps[feildName]);
-          localStorage.setItem(feildName, name);
-        } else if (feildName === 'phone') {
-          const phone = validatePhone(formProps[feildName]);
-          if (!phone) {
-            alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
-            event.preventDefault();
-            clearDataLocalStorage(feildNames);
-            break;
-          }
-          localStorage.setItem(feildName, phone);
-        } else if (feildName === 'course') {
-          if (formProps.orderbump && formProps.orderbumpdetail) {
-            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
-            localStorage.setItem(feildName, formProps[feildName]);
-          }
-        } else if (feildName === 'params') {
-          const urlSearchParams = new URLSearchParams(window.location.search);
-          const params = Object.fromEntries(urlSearchParams.entries());
-          localStorage.setItem(feildName, JSON.stringify(params));
-          console.log('params');
-        } else {
-          localStorage.setItem(feildName, formProps[feildName]);
-        }
-      }
-      // const course = formProps.course.trim().split('/'); // course only
-      // const info = formProps.info.trim().split('/');
-      //params
-
-      // if (formProps.orderbump && formProps.orderbumpdetail) {
-      //   course[0] += `,${formProps.orderbumpdetail.trim()}`;
+      // for (const feildName of feildNames) {
+      //   if (feildName === 'name') {
+      //     const name = correctName(formProps[feildName]);
+      //     localStorage.setItem(feildName, name);
+      //   } else if (feildName === 'phone') {
+      //     const phone = validatePhone(formProps[feildName]);
+      //     if (!phone) {
+      //       alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
+      //       event.preventDefault();
+      //       clearDataLocalStorage(feildNames);
+      //       break;
+      //     }
+      //     localStorage.setItem(feildName, phone);
+      //   } else if (feildName === 'course') {
+      //     if (formProps.orderbump && formProps.orderbumpdetail) {
+      //       formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+      //       localStorage.setItem(feildName, formProps[feildName]);
+      //     }
+      //   } else if (feildName === 'params') {
+      //     const urlSearchParams = new URLSearchParams(window.location.search);
+      //     const params = Object.fromEntries(urlSearchParams.entries());
+      //     localStorage.setItem(feildName, JSON.stringify(params));
+      //     console.log('params');
+      //   } else {
+      //     localStorage.setItem(feildName, formProps[feildName]);
+      //   }
       // }
-      // localStorage.setItem('email', formProps.email);
-      // localStorage.setItem('price', formProps.price);
-      // localStorage.setItem('course', formProps.course);
-      // localStorage.setItem('seller', formProps.seller);
-      // localStorage.setItem('campaign', formProps.campaign);
-      // localStorage.setItem('deal_id', formProps.deal_id);
-      // localStorage.setItem('px', formProps.px);
-      // localStorage.setItem('redirect_url', formProps.redirect_url);
-      // localStorage.setItem('callback_url', formProps.email);
-      // localStorage.setItem('discountCode', formProps.email);
     },
     false
   );
