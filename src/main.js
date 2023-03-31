@@ -120,10 +120,10 @@ function listenerForm(feildNames) {
       // localStorage.setItem('redirect_url', formProps.redirect_url);
       // localStorage.setItem('callback_url', formProps.email);
       // localStorage.setItem('discountCode', formProps.email);
-
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       localStorage.setItem('params', JSON.stringify(params));
+      console.log('complete');
     },
     false
   );
