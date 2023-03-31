@@ -97,8 +97,8 @@ function listenerForm(feildNames) {
       } else if (feildName === 'course') {
         if (formProps.orderbump && formProps.orderbumpdetail) {
           formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
-          localStorage.setItem(feildName, formProps[feildName]);
         }
+        localStorage.setItem(feildName, formProps[feildName]);
       } else if (feildName === 'params') {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
