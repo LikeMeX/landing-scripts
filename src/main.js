@@ -80,7 +80,7 @@ function listenerForm(feildNames) {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
     for (const feildName of feildNames) {
-      if (feildName === 'name') {
+      if (feildName === 'fullName') {
         const name = correctName(formProps[feildName]);
         localStorage.setItem(feildName, name);
       } else if (feildName === 'phone') {
