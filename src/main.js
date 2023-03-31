@@ -2,7 +2,7 @@
 // (function () {
 //   const arguments = {
 //     PXID,
-//     clearDataFields: ['email','phone','name','price','course','campaign','seller','px','redirect_url','callback_url','params','discountCode']
+//     clearDataFields: ['email','phone','fullname','price','course','campaign','seller','px','redirect_url','callback_url','params','discountCode']
 //   };
 //   const {userAgent, dealId} = init(arguments,()=>{
 //     window.dataLayer = window.dataLayer || [];
