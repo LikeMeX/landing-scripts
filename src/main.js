@@ -66,6 +66,7 @@ function validatePhone(phone) {
   if (phone.length !== 10) return undefined;
   return phone;
 }
+
 function correctName(name) {
   name = name
     .replace(/^(นาย|นางสาว|น.ส.|ด.ช.|นาง|คุณ |เด็กชาย|เด็กหญิง)/g, '')
@@ -74,37 +75,54 @@ function correctName(name) {
   return name;
 }
 
-function listenerForm() {
+function listenerForm(feildNames) {
   document.body.addEventListener(
     'submit',
     event => {
       const formData = new FormData(event.target);
       const formProps = Object.fromEntries(formData);
+      for (const feildName of feildNames) {
+        if (feildName === 'name') {
+          const name = correctName(formProps[feildName]);
+          localStorage.setItem(feildName, name);
+        } else if (feildName === 'phone') {
+          const phone = validatePhone(formProps[feildName]);
+          if (!phone) {
+            alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
+            event.preventDefault();
+            clearDataLocalStorage(feildNames);
+            break;
+          }
+          localStorage.setItem(feildName, phone);
+        } else if (feildName === 'course') {
+          if (formProps.orderbump && formProps.orderbumpdetail) {
+            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+            localStorage.setItem(feildName, formProps[feildName]);
+          }
+        } else {
+          localStorage.setItem(feildName, formProps[feildName]);
+        }
+      }
+      // const course = formProps.course.trim().split('/'); // course only
+      // const info = formProps.info.trim().split('/');
+      //params
 
-      const name = correctName(formProps.name);
-      const course = formProps.course.trim().split('/');
-      const info = formProps.info.trim().split('/');
+      // if (formProps.orderbump && formProps.orderbumpdetail) {
+      //   course[0] += `,${formProps.orderbumpdetail.trim()}`;
+      // }
+      // localStorage.setItem('email', formProps.email);
+      // localStorage.setItem('price', formProps.price);
+      // localStorage.setItem('course', formProps.course);
+      // localStorage.setItem('seller', formProps.seller);
+      // localStorage.setItem('campaign', formProps.campaign);
+      // localStorage.setItem('deal_id', formProps.deal_id);
+      // localStorage.setItem('px', formProps.px);
+      // localStorage.setItem('redirect_url', formProps.redirect_url);
+      // localStorage.setItem('callback_url', formProps.email);
+      // localStorage.setItem('discountCode', formProps.email);
+
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
-      const phone = validatePhone(formProps.phone);
-      if (!phone) {
-        alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
-        event.preventDefault();
-        return false;
-      }
-      if (formProps.orderbump && formProps.orderbumpdetail) {
-        course[0] += `,${formProps.orderbumpdetail.trim()}`;
-      }
-      localStorage.setItem('email', formProps.email);
-      localStorage.setItem('phone', phone);
-      localStorage.setItem('name', name);
-      localStorage.setItem('price', formProps.price);
-      localStorage.setItem('course', course[0]);
-      localStorage.setItem('campaign', info[1]);
-      localStorage.setItem('seller', info[0]);
-      localStorage.setItem('deal_id', formProps.deal_id);
-      localStorage.setItem('px', formProps.px);
-      localStorage.setItem('redirect_url', formProps.redirect_url);
       localStorage.setItem('params', JSON.stringify(params));
     },
     false
