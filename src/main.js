@@ -97,6 +97,7 @@ function listenerForm(feildNames) {
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
+    console.log('formProps', formProps);
     for (const feildName of feildNames) {
       if (feildName === 'fullname') {
         const name = correctName(formProps[feildName]);
