@@ -84,16 +84,27 @@ function correctName(name) {
 }
 
 function listenerForm(feildNames) {
-  const defaultPackage = document.getElementsByName('defaultPackage');
-  // const defaultPackage = $('input[name="defaultPackage"]').val();
-  // if (defaultPackage) {
-  //   $('select[name="package"]').val(defaultPackage).change();
-  //   let _defaultPackage = defaultPackage.split('/');
-  //   $('input[name="course"]').val(`${_defaultPackage[0]}/${_defaultPackage[0]}`).change();
-  //   $('input[name="price"]').val(_defaultPackage[1]).change();
-  //   $('input[name="discountCode"]').val(_defaultPackage[2]).change();
-  // }
-  console.log('defaultPackage', defaultPackage);
+  //=========== set default package into package selector ============
+  const defaultPackage = document.querySelector('input[name="defaultPackage"]');
+  document.querySelectorAll('select[name="package"]').forEach(function (element) {
+    element.value = defaultPackage.value;
+  });
+  const _defaultPackage = defaultPackage.split('/');
+  document.querySelector('input[name="discountCode"]').value = _defaultPackage[2];
+  document.querySelector('input[name="course"]').value = _defaultPackage[0];
+  document.querySelector('input[name="price"]').value = _defaultPackage[1];
+  //=========== set default package into package select option ============
+
+  document.body.addEventListener('change', function (event) {
+    //========= package select option on change into other package select option =============
+    if (event.target.name === 'package') {
+      document.querySelectorAll('select[name="package"]').forEach(function (element) {
+        element.value = event.target.value;
+      });
+    }
+    //========= package select option on change into other package select option =============
+  });
+
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
