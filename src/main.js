@@ -2,7 +2,7 @@
 // (function () {
 //   const arguments = {
 //     PXID,
-//     clearDataFields: ['email','phone','fullname','price','course','campaign','seller','px','redirect_url','callback_url','params','discountCode']
+//     clearDataFields: ['email','phone','fullname','price','course','campaign','mkter','px','redirect_url','callback_url','params','discountCode']
 //   };
 //   const {userAgent, dealId} = init(arguments,()=>{
 //     window.dataLayer = window.dataLayer || [];
@@ -84,6 +84,16 @@ function correctName(name) {
 }
 
 function listenerForm(feildNames) {
+  const defaultPackage = document.getElementsByName('defaultPackage');
+  // const defaultPackage = $('input[name="defaultPackage"]').val();
+  // if (defaultPackage) {
+  //   $('select[name="package"]').val(defaultPackage).change();
+  //   let _defaultPackage = defaultPackage.split('/');
+  //   $('input[name="course"]').val(`${_defaultPackage[0]}/${_defaultPackage[0]}`).change();
+  //   $('input[name="price"]').val(_defaultPackage[1]).change();
+  //   $('input[name="discountCode"]').val(_defaultPackage[2]).change();
+  // }
+  console.log('defaultPackage', defaultPackage);
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
@@ -151,7 +161,7 @@ async function submitPayment(localStorageItems) {
       cartTracking: {
         convertionId: conversion?.hash || '',
         campaign: dataFromLocalStorage['campaign'] || '',
-        seller: dataFromLocalStorage['seller'] || '',
+        seller: dataFromLocalStorage['mkter'] || '',
         channel: 'SGC',
         ip: ip,
         utm_source: dataFromLocalStorage['query']?.utm_source || '',
