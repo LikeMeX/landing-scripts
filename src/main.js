@@ -170,7 +170,7 @@ async function submitPayment(localStorageItems) {
     dealId: dataFromLocalStorage['dealId'],
     email: dataFromLocalStorage['email'],
     fullName: dataFromLocalStorage['fullname'],
-    phone: dataFromLocalStorage['tel'],
+    phone: dataFromLocalStorage['phone'],
     price: dataFromLocalStorage['price'],
     discountCode: dataFromLocalStorage['discountCode'],
   }).toString();
