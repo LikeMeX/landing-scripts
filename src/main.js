@@ -169,7 +169,7 @@ async function submitPayment(localStorageItems) {
   const redirectQuery = new URLSearchParams({
     dealId: dataFromLocalStorage['dealId'],
     email: dataFromLocalStorage['email'],
-    fullName: dataFromLocalStorage['fullName'],
+    fullName: dataFromLocalStorage['fullname'],
     phone: dataFromLocalStorage['tel'],
     price: dataFromLocalStorage['price'],
     discountCode: dataFromLocalStorage['discountCode'],
@@ -189,8 +189,8 @@ async function submitPayment(localStorageItems) {
       cartItems,
       userdata: {
         email: dataFromLocalStorage['email'],
-        tel: dataFromLocalStorage['tel'] || '',
-        fullName: dataFromLocalStorage['fullName'] || '',
+        tel: dataFromLocalStorage['phone'] || '',
+        fullName: dataFromLocalStorage['fullname'] || '',
         payload: payload,
       },
       cartTracking: {
