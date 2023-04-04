@@ -167,7 +167,7 @@ async function submitPayment(localStorageItems) {
   const {ip} = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
   const redirectQuery = new URLSearchParams({
-    dealId: dataFromLocalStorage['dealId'],
+    dealId: dataFromLocalStorage['deal_id'],
     email: dataFromLocalStorage['email'],
     fullName: dataFromLocalStorage['fullname'],
     phone: dataFromLocalStorage['phone'],
@@ -204,7 +204,7 @@ async function submitPayment(localStorageItems) {
         utm_campaign: dataFromLocalStorage['query']?.utm_campaign || '',
         utm_term: dataFromLocalStorage['query']?.utm_term || '',
         utm_content: dataFromLocalStorage['query']?.utm_content || '',
-        customField1: dataFromLocalStorage['dealId'],
+        customField1: dataFromLocalStorage['deal_id'],
         customField2: dataFromLocalStorage['px'],
       },
       paymentSuccessRedirectUrl: `${dataFromLocalStorage['redirect_url']}?${redirectQuery}`,
