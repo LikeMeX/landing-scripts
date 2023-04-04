@@ -84,13 +84,13 @@ function correctName(name) {
 }
 
 function listenerForm(feildNames) {
-  //=========== set default package into package selector ============
+  //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   document.querySelectorAll('select[name="package"]').forEach(function (element) {
     element.value = defaultPackage.value;
   });
   const _defaultPackage = defaultPackage.split('/');
-  document.querySelector('input[name="discountCode"]').value = _defaultPackage[2];
+  document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
   document.querySelector('input[name="course"]').value = _defaultPackage[0];
   document.querySelector('input[name="price"]').value = _defaultPackage[1];
   //=========== set default package into package select option ============
@@ -101,6 +101,10 @@ function listenerForm(feildNames) {
       document.querySelectorAll('select[name="package"]').forEach(function (element) {
         element.value = event.target.value;
       });
+      const _package = event.target.value.split('/');
+      document.querySelector('input[name="discountCode"]').value = _package[2] || '';
+      document.querySelector('input[name="course"]').value = _package[0];
+      document.querySelector('input[name="price"]').value = _package[1];
     }
     //========= package select option on change into other package select option =============
   });
@@ -108,7 +112,8 @@ function listenerForm(feildNames) {
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
-    console.log('formProps', formProps);
+    delete formProps.defaultPackage;
+    delete formProps.package;
     for (const feildName of feildNames) {
       if (feildName === 'fullname') {
         const name = correctName(formProps[feildName]);
