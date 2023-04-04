@@ -86,30 +86,32 @@ function correctName(name) {
 function listenerForm(feildNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
-  document.querySelectorAll('select[name="package"]').forEach(function (element) {
-    element.value = defaultPackage.value;
-  });
-  console.log('defaultPackage', defaultPackage.value);
-  const _defaultPackage = defaultPackage.value.split('/');
-  document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
-  document.querySelector('input[name="course"]').value = _defaultPackage[0];
-  document.querySelector('input[name="price"]').value = _defaultPackage[1];
-  //=========== set default package into package select option ============
+  console.log('defaultPackage', defaultPackage);
+  console.log('defaultPackage', defaultPackage?.value);
+  if (defaultPackage) {
+    document.querySelectorAll('select[name="package"]').forEach(function (element) {
+      element.value = defaultPackage.value;
+    });
+    const _defaultPackage = defaultPackage.value.split('/');
+    document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
+    document.querySelector('input[name="course"]').value = _defaultPackage[0];
+    document.querySelector('input[name="price"]').value = _defaultPackage[1];
+    //=========== set default package into package select option ============
 
-  document.body.addEventListener('change', function (event) {
-    //========= package select option on change into other package select option =============
-    if (event.target.name === 'package') {
-      document.querySelectorAll('select[name="package"]').forEach(function (element) {
-        element.value = event.target.value;
-      });
-      const _package = event.target.value.split('/');
-      document.querySelector('input[name="discountCode"]').value = _package[2] || '';
-      document.querySelector('input[name="course"]').value = _package[0];
-      document.querySelector('input[name="price"]').value = _package[1];
-    }
-    //========= package select option on change into other package select option =============
-  });
-
+    document.body.addEventListener('change', function (event) {
+      //========= package select option on change into other package select option =============
+      if (event.target.name === 'package') {
+        document.querySelectorAll('select[name="package"]').forEach(function (element) {
+          element.value = event.target.value;
+        });
+        const _package = event.target.value.split('/');
+        document.querySelector('input[name="discountCode"]').value = _package[2] || '';
+        document.querySelector('input[name="course"]').value = _package[0];
+        document.querySelector('input[name="price"]').value = _package[1];
+      }
+      //========= package select option on change into other package select option =============
+    });
+  }
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
