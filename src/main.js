@@ -191,7 +191,6 @@ async function submitPayment(localStorageItems) {
         email: dataFromLocalStorage['email'],
         tel: dataFromLocalStorage['phone'] || '',
         fullName: dataFromLocalStorage['fullname'] || '',
-        payload: payload,
       },
       cartTracking: {
         convertionId: conversion?.hash || '',
@@ -209,6 +208,8 @@ async function submitPayment(localStorageItems) {
       },
       paymentSuccessRedirectUrl: `${dataFromLocalStorage['redirect_url']}?${redirectQuery}`,
     };
+
+    if (dataFromLocalStorage['type'] && dataFromLocalStorage['type']?.length) data.userdata.payload = payload;
 
     if (dataFromLocalStorage['callback_url']) data.paymentSuccessCallbackUrl = dataFromLocalStorage['callback_url'];
 
