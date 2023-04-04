@@ -89,6 +89,7 @@ function listenerForm(feildNames) {
   document.querySelectorAll('select[name="package"]').forEach(function (element) {
     element.value = defaultPackage.value;
   });
+  console.log('defaultPackage', defaultPackage);
   const _defaultPackage = defaultPackage.split('/');
   document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
   document.querySelector('input[name="course"]').value = _defaultPackage[0];
