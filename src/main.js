@@ -1,4 +1,6 @@
+//===========================================================
 // ================ example use init script =================
+//===========================================================
 // (function () {
 //   const arguments = {
 //     PXID,
@@ -11,15 +13,17 @@
 //     fbq('track', 'PageView');
 //   });
 // })()
-// ================ example use init =================
+//===========================================================
+// ================ example use init script =================
+//===========================================================
 
 function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
+
+  //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName('deal_id');
-  var pxElements = document.getElementsByName('px');
-  var landingUrls = document.getElementsByName('landing_url');
   if (dealIdElements.length) {
     for (const dealIdElement of dealIdElements) {
       dealIdElement.value = dealId;
@@ -27,6 +31,10 @@ function init(arguments, callback) {
   } else {
     console.log('%cinput "deal_id" not define!', 'color: red; font-size: larger');
   }
+  //==================== End => add deal_id into all input deal_id elements ====================
+
+  //==================== Start => add px into all input px elements ====================
+  var pxElements = document.getElementsByName('px');
   if (pxElements.length) {
     for (const pxElement of pxElements) {
       pxElement.value = userAgent;
@@ -34,6 +42,10 @@ function init(arguments, callback) {
   } else {
     console.log('%cinput "px" not define!', 'color: red; font-size: larger');
   }
+  //==================== End => add px into all input px elements ====================
+
+  //==================== Start => add landing_url into all input landing_url elements ====================
+  var landingUrls = document.getElementsByName('landing_url');
   if (landingUrls.length) {
     for (const landingUrl of landingUrls) {
       landingUrl.value = window.location.href;
@@ -41,6 +53,7 @@ function init(arguments, callback) {
   } else {
     console.log('%cinput "landing_url" not define!', 'color: red; font-size: larger');
   }
+  //==================== End => add landing_url into all input landing_url elements ====================
   if (callback) callback();
   return {
     userAgent,
@@ -83,11 +96,11 @@ function correctName(name) {
   return name;
 }
 
+//==========================================================================================================================
+
 function listenerForm(feildNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
-  console.log('defaultPackage', defaultPackage);
-  console.log('defaultPackage', defaultPackage?.value);
   if (defaultPackage) {
     document.querySelectorAll('select[name="package"]').forEach(function (element) {
       element.value = defaultPackage.value;
@@ -115,8 +128,11 @@ function listenerForm(feildNames) {
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
+
     delete formProps.defaultPackage;
     delete formProps.package;
+
+    // ===================== Start = > set localStorage =====================
     for (const feildName of feildNames) {
       if (feildName === 'fullname') {
         const name = correctName(formProps[feildName]);
@@ -143,10 +159,9 @@ function listenerForm(feildNames) {
         localStorage.setItem(feildName, formProps[feildName] || '');
       }
     }
+    // ===================== End = > set localStorage =====================
   });
 }
-
-//=======================================================================
 
 async function submitPayment(localStorageItems) {
   const {ip} = await getIp();
