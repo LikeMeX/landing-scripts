@@ -21,6 +21,8 @@ function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
+  const isPass = checkFieldsRequireFully(arguments.hiddenFieldConfig);
+  if (!isPass) return false;
 
   //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName('deal_id');
@@ -59,6 +61,42 @@ function init(arguments, callback) {
     userAgent,
     dealId,
   };
+}
+
+function checkFieldsRequireFully(hiddenFieldConfig) {
+  const defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
+  const defaultHiddenFields = [
+    'px',
+    'sub_district',
+    'district',
+    'province',
+    'zipcode',
+    'discountCode',
+    'channel',
+    'channel_name',
+    'deal_id',
+    'landing_url',
+    'type',
+  ];
+  const concateArr = [...defaultFields, ...defaultHiddenFields];
+  for (const defaultField of concateArr) {
+    if (!document.querySelector(`input[name="${defaultField}"]`).length) {
+      alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
+      return false;
+    }
+  }
+
+  for (const hiddenField of Object.keys(hiddenFieldConfig)) {
+    if (!document.querySelector(`input[name="${hiddenField}"]`).length && !hiddenFieldConfig[hiddenField].length) {
+      if (!hiddenFieldConfig[hiddenField].length) {
+        alert(`คุณไม่ได้ใส่ค่าใน Field ${hiddenField}`);
+        return false;
+      }
+      alert(`คุณไม่ได้ใส่ Field ${hiddenField}`);
+      return false;
+    }
+  }
+  return true;
 }
 
 function genDealId() {
