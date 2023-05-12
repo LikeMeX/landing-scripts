@@ -18,11 +18,11 @@
 //===========================================================
 
 function init(arguments, callback) {
+  const isPass = checkFieldsRequireFully(arguments.hiddenFieldConfig);
+  if (!isPass) return false;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
-  const isPass = checkFieldsRequireFully(arguments.hiddenFieldConfig);
-  if (!isPass) return false;
 
   //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName('deal_id');
