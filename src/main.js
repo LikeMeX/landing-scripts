@@ -131,9 +131,12 @@ function clearDataLocalStorage(fields) {
   });
 }
 
-function validatePhone(phone) {
+function validatePhone(phone, feildName) {
   if (!phone) return undefined;
-  phone = phone.replace(/(\s+|-|\+66|^66|^0)/g, '0');
+  phone = phone.replace(/(\s+|-|\+66|^66|^0)/g, '');
+  document.querySelectorAll(`select[name="${feildName}"]`).forEach(function (element) {
+    element.value = phone;
+  });
   if (phone.length !== 10) return undefined;
   return phone;
 }
@@ -199,7 +202,7 @@ function listenerForm(feildNames) {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
         } else if (feildName === 'phone') {
-          const phone = validatePhone(formProps[feildName]);
+          const phone = validatePhone(formProps[feildName], feildName);
           if (!phone) {
             alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
             event.preventDefault();
