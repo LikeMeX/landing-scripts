@@ -137,7 +137,7 @@ function validatePhone(phone, feildName) {
   document.querySelectorAll(`select[name="${feildName}"]`).forEach(function (element) {
     element.value = phone;
   });
-  if (phone.length !== 10) return undefined;
+  if (phone.length !== 9) return undefined;
   return phone;
 }
 
