@@ -80,6 +80,10 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
   ];
   const concateArr = [...defaultFields, ...defaultHiddenFields];
   for (const defaultField of concateArr) {
+    console.log(
+      'document.querySelector(`input[name="${defaultField}"]`)',
+      document.querySelector(`input[name="${defaultField}"]`)
+    );
     if (!document.querySelector(`input[name="${defaultField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
       return false;
