@@ -64,7 +64,7 @@ function init(arguments, callback) {
 }
 
 function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
-  const different = ['fullname', 'phone'];
+  const different = ['search', 'address'];
   let defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
   if (landingPageType === 'YR') {
     defaultFields.filter(item => !different.includes(item));
