@@ -171,7 +171,7 @@ function listenerForm(feildNames) {
     });
   }
 
-  document.addEventListener(
+  document.body.addEventListener(
     'submit',
     event => {
       const formData = new FormData(event.target);
@@ -179,15 +179,7 @@ function listenerForm(feildNames) {
       const block = blockSpam(formProps);
       if (!block) {
         event.preventDefault();
-        // event.target;
-        event.stopImmediatePropagation();
-        event.stopPropagation();
-        console.log(event);
-        console.log(event.target.id);
-        // event.target.preventDefault();
-        alert('spam');
-        return false;
-
+        alert('blocked user spam');
         return block;
       }
 
