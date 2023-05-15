@@ -177,12 +177,9 @@ function listenerForm(feildNames) {
     const block = blockSpam(formProps);
     if (!block) {
       event.preventDefault();
-      const currentForm = document.getElementById(event.target.id);
-      currentForm?.target?.preventDefault();
-      currentForm.preventDefault();
       // event.target;
-      // event.stopImmediatePropagation();
-      // event.stopPropagation();
+      event.stopImmediatePropagation();
+      event.stopPropagation();
       console.log(event);
       console.log(event.target.id);
       // event.target.preventDefault();
