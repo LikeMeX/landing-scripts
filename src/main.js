@@ -95,6 +95,7 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
       alert(`คุณไม่ได้ใส่ Field ${hiddenField}`);
       return false;
     }
+    document.querySelectorAll(`input[name="${hiddenField}"]`).value = hiddenFieldConfig[hiddenField];
   }
   return true;
 }
