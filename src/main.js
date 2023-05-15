@@ -170,12 +170,15 @@ function listenerForm(feildNames) {
       //========= package select option on change into other package select option =============
     });
   }
+
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
     const block = blockSpam(formProps);
     if (!block) {
       event.preventDefault();
+      console.log(event);
+
       return block;
     }
 
