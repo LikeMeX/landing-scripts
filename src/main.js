@@ -134,7 +134,7 @@ function clearDataLocalStorage(fields) {
 function validatePhone(phone, feildName) {
   if (!phone) return undefined;
   phone = phone.replace(/(\s+|-|\+66|^66|^0)/g, '');
-  document.querySelectorAll(`select[name="${feildName}"]`).forEach(function (element) {
+  document.querySelectorAll(`input[name="${feildName}"]`).forEach(function (element) {
     element.value = phone;
   });
   if (phone.length !== 9) return undefined;
