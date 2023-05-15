@@ -64,11 +64,8 @@ function init(arguments, callback) {
 }
 
 function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
-  const different = ['search', 'address'];
-  let defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
-  if (landingPageType === 'YR') {
-    defaultFields = defaultFields.filter(item => !different.includes(item));
-  }
+  const different = ['search', 'address', 'sub_district', 'district', 'province', 'zipcode'];
+  const defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
   const defaultHiddenFields = [
     'px',
     'sub_district',
@@ -82,7 +79,10 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
     'landing_url',
     'type',
   ];
-  const concateArr = [...defaultFields, ...defaultHiddenFields];
+  let concateArr = [...defaultFields, ...defaultHiddenFields];
+  if (landingPageType === 'YR') {
+    concateArr = concateArr.filter(item => !different.includes(item));
+  }
   for (const defaultField of concateArr) {
     if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
