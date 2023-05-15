@@ -100,10 +100,12 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
 }
 
 function blockSpam(formProps) {
-  console.log('formProps', formProps);
-  return false;
-  // if (RegExp('charan.p|Zz656').test(formProps) || RegExp('ชรัญเพ็ง|ชัณเพ็ง').test(name)) return false;
-  // return true;
+  const dataSpam = {
+    email: 'charan.p|Zz656',
+    name: 'ชรัญเพ็ง|ชัณเพ็ง',
+  };
+  if (RegExp(dataSpam.email).test(formProps.email) || RegExp(dataSpam.name).test(formProps.name)) return false;
+  return true;
 }
 
 function genDealId() {
