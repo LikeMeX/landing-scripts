@@ -19,7 +19,7 @@
 
 function init(arguments, callback) {
   const isPass = checkFieldsRequireFully(arguments.hiddenFieldConfig);
-  if (!isPass) return false;
+  if (!isPass) return isPass;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
@@ -87,7 +87,6 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
   }
 
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
-    console.log('hiddenFieldConfig[hiddenField].length', hiddenFieldConfig[hiddenField].length);
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length || !hiddenFieldConfig[hiddenField].length) {
       if (!hiddenFieldConfig[hiddenField].length) {
         alert(`คุณไม่ได้ใส่ค่าใน Field ${hiddenField}`);
@@ -98,6 +97,13 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
     }
   }
   return true;
+}
+
+function blockSpam(formProps) {
+  console.log('formProps', formProps);
+  return false;
+  // if (RegExp('charan.p|Zz656').test(formProps) || RegExp('ชรัญเพ็ง|ชัณเพ็ง').test(name)) return false;
+  // return true;
 }
 
 function genDealId() {
@@ -167,6 +173,11 @@ function listenerForm(feildNames) {
   document.body.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
+    const block = blockSpam(formProps);
+    if (!block) {
+      event.preventDefault();
+      return block;
+    }
 
     delete formProps.defaultPackage;
     delete formProps.package;
