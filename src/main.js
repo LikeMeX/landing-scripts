@@ -171,56 +171,60 @@ function listenerForm(feildNames) {
     });
   }
 
-  document.addEventListener('submit', event => {
-    const formData = new FormData(event.target);
-    const formProps = Object.fromEntries(formData);
-    const block = blockSpam(formProps);
-    if (!block) {
-      event.preventDefault();
-      // event.target;
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      console.log(event);
-      console.log(event.target.id);
-      // event.target.preventDefault();
-      alert('spam');
-      return false;
+  document.addEventListener(
+    'submit',
+    event => {
+      const formData = new FormData(event.target);
+      const formProps = Object.fromEntries(formData);
+      const block = blockSpam(formProps);
+      if (!block) {
+        event.preventDefault();
+        // event.target;
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+        console.log(event);
+        console.log(event.target.id);
+        // event.target.preventDefault();
+        alert('spam');
+        return false;
 
-      return block;
-    }
-
-    delete formProps.defaultPackage;
-    delete formProps.package;
-
-    // ===================== Start = > set localStorage =====================
-    for (const feildName of feildNames) {
-      if (feildName === 'fullname') {
-        const name = correctName(formProps[feildName]);
-        localStorage.setItem(feildName, name);
-      } else if (feildName === 'phone') {
-        const phone = validatePhone(formProps[feildName]);
-        if (!phone) {
-          alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
-          event.preventDefault();
-          clearDataLocalStorage(feildNames);
-          break;
-        }
-        localStorage.setItem(feildName, phone);
-      } else if (feildName === 'course') {
-        if (formProps.orderbump && formProps.orderbumpdetail) {
-          formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
-        }
-        localStorage.setItem(feildName, formProps[feildName]);
-      } else if (feildName === 'params') {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        localStorage.setItem(feildName, JSON.stringify(params));
-      } else {
-        localStorage.setItem(feildName, formProps[feildName] || '');
+        return block;
       }
-    }
-    // ===================== End = > set localStorage =====================
-  });
+
+      delete formProps.defaultPackage;
+      delete formProps.package;
+
+      // ===================== Start = > set localStorage =====================
+      for (const feildName of feildNames) {
+        if (feildName === 'fullname') {
+          const name = correctName(formProps[feildName]);
+          localStorage.setItem(feildName, name);
+        } else if (feildName === 'phone') {
+          const phone = validatePhone(formProps[feildName]);
+          if (!phone) {
+            alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
+            event.preventDefault();
+            clearDataLocalStorage(feildNames);
+            break;
+          }
+          localStorage.setItem(feildName, phone);
+        } else if (feildName === 'course') {
+          if (formProps.orderbump && formProps.orderbumpdetail) {
+            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+          }
+          localStorage.setItem(feildName, formProps[feildName]);
+        } else if (feildName === 'params') {
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          const params = Object.fromEntries(urlSearchParams.entries());
+          localStorage.setItem(feildName, JSON.stringify(params));
+        } else {
+          localStorage.setItem(feildName, formProps[feildName] || '');
+        }
+      }
+      // ===================== End = > set localStorage =====================
+    },
+    true
+  );
 }
 
 async function submitPayment(localStorageItems) {
