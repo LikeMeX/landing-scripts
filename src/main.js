@@ -86,16 +86,16 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
     );
     console.log(
       'document.querySelector(`input[name="${defaultField}"]`)',
-      document.querySelectorAll(`input[name="${defaultField}"]`)
+      document.querySelectorAll(`input[name="${defaultField}"]`).length
     );
-    if (!document.querySelector(`input[name="${defaultField}"]`).length) {
+    if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
       return false;
     }
   }
 
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
-    if (!document.querySelector(`input[name="${hiddenField}"]`).length && !hiddenFieldConfig[hiddenField].length) {
+    if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length && !hiddenFieldConfig[hiddenField].length) {
       if (!hiddenFieldConfig[hiddenField].length) {
         alert(`คุณไม่ได้ใส่ค่าใน Field ${hiddenField}`);
         return false;
