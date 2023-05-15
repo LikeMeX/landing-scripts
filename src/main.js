@@ -206,8 +206,10 @@ function listenerForm(feildNames) {
           if (!phone) {
             alert('กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง');
             event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
             clearDataLocalStorage(feildNames);
-            break;
+            return false;
           }
           localStorage.setItem(feildName, phone);
         } else if (feildName === 'course') {
