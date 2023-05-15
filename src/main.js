@@ -179,6 +179,8 @@ function listenerForm(feildNames) {
       const block = blockSpam(formProps);
       if (!block) {
         event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
         alert('blocked user spam');
         return block;
       }
