@@ -84,6 +84,10 @@ function checkFieldsRequireFully(hiddenFieldConfig) {
       'document.querySelector(`input[name="${defaultField}"]`)',
       document.querySelector(`input[name="${defaultField}"]`)
     );
+    console.log(
+      'document.querySelector(`input[name="${defaultField}"]`)',
+      document.querySelectorAll(`input[name="${defaultField}"]`)
+    );
     if (!document.querySelector(`input[name="${defaultField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
       return false;
