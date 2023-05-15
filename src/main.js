@@ -183,7 +183,6 @@ function listenerForm(feildNames) {
       console.log(event.target);
       // event.target.preventDefault();
       alert('spam');
-      returnToPreviousPage();
 
       return block;
     }
