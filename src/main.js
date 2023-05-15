@@ -171,12 +171,15 @@ function listenerForm(feildNames) {
     });
   }
 
-  document.body.addEventListener('submit', event => {
+  document.addEventListener('submit', event => {
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
     const block = blockSpam(formProps);
     if (!block) {
       event.preventDefault();
+      const currentForm = document.getElementById(event.target.id);
+      currentForm?.target?.preventDefault();
+      currentForm.preventDefault();
       // event.target;
       // event.stopImmediatePropagation();
       // event.stopPropagation();
