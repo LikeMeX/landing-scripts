@@ -177,8 +177,9 @@ function listenerForm(feildNames) {
     const block = blockSpam(formProps);
     if (!block) {
       event.preventDefault();
-      event.target.preventDefault();
       console.log(event);
+      console.log(event.target);
+      // event.target.preventDefault();
 
       return block;
     }
