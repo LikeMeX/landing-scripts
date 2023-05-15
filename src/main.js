@@ -171,7 +171,7 @@ function listenerForm(feildNames) {
     });
   }
 
-  document.body.addEventListener(
+  document.addEventListener(
     'submit',
     event => {
       const formData = new FormData(event.target);
