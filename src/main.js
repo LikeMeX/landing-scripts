@@ -18,7 +18,7 @@
 //===========================================================
 
 function init(arguments, callback) {
-  const isPass = checkFieldsRequireFully(arguments.hiddenFieldConfig);
+  const isPass = checkFieldsRequireFully(arguments.hiddenFieldConfig, arguments.landingPageType);
   if (!isPass) return isPass;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
@@ -63,8 +63,12 @@ function init(arguments, callback) {
   };
 }
 
-function checkFieldsRequireFully(hiddenFieldConfig) {
-  const defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
+function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
+  const different = ['fullname', 'phone'];
+  let defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
+  if (landingPageType === 'YR') {
+    defaultFields.filter(item => !different.includes(item));
+  }
   const defaultHiddenFields = [
     'px',
     'sub_district',
