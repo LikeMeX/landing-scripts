@@ -122,7 +122,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
     console.log('hiddenField', hiddenField);
     console.log('remainingFields[hiddenField]', remainingFields[hiddenField]);
     console.log('!hiddenFieldConfig[hiddenField].length', !hiddenFieldConfig[hiddenField].length);
-    if (remainingFields[hiddenField] && !hiddenFieldConfig[hiddenField].length) {
+    if (!remainingFields[hiddenField] && !hiddenFieldConfig[hiddenField].length) {
       alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
     }
