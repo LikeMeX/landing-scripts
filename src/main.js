@@ -23,7 +23,6 @@ function init(arguments, callback) {
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
-  includeJqueryAddress();
 
   //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName('deal_id');
@@ -58,6 +57,7 @@ function init(arguments, callback) {
   }
   //==================== End => add landing_url into all input landing_url elements ====================
   if (callback) callback();
+  includeJqueryAddress();
   return {
     userAgent,
     dealId,
