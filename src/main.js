@@ -378,7 +378,7 @@ function includeJqueryAddressScript() {
   document.body.appendChild(scriptTypeahead);
 
   // script one
-  ($.Thailand = function (o) {
+  $.Thailand = function (o) {
     'use strict';
     o = $.extend({}, $.Thailand.defaults, o);
     function n(e) {
@@ -581,26 +581,27 @@ function includeJqueryAddressScript() {
             });
       'function' == typeof o.onLoad && o.onLoad(), 'function' == typeof o.onComplete && o.onComplete();
     });
-  }),
-    ($.Thailand.defaults = {
-      database: 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/database/db.json',
-      database_type: 'auto',
-      zip_worker_path: !1,
-      autocomplete_size: 20,
-      onLoad: function () {},
-      onDataFill: function () {},
-      $district: !1,
-      $district_code: !1,
-      $amphoe: !1,
-      $amphoe_code: !1,
-      $province: !1,
-      $province_code: !1,
-      $zipcode: !1,
-      $search: !1,
-    }),
-    ($.Thailand.setup = function (e) {
-      $.extend($.Thailand.defaults, e);
-    });
+  };
+  $.Thailand.defaults = {
+    database: 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/database/db.json',
+    database_type: 'auto',
+    zip_worker_path: !1,
+    autocomplete_size: 20,
+    onLoad: function () {},
+    onDataFill: function () {},
+    $district: !1,
+    $district_code: !1,
+    $amphoe: !1,
+    $amphoe_code: !1,
+    $province: !1,
+    $province_code: !1,
+    $zipcode: !1,
+    $search: !1,
+  };
+
+  $.Thailand.setup = function (e) {
+    $.extend($.Thailand.defaults, e);
+  };
 
   // script two
   $.Thailand.setup({
