@@ -74,6 +74,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
   }
   for (const defaultField of concateArr) {
     if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
+      console.log();
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
       return false;
     }
@@ -82,10 +83,10 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length || !hiddenFieldConfig[hiddenField].length) {
       if (!hiddenFieldConfig[hiddenField].length) {
-        alert(`คุณไม่ได้ใส่ค่าใน Field ${hiddenField}`);
+        alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
         return false;
       }
-      alert(`คุณไม่ได้ใส่ Field ${hiddenField}`);
+      alert(`คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
     }
     document.querySelectorAll(`input[name="${hiddenField}"]`).forEach(function (element) {
