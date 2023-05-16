@@ -55,6 +55,7 @@ function init(arguments, callback) {
   } else {
     console.log('%cinput "landing_url" not define!', 'color: red; font-size: larger');
   }
+  includeJqueryAddressScript();
   //==================== End => add landing_url into all input landing_url elements ====================
   if (callback) callback();
   return {
@@ -340,37 +341,39 @@ async function fetchPost(url, data, headers) {
 // ===================== add jquery script ========================
 // ================================================================
 
-const scriptJQL = document.createElement('script');
-scriptJQL.src = 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/JQL.min.js';
+(function includeJqueryAddressScript() {
+  const scriptJQL = document.createElement('script');
+  scriptJQL.src = 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/JQL.min.js';
 
-// make code in script to be treated as JavaScript module
-// script.type = 'module';
-scriptJQL.type = 'text/javascript';
+  // make code in script to be treated as JavaScript module
+  // script.type = 'module';
+  scriptJQL.type = 'text/javascript';
 
-scriptJQL.onload = () => {
-  console.log('Script earthchie JQL loaded successfuly');
-};
+  scriptJQL.onload = () => {
+    console.log('Script earthchie JQL loaded successfuly');
+  };
 
-scriptJQL.onerror = () => {
-  console.log('Error occurred while loading script earthchie JQL');
-};
+  scriptJQL.onerror = () => {
+    console.log('Error occurred while loading script earthchie JQL');
+  };
 
-document.body.appendChild(scriptJQL);
+  document.body.appendChild(scriptJQL);
 
-const scriptTypeahead = document.createElement('script');
-scriptTypeahead.src =
-  'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/typeahead.bundle.js';
+  const scriptTypeahead = document.createElement('script');
+  scriptTypeahead.src =
+    'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/typeahead.bundle.js';
 
-// make code in script to be treated as JavaScript module
-// script.type = 'module';
-scriptTypeahead.type = 'text/javascript';
+  // make code in script to be treated as JavaScript module
+  // script.type = 'module';
+  scriptTypeahead.type = 'text/javascript';
 
-scriptTypeahead.onload = () => {
-  console.log('Script earthchie typeahead loaded successfuly');
-};
+  scriptTypeahead.onload = () => {
+    console.log('Script earthchie typeahead loaded successfuly');
+  };
 
-scriptTypeahead.onerror = () => {
-  console.log('Error occurred while loading script earthchie typeahead ');
-};
+  scriptTypeahead.onerror = () => {
+    console.log('Error occurred while loading script earthchie typeahead ');
+  };
 
-document.body.appendChild(scriptTypeahead);
+  document.body.appendChild(scriptTypeahead);
+})();
