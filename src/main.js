@@ -120,13 +120,9 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       return false;
     }
     console.log('hiddenField', hiddenField);
-    console.log('remainingFields[hiddenField]', remainingFields[hiddenField]);
+    console.log('remainingFields[hiddenField] !== undefined', remainingFields[hiddenField] !== undefined);
     console.log('!hiddenFieldConfig[hiddenField].length', !hiddenFieldConfig[hiddenField].length);
-    if (
-      remainingFields[hiddenField] !== undefined &&
-      !remainingFields[hiddenField] &&
-      !hiddenFieldConfig[hiddenField].length
-    ) {
+    if (remainingFields[hiddenField] !== undefined && !hiddenFieldConfig[hiddenField].length) {
       alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
     }
