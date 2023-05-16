@@ -67,18 +67,7 @@ function init(arguments, callback) {
 function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
   const different = ['search', 'address', 'sub_district', 'district', 'province', 'zipcode'];
   const defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
-  const defaultHiddenFields = [
-    'px',
-    'sub_district',
-    'district',
-    'province',
-    'zipcode',
-    'discountCode',
-    'channel',
-    'channel_name',
-    'deal_id',
-    'landing_url',
-  ];
+  const defaultHiddenFields = ['px', 'sub_district', 'district', 'province', 'zipcode', 'deal_id', 'landing_url'];
   let concateArr = [...defaultFields, ...defaultHiddenFields];
   if (landingPageType === 'YR') {
     concateArr = concateArr.filter(item => !different.includes(item));
