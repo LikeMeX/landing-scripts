@@ -75,7 +75,6 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
   }
   for (const defaultField of concateArr) {
     if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
-      console.log();
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
       return false;
     }
@@ -96,10 +95,8 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       'redirect_url',
       'callback_url',
     ];
-    console.log('Object.keys(hiddenFieldConfig)', Object.keys(hiddenFieldConfig));
     const filtered = Object.entries(hiddenFieldConfig).filter(([key]) => !optionalFieldsYR.includes(key));
     remainingFields = Object.fromEntries(filtered);
-    console.log('remainingFields', remainingFields);
   } else {
     const optionalFieldsSGC = [
       'orderbumpdetail',
@@ -119,9 +116,6 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       alert(`คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
     }
-    console.log('hiddenField', hiddenField);
-    console.log('remainingFields[hiddenField] !== undefined', remainingFields[hiddenField] !== undefined);
-    console.log('!hiddenFieldConfig[hiddenField].length', !hiddenFieldConfig[hiddenField].length);
     if (remainingFields[hiddenField] !== undefined && !hiddenFieldConfig[hiddenField].length) {
       alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
