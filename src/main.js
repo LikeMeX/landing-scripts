@@ -78,7 +78,6 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
     'channel_name',
     'deal_id',
     'landing_url',
-    'type',
   ];
   let concateArr = [...defaultFields, ...defaultHiddenFields];
   if (landingPageType === 'YR') {
