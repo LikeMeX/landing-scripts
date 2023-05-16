@@ -81,7 +81,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
     }
   }
   // check optional fields AND splite into remainingFields
-  let remainingFields = [];
+  let remainingFields;
   if (landingPageType === 'YR') {
     const optionalFieldsYR = [
       'campaign_info',
@@ -97,7 +97,8 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       'callback_url',
     ];
     console.log('Object.keys(hiddenFieldConfig)', Object.keys(hiddenFieldConfig));
-    remainingFields = Object.keys(hiddenFieldConfig).filter(item => !optionalFieldsYR.includes(item));
+    const filtered = Object.entries(hiddenFieldConfig).filter(([key]) => !optionalFieldsYR.includes(key));
+    remainingFields = Object.fromEntries(filtered);
     console.log('remainingFields', remainingFields);
   } else {
     const optionalFieldsSGC = [
@@ -110,7 +111,8 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       'landing_type',
       'callback_url',
     ];
-    remainingFields = Object.keys(hiddenFieldConfig).filter(item => !optionalFieldsSGC.includes(item));
+    const filtered = Object.entries(hiddenFieldConfig).filter(([key]) => !optionalFieldsSGC.includes(key));
+    remainingFields = Object.fromEntries(filtered);
   }
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
