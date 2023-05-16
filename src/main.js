@@ -65,6 +65,7 @@ function init(arguments, callback) {
 }
 
 function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
+  // ================ static fields =====================
   const different = ['search', 'address', 'sub_district', 'district', 'province', 'zipcode'];
   const defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
   const defaultHiddenFields = ['px', 'sub_district', 'district', 'province', 'zipcode', 'deal_id', 'landing_url'];
@@ -79,14 +80,43 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       return false;
     }
   }
-
+  // check optional fields AND splite into remainingFields
+  let remainingFields = [];
+  if (landingPageType === 'YR') {
+    const optionalFieldsYR = [
+      'campaign_info',
+      'price',
+      'course',
+      'orderbumpdetail',
+      'discountCode',
+      'channelchannel_name',
+      'bonusdetail',
+      'type',
+      'landing_type',
+      'redirect_url',
+      'callback_url',
+    ];
+    remainingFields = hiddenFieldConfig.filter(item => !optionalFieldsYR.includes(item));
+  } else {
+    const optionalFieldsSGC = [
+      'orderbumpdetail',
+      'bonusdetail',
+      'discountCode',
+      'channel',
+      'channel_name',
+      'type',
+      'landing_type',
+      'callback_url',
+    ];
+    remainingFields = hiddenFieldConfig.filter(item => !optionalFieldsSGC.includes(item));
+  }
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
-    if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length || !hiddenFieldConfig[hiddenField].length) {
-      if (!hiddenFieldConfig[hiddenField].length) {
-        alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
-        return false;
-      }
+    if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration`);
+      return false;
+    }
+    if (remainingFields[hiddenField] && !hiddenFieldConfig[hiddenField].length) {
+      alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
     }
     document.querySelectorAll(`input[name="${hiddenField}"]`).forEach(function (element) {
