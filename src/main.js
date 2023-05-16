@@ -341,7 +341,7 @@ async function fetchPost(url, data, headers) {
 // ===================== add jquery script ========================
 // ================================================================
 
-(function includeJqueryAddressScript() {
+function includeJqueryAddressScript() {
   const scriptJQL = document.createElement('script');
   scriptJQL.src = 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/JQL.min.js';
 
@@ -376,4 +376,4 @@ async function fetchPost(url, data, headers) {
   };
 
   document.body.appendChild(scriptTypeahead);
-})();
+}
