@@ -96,7 +96,9 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       'redirect_url',
       'callback_url',
     ];
+    console.log('Object.keys(hiddenFieldConfig)', Object.keys(hiddenFieldConfig));
     remainingFields = Object.keys(hiddenFieldConfig).filter(item => !optionalFieldsYR.includes(item));
+    console.log('remainingFields', remainingFields);
   } else {
     const optionalFieldsSGC = [
       'orderbumpdetail',
