@@ -96,7 +96,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       'redirect_url',
       'callback_url',
     ];
-    remainingFields = hiddenFieldConfig.filter(item => !optionalFieldsYR.includes(item));
+    remainingFields = Object.keys(hiddenFieldConfig).filter(item => !optionalFieldsYR.includes(item));
   } else {
     const optionalFieldsSGC = [
       'orderbumpdetail',
@@ -108,7 +108,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
       'landing_type',
       'callback_url',
     ];
-    remainingFields = hiddenFieldConfig.filter(item => !optionalFieldsSGC.includes(item));
+    remainingFields = Object.keys(hiddenFieldConfig).filter(item => !optionalFieldsSGC.includes(item));
   }
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
