@@ -84,6 +84,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
   if (landingPageType === 'YR') {
     const optionalFieldsYR = [
       'campaign_info',
+      'campaign',
       'price',
       'course',
       'orderbumpdetail',
@@ -101,6 +102,8 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
   } else {
     const optionalFieldsSGC = [
       'orderbumpdetail',
+      'campaign',
+      'campaign_info',
       'bonusdetail',
       'discountCode',
       'channel',
