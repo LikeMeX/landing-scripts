@@ -184,10 +184,11 @@ function listenerForm(feildNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
+    const _defaultPackage = defaultPackage.value.split('/');
+
     document.querySelectorAll('select[name="package"]').forEach(function (element) {
       element.value = defaultPackage.value;
     });
-    const _defaultPackage = defaultPackage.value.split('/');
     document.querySelectorAll('input[name="discountCode"]').forEach(function (element) {
       element.value = _defaultPackage[2] || '';
     });
@@ -197,9 +198,7 @@ function listenerForm(feildNames) {
     document.querySelectorAll('input[name="price"]').forEach(function (element) {
       element.value = _defaultPackage[1];
     });
-    // document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
-    // document.querySelector('input[name="course"]').value = _defaultPackage[0];
-    // document.querySelector('input[name="price"]').value = _defaultPackage[1];
+
     //=========== set default package into package select option ============
 
     document.body.addEventListener('change', function (event) {
