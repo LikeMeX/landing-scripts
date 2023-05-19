@@ -183,13 +183,11 @@ function correctName(name) {
 function listenerForm(feildNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
-  console.log('defaultPackage', defaultPackage);
   if (defaultPackage) {
     document.querySelectorAll('select[name="package"]').forEach(function (element) {
       element.value = defaultPackage.value;
     });
     const _defaultPackage = defaultPackage.value.split('/');
-    console.log('_defaultPackage', _defaultPackage);
     document.querySelectorAll('input[name="discountCode"]').forEach(function (element) {
       element.value = _defaultPackage[2] || '';
     });
