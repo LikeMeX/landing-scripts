@@ -180,11 +180,13 @@ function correctName(name) {
 function listenerForm(feildNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
+  console.log('defaultPackage', defaultPackage);
   if (defaultPackage) {
     document.querySelectorAll('select[name="package"]').forEach(function (element) {
       element.value = defaultPackage.value;
     });
     const _defaultPackage = defaultPackage.value.split('/');
+    console.log('_defaultPackage', _defaultPackage);
     document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
     document.querySelector('input[name="course"]').value = _defaultPackage[0];
     document.querySelector('input[name="price"]').value = _defaultPackage[1];
