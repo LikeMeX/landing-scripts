@@ -187,9 +187,18 @@ function listenerForm(feildNames) {
     });
     const _defaultPackage = defaultPackage.value.split('/');
     console.log('_defaultPackage', _defaultPackage);
-    document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
-    document.querySelector('input[name="course"]').value = _defaultPackage[0];
-    document.querySelector('input[name="price"]').value = _defaultPackage[1];
+    document.querySelectorAll('input[name="discountCode"]').forEach(function (element) {
+      element.value = _defaultPackage[2] || '';
+    });
+    document.querySelectorAll('input[name="course"]').forEach(function (element) {
+      element.value = _defaultPackage[0];
+    });
+    document.querySelectorAll('input[name="price"]').forEach(function (element) {
+      element.value = _defaultPackage[1];
+    });
+    // document.querySelector('input[name="discountCode"]').value = _defaultPackage[2] || '';
+    // document.querySelector('input[name="course"]').value = _defaultPackage[0];
+    // document.querySelector('input[name="price"]').value = _defaultPackage[1];
     //=========== set default package into package select option ============
 
     document.body.addEventListener('change', function (event) {
