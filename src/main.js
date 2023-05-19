@@ -248,7 +248,7 @@ function listenerForm(feildNames) {
             clearDataLocalStorage(feildNames);
             return false;
           }
-          localStorage.setItem(feildName, phone);
+          localStorage.setItem(feildName, `0${phone}`);
         } else if (feildName === 'course') {
           if (formProps.orderbump && formProps.orderbumpdetail) {
             formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
