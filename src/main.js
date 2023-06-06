@@ -202,7 +202,6 @@ function listenerForm(feildNames) {
     //=========== set default package into package select option ============
 
     document.body.addEventListener('change', function (event) {
-      console.log('event', event);
       //========= package select option on change into other package select option =============
       if (event.target.name === 'package') {
         document.querySelectorAll('select[name="package"]').forEach(function (element) {
@@ -214,6 +213,31 @@ function listenerForm(feildNames) {
         document.querySelector('input[name="price"]').value = _package[1];
       }
       //========= package select option on change into other package select option =============
+    });
+
+    document.addEventListener('change', function (event) {
+      console.log('change', event);
+    });
+    document.addEventListener('cuechange', function (event) {
+      console.log('cuechange', event);
+    });
+    document.addEventListener('durationchange', function (event) {
+      console.log('durationchange', event);
+    });
+    document.addEventListener('keypress', function (event) {
+      console.log('keypress', event);
+    });
+    document.addEventListener('keydown', function (event) {
+      console.log('keydown', event);
+    });
+    document.addEventListener('keyup', function (event) {
+      console.log('keyup', event);
+    });
+    document.addEventListener('select', function (event) {
+      console.log('select', event);
+    });
+    document.addEventListener('selectionchange', function (event) {
+      console.log('selectionchange', event);
     });
   }
 
