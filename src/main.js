@@ -202,6 +202,7 @@ function listenerForm(feildNames) {
     //=========== set default package into package select option ============
 
     document.body.addEventListener('change', function (event) {
+      console.log('event', event);
       //========= package select option on change into other package select option =============
       if (event.target.name === 'package') {
         document.querySelectorAll('select[name="package"]').forEach(function (element) {
