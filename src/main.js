@@ -115,6 +115,10 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
     const filtered = Object.entries(hiddenFieldConfig).filter(([key]) => !optionalFieldsSGC.includes(key));
     remainingFields = Object.fromEntries(filtered);
   }
+  // ================ get params URL =====================
+  const urlParams = new URLSearchParams(window.location.search);
+  const discountCode = urlParams.get('discountCode');
+  // ================ get params URL =====================
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration`);
@@ -123,6 +127,9 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
     if (remainingFields[hiddenField] !== undefined && !hiddenFieldConfig[hiddenField].length) {
       alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
       return false;
+    }
+    if (hiddenField === 'discountCode' && discountCode) {
+      hiddenFieldConfig[hiddenField] = discountCode;
     }
     document.querySelectorAll(`input[name="${hiddenField}"]`).forEach(function (element) {
       element.value = hiddenFieldConfig[hiddenField];
