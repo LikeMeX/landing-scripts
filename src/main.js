@@ -349,7 +349,7 @@ function getDataFromLocalStorage(localStorageItems) {
 async function createCart(cart) {
   var data = await fetchPost('https://pay-api.futureskill.co/api/cart/create', cart, {
     'Content-Type': 'application/json',
-    Authorization: 'Basic NzAyMTg2NzcwNzY0ODMzMDQ6ejE5ZmpmckZrMGZuUVFRTUc0UHQ=',
+    Authorization: 'Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=',
   });
   return data.url;
 }
