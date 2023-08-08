@@ -140,8 +140,8 @@ function checkFieldsRequireFully(hiddenFieldConfig, landingPageType = 'SGC') {
 
 function blockSpam(formProps) {
   const dataSpam = {
-    email: 'charan.p|Zz656|Boss3870952199727@gmail.com',
-    name: 'ชรัญเพ็ง|ชัณเพ็ง',
+    email: 'charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com',
+    name: 'ชรัญเพ็ง|ชัณเพ็ง|ชรัณ เพ็งนวม|ชรัณ|เพ็งนวม',
   };
   if (RegExp(dataSpam.email).test(formProps.email) || RegExp(dataSpam.name).test(formProps.name)) return false;
   return true;
