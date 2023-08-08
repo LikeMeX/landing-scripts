@@ -76,7 +76,7 @@ function init(arguments, callback) {
 
 function checkFieldsRequireFully(
   hiddenFieldConfig,
-  defaultFields = ["email", "fullname", "phone", "search", "address"],
+  defaultFieldsWith = [],
   landingPageType = "SGC"
 ) {
   // ================ static fields =====================
@@ -97,11 +97,17 @@ function checkFieldsRequireFully(
     "deal_id",
     "landing_url",
   ];
-  let concateArr = [...defaultFields, ...defaultHiddenFields];
-  if (landingPageType === "YR") {
-    concateArr = concateArr.filter((item) => !different.includes(item));
+  let defaultFields = ["email", "fullname", "phone", "search", "address"];
+  if (defaultFieldsWith.length) {
+    defaultFields = defaultFieldsWith;
+  } else {
+    defaultFields = [...defaultFields, ...defaultHiddenFields];
   }
-  for (const defaultField of concateArr) {
+
+  if (landingPageType === "YR") {
+    defaultFields = defaultFields.filter((item) => !different.includes(item));
+  }
+  for (const defaultField of defaultFields) {
     if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
       alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
       return false;
