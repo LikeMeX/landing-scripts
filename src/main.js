@@ -20,6 +20,7 @@
 function init(arguments, callback) {
   const isPass = checkFieldsRequireFully(
     arguments.hiddenFieldConfig,
+    arguments.defaultFields,
     arguments.landingPageType
   );
   if (!isPass) return isPass;
