@@ -405,9 +405,7 @@ async function createPaymentWith(formData) {
     if (formData["discountCode"])
       url = `${url}?discountCode=${formData["discountCode"]}`;
 
-    setTimeout(function () {
-      window.location.replace(url);
-    }, 1500);
+    return url;
   }
 }
 
