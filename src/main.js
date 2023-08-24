@@ -402,6 +402,7 @@ async function createPaymentWith(formData) {
       if (formData["callback_url"])
         data.paymentSuccessCallbackUrl = formData["callback_url"];
       var url = await createCart(data);
+      console.log("url", url);
       if (formData["discountCode"])
         url = `${url}?discountCode=${formData["discountCode"]}`;
 
