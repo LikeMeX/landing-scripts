@@ -494,20 +494,16 @@ function getDataFromLocalStorage(localStorageItems) {
 }
 
 async function createCart(cart) {
-  try {
-    var data = await fetchPost(
-      "https://pay-api.futureskill.co/api/cart/create",
-      cart,
-      {
-        "Content-Type": "application/json",
-        Authorization:
-          "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
-      }
-    );
-    return data.url;
-  } catch (error) {
-    console.log("error", error);
-  }
+  var data = await fetchPost(
+    "https://pay-api.futureskill.co/api/cart/create",
+    cart,
+    {
+      "Content-Type": "application/json",
+      Authorization:
+        "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
+    }
+  );
+  return data.url;
 }
 
 async function getIp() {
