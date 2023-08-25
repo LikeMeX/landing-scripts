@@ -346,71 +346,67 @@ function listenerForm(feildNames) {
 }
 
 async function createPaymentWith(formData) {
-  try {
-    const { ip } = await getIp();
-    const redirectQuery = new URLSearchParams({
-      dealId: formData["deal_id"] || "",
-      email: formData["email"] || "",
-      fullName: formData["fullname"] || "",
-      phone: formData["phone"] || "",
-      price: formData["price"] || "",
-      discountCode: formData["discountCode"] || "",
-    }).toString();
+  const { ip } = await getIp();
+  const redirectQuery = new URLSearchParams({
+    dealId: formData["deal_id"] || "",
+    email: formData["email"] || "",
+    fullName: formData["fullname"] || "",
+    phone: formData["phone"] || "",
+    price: formData["price"] || "",
+    discountCode: formData["discountCode"] || "",
+  }).toString();
 
-    const courses = formData["course"] ? formData["course"].split(",") : [];
+  const courses = formData["course"] ? formData["course"].split(",") : [];
 
-    const payload = {
-      userId: undefined,
-      redeem: true,
-      type: formData["type"],
+  const payload = {
+    userId: undefined,
+    redeem: true,
+    type: formData["type"],
+  };
+
+  if (courses.length) {
+    const cartItems = courses.map((product) => {
+      return {
+        product: product,
+        quantity: 1,
+      };
+    });
+    var data = {
+      cartItems,
+      userdata: {
+        email: formData["email"],
+        tel: formData["phone"] || "",
+        fullName: formData["fullname"] || "",
+      },
+      cartTracking: {
+        convertionId: formData["conversion"] || "",
+        campaign: formData["campaign"] || "",
+        seller: formData["mkter"] || "",
+        channel: "SGC",
+        ip: ip,
+        utm_source: formData.utm_source || "",
+        utm_medium: formData.utm_medium || "",
+        utm_campaign: formData.utm_campaign || "",
+        utm_term: formData.utm_term || "",
+        utm_content: formData.utm_content || "",
+        customField1: formData["deal_id"],
+        customField2: formData["px"],
+      },
+      paymentSuccessRedirectUrl: `${formData["redirect_url"]}?${redirectQuery}`,
     };
 
-    if (courses.length) {
-      const cartItems = courses.map((product) => {
-        return {
-          product: product,
-          quantity: 1,
-        };
-      });
-      var data = {
-        cartItems,
-        userdata: {
-          email: formData["email"],
-          tel: formData["phone"] || "",
-          fullName: formData["fullname"] || "",
-        },
-        cartTracking: {
-          convertionId: formData["conversion"] || "",
-          campaign: formData["campaign"] || "",
-          seller: formData["mkter"] || "",
-          channel: "SGC",
-          ip: ip,
-          utm_source: formData.utm_source || "",
-          utm_medium: formData.utm_medium || "",
-          utm_campaign: formData.utm_campaign || "",
-          utm_term: formData.utm_term || "",
-          utm_content: formData.utm_content || "",
-          customField1: formData["deal_id"],
-          customField2: formData["px"],
-        },
-        paymentSuccessRedirectUrl: `${formData["redirect_url"]}?${redirectQuery}`,
-      };
+    if (formData["type"] && formData["type"]?.length)
+      data.userdata.payload = payload;
 
-      if (formData["type"] && formData["type"]?.length)
-        data.userdata.payload = payload;
+    if (formData["callback_url"])
+      data.paymentSuccessCallbackUrl = formData["callback_url"];
 
-      if (formData["callback_url"])
-        data.paymentSuccessCallbackUrl = formData["callback_url"];
+    console.log("data", data);
+    var url = await createCart(data);
+    if (formData["discountCode"])
+      url = `${url}?discountCode=${formData["discountCode"]}`;
 
-      console.log("data", data);
-      var url = await createCart(data);
-      if (formData["discountCode"])
-        url = `${url}?discountCode=${formData["discountCode"]}`;
-
-      return url;
-    }
-  } catch (error) {
-    console.log("error", error);
+    return url;
   }
 }
 
@@ -498,16 +494,20 @@ function getDataFromLocalStorage(localStorageItems) {
 }
 
 async function createCart(cart) {
-  var data = await fetchPost(
-    "https://pay-api.futureskill.co/api/cart/create",
-    cart,
-    {
-      "Content-Type": "application/json",
-      Authorization:
-        "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
-    }
-  );
-  return data.url;
+  try {
+    var data = await fetchPost(
+      "https://pay-api.futureskill.co/api/cart/create",
+      cart,
+      {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
+      }
+    );
+    return data.url;
+  } catch (error) {
+    console.log("error", error);
+  }
 }
 
 async function getIp() {
