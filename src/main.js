@@ -347,6 +347,7 @@ function listenerForm(feildNames) {
   );
 }
 
+// use in wordpress
 async function createPaymentWith(formData) {
   const { ip } = await getIp();
   const redirectQuery = new URLSearchParams({
@@ -359,6 +360,10 @@ async function createPaymentWith(formData) {
   }).toString();
 
   const courses = formData["course"] ? formData["course"].split(",") : [];
+
+  if (formData["orderbump"]) {
+    courses.push(formData["orderbumpdetail"]);
+  }
 
   const payload = {
     userId: undefined,
