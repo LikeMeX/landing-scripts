@@ -131,6 +131,7 @@ function checkFieldsRequireFully(
       "redirect_url",
       "callback_url",
       "category",
+      "email_cf_channel",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsYR.includes(key)
@@ -149,6 +150,7 @@ function checkFieldsRequireFully(
       "landing_type",
       "callback_url",
       "category",
+      "email_cf_channel",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsSGC.includes(key)
