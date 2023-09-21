@@ -132,6 +132,7 @@ function checkFieldsRequireFully(
       "callback_url",
       "category",
       "email_cf_channel",
+      "title",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsYR.includes(key)
@@ -151,6 +152,7 @@ function checkFieldsRequireFully(
       "callback_url",
       "category",
       "email_cf_channel",
+      "title",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsSGC.includes(key)
