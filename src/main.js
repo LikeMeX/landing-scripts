@@ -66,6 +66,10 @@ function init(arguments, callback) {
     );
   }
   includeJqueryAddressScript();
+  console.log(
+    '%cinput "includeJqueryAddressScript" start.!',
+    "color: yellow; font-size: larger"
+  );
   //==================== End => add landing_url into all input landing_url elements ====================
   if (callback) callback();
   return {
