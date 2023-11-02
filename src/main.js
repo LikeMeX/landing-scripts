@@ -18,7 +18,6 @@
 //===========================================================
 
 function init(arguments, callback) {
-  console.log("arguments", arguments);
   const isPass = checkFieldsRequireFully(
     arguments.hiddenFieldConfig,
     arguments.defaultFields,
