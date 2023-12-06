@@ -358,14 +358,18 @@ function listenerForm(feildNames) {
 // use in wordpress
 async function createPaymentWith(formData) {
   const { ip } = await getIp();
-  const redirectQuery = new URLSearchParams({
+  const paymentSuccessRedirectUrl = new URL(formData["redirect_url"]);
+  const redirectQuery = {
     dealId: formData["deal_id"] || "",
     email: formData["email"] || "",
     fullName: formData["fullname"] || "",
     phone: formData["phone"] || "",
     price: formData["price"] || "",
     discountCode: formData["discountCode"] || "",
-  }).toString();
+  };
+  Object.keys(redirectQuery).forEach((key) =>
+    paymentSuccessRedirectUrl.searchParams.set(key, redirectQuery[key])
+  );
 
   const courses = formData["course"] ? formData["course"].split(",") : [];
 
@@ -407,7 +411,7 @@ async function createPaymentWith(formData) {
         customField1: formData["deal_id"],
         customField2: formData["px"],
       },
-      paymentSuccessRedirectUrl: `${formData["redirect_url"]}?${redirectQuery}`,
+      paymentSuccessRedirectUrl: paymentSuccessRedirectUrl.toString(),
     };
 
     if (formData["type"] && formData["type"]?.length)
@@ -415,8 +419,6 @@ async function createPaymentWith(formData) {
 
     if (formData["callback_url"])
       data.paymentSuccessCallbackUrl = formData["callback_url"];
-
-    console.log("data", data);
     var url = await createCart(data);
     if (formData["discountCode"])
       url = `${url}?discountCode=${formData["discountCode"]}`;
