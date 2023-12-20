@@ -410,6 +410,7 @@ async function createPaymentWith(formData) {
         utm_content: formData.utm_content || "",
         customField1: formData["deal_id"],
         customField2: formData["px"],
+        customField3: formData["initial_sku"] || undefined,
       },
       paymentSuccessRedirectUrl: paymentSuccessRedirectUrl.toString(),
     };
@@ -475,6 +476,7 @@ async function submitPayment(localStorageItems) {
         utm_content: dataFromLocalStorage["query"]?.utm_content || "",
         customField1: dataFromLocalStorage["deal_id"],
         customField2: dataFromLocalStorage["px"],
+        customField3: formData["initial_sku"] || undefined,
       },
       paymentSuccessRedirectUrl: `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`,
     };
