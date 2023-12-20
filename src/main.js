@@ -456,6 +456,11 @@ async function submitPayment(localStorageItems) {
         quantity: 1,
       };
     });
+    if (dataFromLocalStorage["email"] === "kitinun.khonson@gmail.com") {
+      dataFromLocalStorage[
+        "initial_sku"
+      ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
+    }
     var data = {
       cartItems,
       userdata: {
@@ -476,7 +481,7 @@ async function submitPayment(localStorageItems) {
         utm_content: dataFromLocalStorage["query"]?.utm_content || "",
         customField1: dataFromLocalStorage["deal_id"],
         customField2: dataFromLocalStorage["px"],
-        customField3: formData["initial_sku"] || undefined,
+        customField3: dataFromLocalStorage["initial_sku"] || undefined,
       },
       paymentSuccessRedirectUrl: `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`,
     };
