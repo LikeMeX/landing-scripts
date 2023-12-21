@@ -456,11 +456,11 @@ async function submitPayment(localStorageItems) {
         quantity: 1,
       };
     });
-    if (dataFromLocalStorage["email"] === "kitinun.khonson@gmail.com") {
-      dataFromLocalStorage[
-        "initial_sku"
-      ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
-    }
+
+    dataFromLocalStorage[
+      "initial_sku"
+    ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
+
     var data = {
       cartItems,
       userdata: {
