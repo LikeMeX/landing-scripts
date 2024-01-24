@@ -137,6 +137,8 @@ function checkFieldsRequireFully(
       "category",
       "email_cf_channel",
       "title",
+      "free_sku",
+      "gift_item",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsYR.includes(key)
@@ -157,6 +159,8 @@ function checkFieldsRequireFully(
       "category",
       "email_cf_channel",
       "title",
+      "free_sku",
+      "gift_item",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsSGC.includes(key)
