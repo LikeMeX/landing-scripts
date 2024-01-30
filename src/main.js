@@ -511,7 +511,7 @@ function getDataFromLocalStorage(localStorageItems) {
   for (const localStorageItem of localStorageItems) {
     if (localStorageItem === "params") {
       dataFromLocalStorage[localStorageItem] = JSON.parse(
-        localStorage.getItem(localStorageItem) || {}
+        localStorage.getItem(localStorageItem) || "{}"
       );
     } else {
       dataFromLocalStorage[localStorageItem] =
