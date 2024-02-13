@@ -340,11 +340,11 @@ function listenerForm(feildNames) {
             return false;
           }
           localStorage.setItem(feildName, `0${phone}`);
-        } else if (feildName === "course") {
-          if (formProps.orderbump && formProps.orderbumpdetail) {
-            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
-          }
-          localStorage.setItem(feildName, formProps[feildName]);
+          // } else if (feildName === "course") {
+          //   if (formProps.orderbump && formProps.orderbumpdetail) {
+          //     formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+          //   }
+          //   localStorage.setItem(feildName, formProps[feildName]);
         } else if (feildName === "params") {
           const urlSearchParams = new URLSearchParams(window.location.search);
           const params = Object.fromEntries(urlSearchParams.entries());
@@ -447,6 +447,12 @@ async function submitPayment(localStorageItems) {
   const courses = dataFromLocalStorage["course"]
     ? dataFromLocalStorage["course"].split(",")
     : [];
+
+  if (dataFromLocalStorage["orderbumpdetail"].length) {
+    const orderbumpCourse = dataFromLocalStorage["orderbumpdetail"].split(",");
+    courses.push(...orderbumpCourse);
+  }
+
   const payload = {
     userId: undefined,
     redeem: true,
