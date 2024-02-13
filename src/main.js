@@ -448,7 +448,7 @@ async function submitPayment(localStorageItems) {
     ? dataFromLocalStorage["course"].split(",")
     : [];
 
-  if (dataFromLocalStorage["orderbumpdetail"].length) {
+  if (dataFromLocalStorage["orderbump"] === "on") {
     const orderbumpCourse = dataFromLocalStorage["orderbumpdetail"].split(",");
     courses.push(...orderbumpCourse);
   }
