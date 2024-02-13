@@ -341,7 +341,11 @@ function listenerForm(feildNames) {
           }
           localStorage.setItem(feildName, `0${phone}`);
         } else if (feildName === "course") {
-          if (formProps.orderbump && formProps.orderbumpdetail) {
+          if (
+            formProps.orderbump &&
+            formProps.orderbumpdetail &&
+            !feildNames.includes("orderbump", "orderbumpdetail")
+          ) {
             formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
           }
           localStorage.setItem(feildName, formProps[feildName]);
@@ -447,6 +451,14 @@ async function submitPayment(localStorageItems) {
   const courses = dataFromLocalStorage["course"]
     ? dataFromLocalStorage["course"].split(",")
     : [];
+
+  if (dataFromLocalStorage["orderbump"] === "on") {
+    const orderbumpCourse = dataFromLocalStorage["orderbumpdetail"].split(",");
+    if (!courses.includes(...orderbumpCourse)) {
+      courses.push(...orderbumpCourse);
+    }
+  }
+
   const payload = {
     userId: undefined,
     redeem: true,
