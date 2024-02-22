@@ -250,6 +250,20 @@ function validatePhone(phone, feildName) {
   return phone;
 }
 
+function validateEmail(email, feildName) {
+  if (!email) return undefined;
+  const regex = /^[a-zA-Z0-9]+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/;
+  if (!regex.test(email)) {
+    return undefined;
+  }
+  document
+    .querySelectorAll(`input[name="${feildName}"]`)
+    .forEach(function (element) {
+      element.value = email;
+    });
+  return email;
+}
+
 function correctName(name) {
   name = name
     .replace(/^(นาย|นางสาว|น.ส.|ด.ช.|ด.ญ.|นาง|คุณ|เด็กชาย|เด็กหญิง)/g, "")
@@ -329,6 +343,16 @@ function listenerForm(feildNames) {
         if (feildName === "fullname") {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
+        }else if(feildName === "email"){
+          const email = validateEmail(formProps[feildName], feildName);
+          if (!email) {
+            alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+            clearDataLocalStorage(feildNames);
+            return false;
+          }
         } else if (feildName === "phone") {
           const phone = validatePhone(formProps[feildName], feildName);
           if (!phone) {
