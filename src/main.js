@@ -346,7 +346,7 @@ function listenerForm(feildNames) {
         }else if(feildName === "email"){
           const email = validateEmail(formProps[feildName], feildName);
           if (!email) {
-            alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
+            alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
