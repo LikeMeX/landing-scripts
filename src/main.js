@@ -173,7 +173,9 @@ function checkFieldsRequireFully(
   // ================ get params URL =====================
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
-      alert(`คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration`);
+      alert(
+        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration หรือ Hidden Field`
+      );
       return false;
     }
     if (
@@ -252,7 +254,8 @@ function validatePhone(phone, feildName) {
 
 function validateEmail(email, feildName) {
   if (!email) return undefined;
-  const regex = /^([a-zA-Z0-9]+)([\w.+-]+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+  const regex =
+    /^([a-zA-Z0-9]+)([\w.+-]+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
   if (!regex.test(email)) {
     return undefined;
   }
@@ -343,7 +346,7 @@ function listenerForm(feildNames) {
         if (feildName === "fullname") {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
-        }else if(feildName === "email"){
+        } else if (feildName === "email") {
           const email = validateEmail(formProps[feildName], feildName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
