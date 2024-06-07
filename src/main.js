@@ -255,7 +255,7 @@ function validatePhone(phone, feildName) {
 function validateEmail(email, feildName) {
   if (!email) return undefined;
   const regex =
-    /^([a-zA-Z0-9]+)([\w.+-]+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+    /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
   if (!regex.test(email)) {
     return undefined;
   }
