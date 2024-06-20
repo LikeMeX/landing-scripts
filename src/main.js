@@ -139,6 +139,7 @@ function checkFieldsRequireFully(
       "title",
       "free_sku",
       "gift_item",
+      "course_upsale",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsYR.includes(key)
@@ -161,6 +162,7 @@ function checkFieldsRequireFully(
       "title",
       "free_sku",
       "gift_item",
+      "course_upsale",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
       ([key]) => !optionalFieldsSGC.includes(key)
