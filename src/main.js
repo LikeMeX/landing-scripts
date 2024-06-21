@@ -410,8 +410,11 @@ async function createPaymentWith(formData) {
 
   const courses = formData["course"] ? formData["course"].split(",") : [];
 
-  if (formData["orderbump"]) {
-    courses.push(formData["orderbumpdetail"]);
+  if (formData["orderbump"] && formData["orderbumpdetail"].length) {
+    const orderbumpdetail = formData["orderbumpdetail"]
+      ? formData["orderbumpdetail"].split(",")
+      : [];
+    courses.push(...orderbumpdetail);
   }
 
   const payload = {
