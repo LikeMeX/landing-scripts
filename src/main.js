@@ -106,6 +106,7 @@ function checkFieldsRequireFully(
     defaultFields = defaultFieldsWith;
   } else {
     defaultFields = [...defaultFields, ...defaultHiddenFields];
+    defaultFields = defaultFields.filter((item) => !different.includes(item));
   }
 
   if (landingPageType === "YR") {
