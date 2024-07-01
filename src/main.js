@@ -400,6 +400,7 @@ function listenerForm(feildNames) {
 // use in wordpress
 async function createPaymentWith(formData) {
   const { ip } = await getIp();
+  const pxMixed = appendUserAgent(formData["fb_pixel"]);
   const paymentSuccessRedirectUrl = new URL(formData["redirect_url"]);
   const redirectQuery = {
     dealId: formData["deal_id"] || "",
@@ -454,7 +455,7 @@ async function createPaymentWith(formData) {
         utm_term: formData.utm_term || "",
         utm_content: formData.utm_content || "",
         customField1: formData["deal_id"],
-        customField2: formData["px"],
+        customField2: pxMixed,
         customField3: formData["initial_sku"] || undefined,
       },
       paymentSuccessRedirectUrl: paymentSuccessRedirectUrl.toString(),
@@ -465,7 +466,7 @@ async function createPaymentWith(formData) {
 
     if (formData["callback_url"])
       data.paymentSuccessCallbackUrl = formData["callback_url"];
-    var url = await createCart(data);
+    let url = await createCart(data);
     if (formData["discountCode"])
       url = `${url}?discountCode=${formData["discountCode"]}`;
 
