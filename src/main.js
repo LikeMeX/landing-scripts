@@ -355,7 +355,13 @@ function listenerForm(feildNames) {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
         } else if (feildName === "email") {
+          console.log(
+            "formProps[feildName], feildName",
+            formProps[feildName],
+            feildName
+          );
           const email = validateEmail(formProps[feildName], feildName);
+          console.log("email", email);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
