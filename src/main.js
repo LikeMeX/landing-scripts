@@ -17,7 +17,34 @@
 // ================ example use init script =================
 //===========================================================
 
+// ================================================================
+// ================== start affiliate script ======================
+// ================================================================
+const AFFILIATE_CHANNEL = "affiliate";
+const AFFILIATE_KEY = "aff";
+function initAffiliateScript() {
+  window.localStorage.removeItem(AFFILIATE_KEY);
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const aff = urlParams.get(AFFILIATE_KEY);
+  if (aff) {
+    window.localStorage.setItem(AFFILIATE_KEY, aff);
+  }
+}
+
+function getAffiliateIdFromLocalStorage() {
+  return window.localStorage.getItem(AFFILIATE_KEY);
+}
+
+// ================================================================
+// =================== end affiliate script =======================
+// ================================================================
+
 function init(arguments, callback) {
+  if (!arguments?.isStopAffiliate) {
+    initAffiliateScript();
+  }
+
   const isPass = checkFieldsRequireFully(
     arguments.hiddenFieldConfig,
     arguments.defaultFields,
@@ -402,6 +429,7 @@ function listenerForm(feildNames) {
 // use in wordpress
 async function createPaymentWith(formData) {
   const { ip } = await getIp();
+  const affId = getAffiliateIdFromLocalStorage();
   const pxMixed = appendUserAgent(formData["fb_pixel"]);
   const paymentSuccessRedirectUrl = new URL(formData["redirect_url"]);
   const redirectQuery = {
@@ -448,8 +476,9 @@ async function createPaymentWith(formData) {
       cartTracking: {
         convertionId: formData["conversion"] || "",
         campaign: formData["campaign"] || "",
-        seller: formData["mkter"] || "",
-        channel: "SGC",
+        seller: affId ? null : formData["mkter"] || "",
+        channel: affId ? AFFILIATE_CHANNEL : "SGC",
+        ...(affId ? { affiliateID: affId } : {}),
         ip: ip,
         utm_source: formData.utm_source || "",
         utm_medium: formData.utm_medium || "",
@@ -479,6 +508,7 @@ async function createPaymentWith(formData) {
 async function submitPayment(localStorageItems) {
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
+  const affId = getAffiliateIdFromLocalStorage();
   const redirectQuery = new URLSearchParams({
     dealId: dataFromLocalStorage["deal_id"],
     email: dataFromLocalStorage["email"],
@@ -527,8 +557,9 @@ async function submitPayment(localStorageItems) {
       cartTracking: {
         convertionId: conversion?.hash || "",
         campaign: dataFromLocalStorage["campaign"] || "",
-        seller: dataFromLocalStorage["mkter"] || "",
-        channel: "SGC",
+        seller: affId ? null : dataFromLocalStorage["mkter"] || "",
+        channel: affId ? AFFILIATE_CHANNEL : "SGC",
+        ...(affId ? { affiliateID: affId } : {}),
         ip: ip,
         utm_source: dataFromLocalStorage["query"]?.utm_source || "",
         utm_medium: dataFromLocalStorage["query"]?.utm_medium || "",
