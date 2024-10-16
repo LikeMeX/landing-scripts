@@ -502,7 +502,7 @@ async function createPaymentWith(formData) {
       data.paymentSuccessCallbackUrl =
         "https://hook.eu1.make.com/05p3tsene4fiw1vcswvl5i6xrevkoswl";
     }
-    
+
     let url = await createCart(data);
     if (formData["discountCode"])
       url = `${url}?discountCode=${formData["discountCode"]}`;
@@ -616,15 +616,27 @@ function getDataFromLocalStorage(localStorageItems) {
 }
 
 async function createCart(cart) {
+  // TODO: Remove this before deploy to production
   var data = await fetchPost(
-    "https://pay-api.futureskill.co/api/cart/create",
+    "https://uat-pay-api.futureskill.live/api/cart/create",
     cart,
     {
       "Content-Type": "application/json",
       Authorization:
-        "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
+        "Basic MjUwNjY2MDU4NTY5MDQ1ODg6cE5DV3E0YnRxU09Bb05zM1VEaHM=",
     }
   );
+
+  // TODO: Use below script in production
+  // var data = await fetchPost(
+  //   "https://pay-api.futureskill.co/api/cart/create",
+  //   cart,
+  //   {
+  //     "Content-Type": "application/json",
+  //     Authorization:
+  //       "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
+  //   }
+  // );
   return data.url;
 }
 
