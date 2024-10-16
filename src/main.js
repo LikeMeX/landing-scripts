@@ -497,6 +497,12 @@ async function createPaymentWith(formData) {
 
     if (formData["callback_url"])
       data.paymentSuccessCallbackUrl = formData["callback_url"];
+
+    if (affId) {
+      data.paymentSuccessCallbackUrl =
+        "https://hook.eu1.make.com/05p3tsene4fiw1vcswvl5i6xrevkoswl";
+    }
+    
     let url = await createCart(data);
     if (formData["discountCode"])
       url = `${url}?discountCode=${formData["discountCode"]}`;
@@ -578,6 +584,11 @@ async function submitPayment(localStorageItems) {
 
     if (dataFromLocalStorage["callback_url"])
       data.paymentSuccessCallbackUrl = dataFromLocalStorage["callback_url"];
+
+    if (affId) {
+      data.paymentSuccessCallbackUrl =
+        "https://hook.eu1.make.com/05p3tsene4fiw1vcswvl5i6xrevkoswl";
+    }
 
     var url = await createCart(data);
     if (dataFromLocalStorage["discountCode"])
