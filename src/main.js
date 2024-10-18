@@ -498,9 +498,10 @@ async function createPaymentWith(formData) {
     if (formData["callback_url"])
       data.paymentSuccessCallbackUrl = formData["callback_url"];
 
+    // TODO: Remove below in production
     if (affId) {
       data.paymentSuccessCallbackUrl =
-        "https://hook.eu1.make.com/05p3tsene4fiw1vcswvl5i6xrevkoswl";
+        "https://hook.eu1.make.com/f1thu883zumxy2tk0v88ggscgbed9tft";
     }
 
     let url = await createCart(data);
@@ -585,9 +586,10 @@ async function submitPayment(localStorageItems) {
     if (dataFromLocalStorage["callback_url"])
       data.paymentSuccessCallbackUrl = dataFromLocalStorage["callback_url"];
 
+    // TODO: Remove below in production
     if (affId) {
       data.paymentSuccessCallbackUrl =
-        "https://hook.eu1.make.com/05p3tsene4fiw1vcswvl5i6xrevkoswl";
+        "https://hook.eu1.make.com/f1thu883zumxy2tk0v88ggscgbed9tft";
     }
 
     var url = await createCart(data);
