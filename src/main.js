@@ -43,6 +43,8 @@ function getAffiliateIdFromLocalStorage() {
 function init(arguments, callback) {
   if (!arguments?.isStopAffiliate) {
     initAffiliateScript();
+  } else {
+    window.localStorage.removeItem(AFFILIATE_KEY);
   }
 
   const isPass = checkFieldsRequireFully(
