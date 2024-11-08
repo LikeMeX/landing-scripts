@@ -46,17 +46,18 @@ function getAffiliateIdFromLocalStorage() {
 // ================================================================
 
 function init(arguments, callback) {
+  const isPass = checkFieldsRequireFully(
+    arguments.hiddenFieldConfig,
+    arguments.defaultFields,
+    arguments.landingPageType
+  );
+
   if (!arguments?.isStopAffiliate) {
     initAffiliateScript();
   } else {
     window.localStorage.removeItem(AFFILIATE_KEY);
   }
 
-  const isPass = checkFieldsRequireFully(
-    arguments.hiddenFieldConfig,
-    arguments.defaultFields,
-    arguments.landingPageType
-  );
   if (!isPass) return isPass;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
