@@ -29,6 +29,11 @@ function initAffiliateScript() {
   const aff = urlParams.get(AFFILIATE_KEY);
   if (aff) {
     window.localStorage.setItem(AFFILIATE_KEY, aff);
+    document
+      .querySelectorAll(`input[name="mkter"]`)
+      .forEach(function (element) {
+        element.value = "affiliate";
+      });
   }
 }
 
