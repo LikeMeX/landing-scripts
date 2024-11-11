@@ -32,7 +32,7 @@ function initAffiliateScript() {
     document
       .querySelectorAll(`input[name="mkter"]`)
       .forEach(function (element) {
-        element.value = "affiliate";
+        element.value = AFFILIATE_CHANNEL;
       });
   }
 }
@@ -484,7 +484,7 @@ async function createPaymentWith(formData) {
       cartTracking: {
         convertionId: formData["conversion"] || "",
         campaign: formData["campaign"] || "",
-        seller: affId ? null : formData["mkter"] || "",
+        seller: affId ? null : formData["mkter"] || AFFILIATE_CHANNEL,
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
@@ -566,7 +566,7 @@ async function submitPayment(localStorageItems) {
       cartTracking: {
         convertionId: conversion?.hash || "",
         campaign: dataFromLocalStorage["campaign"] || "",
-        seller: affId ? null : dataFromLocalStorage["mkter"] || "",
+        seller: affId ? null : dataFromLocalStorage["mkter"] || AFFILIATE_CHANNEL,
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
