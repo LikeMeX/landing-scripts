@@ -484,7 +484,7 @@ async function createPaymentWith(formData) {
       cartTracking: {
         convertionId: formData["conversion"] || "",
         campaign: formData["campaign"] || "",
-        seller: affId ? null : formData["mkter"] || AFFILIATE_CHANNEL,
+        seller: affId ? AFFILIATE_CHANNEL : formData["mkter"] || "",
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
@@ -566,7 +566,7 @@ async function submitPayment(localStorageItems) {
       cartTracking: {
         convertionId: conversion?.hash || "",
         campaign: dataFromLocalStorage["campaign"] || "",
-        seller: affId ? null : dataFromLocalStorage["mkter"] || AFFILIATE_CHANNEL,
+        seller: affId ? AFFILIATE_CHANNEL : dataFromLocalStorage["mkter"] || "",
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
