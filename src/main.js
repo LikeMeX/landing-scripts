@@ -29,6 +29,11 @@ function initAffiliateScript() {
   const aff = urlParams.get(AFFILIATE_KEY);
   if (aff) {
     window.localStorage.setItem(AFFILIATE_KEY, aff);
+    document
+      .querySelectorAll(`input[name="mkter"]`)
+      .forEach(function (element) {
+        element.value = AFFILIATE_CHANNEL;
+      });
   }
 }
 
@@ -41,17 +46,18 @@ function getAffiliateIdFromLocalStorage() {
 // ================================================================
 
 function init(arguments, callback) {
+  const isPass = checkFieldsRequireFully(
+    arguments.hiddenFieldConfig,
+    arguments.defaultFields,
+    arguments.landingPageType
+  );
+
   if (!arguments?.isStopAffiliate) {
     initAffiliateScript();
   } else {
     window.localStorage.removeItem(AFFILIATE_KEY);
   }
 
-  const isPass = checkFieldsRequireFully(
-    arguments.hiddenFieldConfig,
-    arguments.defaultFields,
-    arguments.landingPageType
-  );
   if (!isPass) return isPass;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
@@ -478,7 +484,7 @@ async function createPaymentWith(formData) {
       cartTracking: {
         convertionId: formData["conversion"] || "",
         campaign: formData["campaign"] || "",
-        seller: affId ? null : formData["mkter"] || "",
+        seller: affId ? AFFILIATE_CHANNEL : formData["mkter"] || "",
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
@@ -560,7 +566,7 @@ async function submitPayment(localStorageItems) {
       cartTracking: {
         convertionId: conversion?.hash || "",
         campaign: dataFromLocalStorage["campaign"] || "",
-        seller: affId ? null : dataFromLocalStorage["mkter"] || "",
+        seller: affId ? AFFILIATE_CHANNEL : dataFromLocalStorage["mkter"] || "",
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
