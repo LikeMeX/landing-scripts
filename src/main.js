@@ -63,6 +63,17 @@ function init(arguments, callback) {
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
 
+  //==================== Start => edit channel_name ====================
+  const urlParams = new URLSearchParams(window.location.search);
+  const channel_name = urlParams.get("channel_name");
+  const channelNameElements = document.getElementsByName("channel_name");
+  if (channel_name && channelNameElements.length) {
+    for (const channelNameIdElement of channelNameElements) {
+      channelNameIdElement.value = channel_name;
+    }
+  }
+  //==================== End => edit channel_name  ====================
+
   //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName("deal_id");
   if (dealIdElements.length) {
