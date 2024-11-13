@@ -63,6 +63,17 @@ function init(arguments, callback) {
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
 
+  //==================== Start => edit channel_name ====================
+  const urlParams = new URLSearchParams(window.location.search);
+  const channel_name = urlParams.get("channel_name");
+  const channelNameElements = document.getElementsByName("channel_name");
+  if (channel_name && channelNameElements.length) {
+    for (const channelNameIdElement of channelNameElements) {
+      channelNameIdElement.value = channel_name;
+    }
+  }
+  //==================== End => edit channel_name  ====================
+
   //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName("deal_id");
   if (dealIdElements.length) {
@@ -570,11 +581,11 @@ async function submitPayment(localStorageItems) {
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
         ip: ip,
-        utm_source: dataFromLocalStorage["query"]?.utm_source || "",
-        utm_medium: dataFromLocalStorage["query"]?.utm_medium || "",
-        utm_campaign: dataFromLocalStorage["query"]?.utm_campaign || "",
-        utm_term: dataFromLocalStorage["query"]?.utm_term || "",
-        utm_content: dataFromLocalStorage["query"]?.utm_content || "",
+        utm_source: dataFromLocalStorage["params"]?.utm_source || "",
+        utm_medium: dataFromLocalStorage["params"]?.utm_medium || "",
+        utm_campaign: dataFromLocalStorage["params"]?.utm_campaign || "",
+        utm_term: dataFromLocalStorage["params"]?.utm_term || "",
+        utm_content: dataFromLocalStorage["params"]?.utm_content || "",
         customField1: dataFromLocalStorage["deal_id"],
         customField2: dataFromLocalStorage["px"],
         customField3: dataFromLocalStorage["initial_sku"] || undefined,
