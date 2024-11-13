@@ -591,9 +591,6 @@ async function submitPayment(localStorageItems) {
         customField3: dataFromLocalStorage["initial_sku"] || undefined,
       },
       paymentSuccessRedirectUrl: `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`,
-      ...(dataFromLocalStorage["params"].channel
-        ? { channel: dataFromLocalStorage["params"].channel }
-        : {}),
     };
 
     if (dataFromLocalStorage["type"] && dataFromLocalStorage["type"]?.length)
