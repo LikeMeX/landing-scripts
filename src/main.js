@@ -18,6 +18,27 @@
 //===========================================================
 
 // ================================================================
+// ================== start cookies script ======================
+// ================================================================
+function checkCookie(name) {
+  return getCookie(name) !== null;
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split("=").map((c) => c.trim());
+    if (cookieName === name) {
+      return decodeURIComponent(cookieValue);
+    }
+  }
+  return null;
+}
+// ================================================================
+// =================== end cookies script =======================
+// ================================================================
+
+// ================================================================
 // ================== start affiliate script ======================
 // ================================================================
 const AFFILIATE_CHANNEL = "affiliate";
@@ -73,6 +94,19 @@ function init(arguments, callback) {
     }
   }
   //==================== End => edit channel_name  ====================
+
+   //==================== Start => add user cookie landing ====================
+   if (checkCookie("user")) {
+    const user = JSON.parse(decodeURIComponent(getCookie("user")));
+    document.getElementsByName("email").forEach((element) => {
+      element.value = user.email || "";
+    });
+    document.getElementsByName("fullname").forEach((element) => {
+      const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+      element.value = fullName;
+    });
+  }
+  //==================== End => add user cookie landing ====================
 
   //==================== Start => add deal_id into all input deal_id elements ====================
   var dealIdElements = document.getElementsByName("deal_id");
