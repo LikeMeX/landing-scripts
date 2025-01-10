@@ -672,7 +672,7 @@ async function createCart(cart) {
 }
 
 async function getIp() {
-  const response = await fetch("https://1.1.1.1/cdn-cgi/trace");
+  const response = await fetch("https://cloudflare.com/cdn-cgi/trace");
   let data = await response.text();
   data = data
     .trim()
