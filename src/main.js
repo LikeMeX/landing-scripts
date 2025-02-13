@@ -95,8 +95,8 @@ function init(arguments, callback) {
   }
   //==================== End => edit channel_name  ====================
 
-   //==================== Start => add user cookie landing ====================
-   if (checkCookie("user")) {
+  //==================== Start => add user cookie landing ====================
+  if (checkCookie("user")) {
     const user = JSON.parse(decodeURIComponent(getCookie("user")));
     document.getElementsByName("email").forEach((element) => {
       element.value = user.email || "";
@@ -660,12 +660,12 @@ function getDataFromLocalStorage(localStorageItems) {
 
 async function createCart(cart) {
   var data = await fetchPost(
-    "https://pay-api.futureskill.co/api/cart/create",
+    "https://uat.futureskill.live/pay-api/cart/create",
     cart,
     {
       "Content-Type": "application/json",
       Authorization:
-        "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
+        "Basic MjUwNjY2MDU4NTY5MDQ1ODg6cE5DV3E0YnRxU09Bb05zM1VEaHM=",
     }
   );
   return data.url;
