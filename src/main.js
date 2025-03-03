@@ -43,6 +43,8 @@ function getCookie(name) {
 // ================================================================
 const AFFILIATE_CHANNEL = "affiliate";
 const AFFILIATE_KEY = "aff";
+let isSubmitPayment = false;
+
 function initAffiliateScript() {
   window.localStorage.removeItem(AFFILIATE_KEY);
   const queryString = window.location.search;
@@ -567,6 +569,7 @@ const checkIsLineLanding = () => {
 };
 
 async function submitPayment(localStorageItems) {
+  isSubmitPayment = true;
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
   const affId = getAffiliateIdFromLocalStorage();
@@ -664,15 +667,14 @@ async function submitPayment(localStorageItems) {
       };
 
       // TODO: EDIT THIS IN PRODUCTION
-      await fetchPost(
-        "https://futureskill.app.n8n.cloud/webhook/b0162197-6c17-4a69-98ba-32f865bc4438",
-        {
-          ...cartParams,
-          dealId: cartParams.deal_id,
-          name: cartParams.fullname,
-          landingUrl: dataFromLocalStorage["landing_url"],
-        }
-      );
+      const sendEmailLine =
+        "https://futureskill.app.n8n.cloud/webhook/b0162197-6c17-4a69-98ba-32f865bc4438";
+      await fetchPost(sendEmailLine, {
+        ...cartParams,
+        dealId: cartParams.deal_id,
+        name: cartParams.fullname,
+        landingUrl: dataFromLocalStorage["landing_url"],
+      });
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
@@ -1135,22 +1137,23 @@ function includeJqueryAddressScript() {
 // ========= START ADD EVENT LISTENER ON PUSH DATA LAYER =========
 
 window.dataLayer = new Proxy(window.dataLayer || [], {
-  set: (obj, prop, value) => {  
-    if (prop !== 'length') {
-      const pushEvent = new CustomEvent('datalayerpush', {
-        detail: value
+  set: (obj, prop, value) => {
+    if (prop !== "length") {
+      const pushEvent = new CustomEvent("datalayerpush", {
+        detail: value,
       });
       window.dispatchEvent(pushEvent);
     }
-    
+
     return Reflect.set(obj, prop, value);
-  }
+  },
 });
 
 window.addEventListener("datalayerpush", async (event) => {
   if (
     event.detail?.event === "FSCompleteRegistration" &&
-    getAffiliateIdFromLocalStorage()
+    getAffiliateIdFromLocalStorage() &&
+    isSubmitPayment === false
   ) {
     const localStorageItems = [
       "email",
