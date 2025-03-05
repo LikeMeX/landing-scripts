@@ -680,7 +680,7 @@ async function submitPayment(localStorageItems) {
 
       // TODO: EDIT THIS IN PRODUCTION
       // const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
-      const urlLiff = `https://liff.line.me/2001020437-LmZXm4wx?${redirectQuery}`;
+      const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
 
       setTimeout(function () {
         window.location.replace(urlLiff);
