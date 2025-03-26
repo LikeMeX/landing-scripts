@@ -714,7 +714,7 @@ async function createCart(cart) {
         "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
     }
   );
-  return data.url;
+  return data;
 }
 
 async function getIp() {
