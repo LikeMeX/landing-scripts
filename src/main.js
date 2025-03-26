@@ -43,6 +43,8 @@ function getCookie(name) {
 // ================================================================
 const AFFILIATE_CHANNEL = "affiliate";
 const AFFILIATE_KEY = "aff";
+let isSubmitPayment = false;
+
 function initAffiliateScript() {
   window.localStorage.removeItem(AFFILIATE_KEY);
   const queryString = window.location.search;
@@ -95,8 +97,8 @@ function init(arguments, callback) {
   }
   //==================== End => edit channel_name  ====================
 
-   //==================== Start => add user cookie landing ====================
-   if (checkCookie("user")) {
+  //==================== Start => add user cookie landing ====================
+  if (checkCookie("user")) {
     const user = JSON.parse(decodeURIComponent(getCookie("user")));
     document.getElementsByName("email").forEach((element) => {
       element.value = user.email || "";
@@ -474,6 +476,9 @@ function listenerForm(feildNames) {
         }
       }
       // ===================== End = > set localStorage =====================
+
+      // =============== Add required fields for LINE landing ===============
+      localStorage.setItem("landing_url", formProps["landing_url"] || "");
     },
     true
   );
@@ -551,7 +556,7 @@ async function createPaymentWith(formData) {
     if (formData["callback_url"])
       data.paymentSuccessCallbackUrl = formData["callback_url"];
 
-    let url = await createCart(data);
+    let { url } = await createCart(data);
     if (formData["discountCode"])
       url = `${url}?discountCode=${formData["discountCode"]}`;
 
@@ -559,7 +564,12 @@ async function createPaymentWith(formData) {
   }
 }
 
+const checkIsLineLanding = () => {
+  return hiddenFieldConfig?.email_cf_channel === "line";
+};
+
 async function submitPayment(localStorageItems) {
+  isSubmitPayment = true;
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
   const affId = getAffiliateIdFromLocalStorage();
@@ -633,13 +643,50 @@ async function submitPayment(localStorageItems) {
     if (dataFromLocalStorage["callback_url"])
       data.paymentSuccessCallbackUrl = dataFromLocalStorage["callback_url"];
 
-    var url = await createCart(data);
+    let { url, cartNo } = await createCart(data);
     if (dataFromLocalStorage["discountCode"])
       url = `${url}?discountCode=${dataFromLocalStorage["discountCode"]}`;
 
-    setTimeout(function () {
-      window.location.replace(url);
-    }, 1500);
+    if (checkIsLineLanding()) {
+      const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
+      const cartParams = {
+        cartNo,
+        deal_id: dataFromLocalStorage["deal_id"],
+        email: dataFromLocalStorage["email"],
+        fullname: dataFromLocalStorage["fullname"],
+        phone: dataFromLocalStorage["phone"],
+        course: dataFromLocalStorage["course"],
+        price: dataFromLocalStorage["price"],
+        title: dataFromLocalStorage["campaign"],
+        orderbump: dataFromLocalStorage["orderbump"],
+        orderbumpdetail: dataFromLocalStorage["orderbumpdetail"],
+        bonusdetail: dataFromLocalStorage["bonusdetail"],
+        ...(dataFromLocalStorage["orderbump"] === "on"
+          ? {}
+          : { discountCode: dataFromLocalStorage["discountCode"] }),
+      };
+
+      const sendEmailLine =
+        "https://futureskill.app.n8n.cloud/webhook/line/email";
+      await fetchPost(sendEmailLine, {
+        ...cartParams,
+        dealId: cartParams.deal_id,
+        name: cartParams.fullname,
+        landingUrl: dataFromLocalStorage["landing_url"],
+      });
+
+      const redirectQuery = new URLSearchParams(cartParams).toString();
+
+      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
+
+      setTimeout(function () {
+        window.location.replace(urlLiff);
+      }, 1500);
+    } else {
+      setTimeout(function () {
+        window.location.replace(url);
+      }, 1500);
+    }
   }
 }
 
@@ -657,7 +704,6 @@ function getDataFromLocalStorage(localStorageItems) {
   }
   return dataFromLocalStorage;
 }
-
 async function createCart(cart) {
   var data = await fetchPost(
     "https://pay-api.futureskill.co/api/cart/create",
@@ -668,7 +714,7 @@ async function createCart(cart) {
         "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
     }
   );
-  return data.url;
+  return data;
 }
 
 async function getIp() {
@@ -1071,3 +1117,46 @@ function includeJqueryAddressScript() {
     }
   };
 }
+
+// ========= START ADD EVENT LISTENER ON PUSH DATA LAYER =========
+
+window.dataLayer = new Proxy(window.dataLayer || [], {
+  set: (obj, prop, value) => {
+    if (prop !== "length") {
+      const pushEvent = new CustomEvent("datalayerpush", {
+        detail: value,
+      });
+      window.dispatchEvent(pushEvent);
+    }
+
+    return Reflect.set(obj, prop, value);
+  },
+});
+
+window.addEventListener("datalayerpush", async (event) => {
+  if (
+    event.detail?.event === "FSCompleteRegistration" &&
+    getAffiliateIdFromLocalStorage() &&
+    isSubmitPayment === false
+  ) {
+    const localStorageItems = [
+      "email",
+      "phone",
+      "fullname",
+      "price",
+      "course",
+      "seller",
+      "campaign",
+      "deal_id",
+      "px",
+      "redirect_url",
+      "callback_url",
+      "discountCode",
+      "params",
+      "type",
+      "landing_url",
+    ];
+    await submitPayment(localStorageItems);
+  }
+});
+// ========= END ADD EVENT LISTENER ON PUSH DATA LAYER =========
