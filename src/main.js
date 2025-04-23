@@ -668,12 +668,18 @@ async function submitPayment(localStorageItems) {
 
       const sendEmailLine =
         "https://futureskill.app.n8n.cloud/webhook/line/email";
-      await fetchPost(sendEmailLine, {
-        ...cartParams,
-        dealId: cartParams.deal_id,
-        name: cartParams.fullname,
-        landingUrl: dataFromLocalStorage["landing_url"],
-      });
+      await fetchPost(
+        sendEmailLine,
+        {
+          ...cartParams,
+          dealId: cartParams.deal_id,
+          name: cartParams.fullname,
+          landingUrl: dataFromLocalStorage["landing_url"],
+        },
+        {
+          "content-type": "application/json",
+        }
+      );
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
