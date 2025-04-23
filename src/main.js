@@ -291,7 +291,7 @@ function checkFieldsRequireFully(
 function blockSpam(formProps) {
   const dataSpam = {
     email:
-      "charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com",
+      "charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com|wanvisa@gmail.com|lampong251731@gmail.com|sinmue89@gmail.com",
     name: "ชรัญเพ็ง|ชัณเพ็ง|ชรัณ เพ็งนวม|ชรัณ|เพ็งนวม",
   };
   if (
