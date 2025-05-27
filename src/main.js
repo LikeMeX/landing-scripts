@@ -183,7 +183,7 @@ function checkFieldsRequireFully(
     "deal_id",
     "landing_url",
   ];
-  let defaultFields = ["email", "fullname", "phone", "search", "address"];
+  let defaultFields = ["email", "phone", "search", "address"];
   if (defaultFieldsWith.length) {
     defaultFields = defaultFieldsWith;
   } else {
@@ -432,7 +432,7 @@ function listenerForm(feildNames) {
 
   document.addEventListener(
     "submit",
-    (event) => {
+    async (event) => {
       const formData = new FormData(event.target);
       const formProps = Object.fromEntries(formData);
       const block = blockSpam(formProps);
@@ -453,7 +453,7 @@ function listenerForm(feildNames) {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
         } else if (feildName === "email") {
-          const email = validateEmail(formProps[feildName], feildName);
+          const email = await validateEmail(formProps[feildName], feildName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
