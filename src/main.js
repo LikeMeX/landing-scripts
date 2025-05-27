@@ -355,12 +355,32 @@ async function validateEmailWithZeroBounce(email) {
   return false;
 }
 
-async function validateEmail(email, feildName) {
+function debounce(func, delay = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+const isEmailValid = false;
+
+async function handleEmailInput(event) {
+  const email = event.target.value;
+  isEmailValid = await validateEmailWithZeroBounce(email);
+}
+
+const debouncedEmailInput = debounce(handleEmailInput, 500);
+
+document.querySelectorAll('select[name="email"]').forEach(function (element) {
+  element.addEventListener("input", debouncedEmailInput);
+});
+
+function validateEmail(email, feildName) {
   if (!email) return undefined;
   const regex =
     /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
 
-  const isEmailValid = await validateEmailWithZeroBounce(email);
   if (!regex.test(email) || !isEmailValid) {
     return undefined;
   }
@@ -432,7 +452,7 @@ function listenerForm(feildNames) {
 
   document.addEventListener(
     "submit",
-    async (event) => {
+    (event) => {
       const formData = new FormData(event.target);
       const formProps = Object.fromEntries(formData);
       const block = blockSpam(formProps);
@@ -453,10 +473,10 @@ function listenerForm(feildNames) {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
         } else if (feildName === "email") {
-          event.preventDefault();
-          const email = await validateEmail(formProps[feildName], feildName);
+          const email = validateEmail(formProps[feildName], feildName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
+            event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
             clearDataLocalStorage(feildNames);
