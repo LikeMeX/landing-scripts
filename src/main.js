@@ -346,7 +346,7 @@ async function validateEmailWithZeroBounce(email) {
   if (!email) return false;
   const api_key = "85b5a9d5f22746b4906a30a7a33fe7ff";
   const response = await fetch(
-    `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}}`
+    `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
   );
   const responseData = await response.json();
   if (responseData && responseData.status == "valid") {
@@ -355,31 +355,32 @@ async function validateEmailWithZeroBounce(email) {
   return false;
 }
 
-async function debounce(func, delay = 500) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(async () => await func.apply(this, args), delay);
-  };
-}
-
 let isEmailValid = true;
 
 async function handleEmailInput(event) {
   const email = event.target.value;
-  isEmailValid = await validateEmailWithZeroBounce(email);
-  console.log("🚀 ~ handleEmailInput ~ isEmailValid:", isEmailValid);
+  const regex =
+    /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+  if (!email) {
+    isEmailValid = false;
+    return;
+  }
+  if (regex.test(email)) {
+    isEmailValid = await validateEmailWithZeroBounce(email);
+    console.log("🚀 ~ handleEmailInput ~ isEmailValid:", isEmailValid);
+    return;
+  }
+  isEmailValid = false;
+  return;
 }
 
-const debouncedEmailInput = debounce(handleEmailInput, 500);
-
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
   console.log("validate email!!");
-  const emailInputs = document.getElementsByName("email");
-  emailInputs.forEach((input) => {
-    input.addEventListener("input", async () => await debouncedEmailInput());
+  const emailInputs = document.querySelectorAll('input[name="email"]')[0];
+  emailInputs.addEventListener("blur", async (event) => {
+    await handleEmailInput(event);
   });
-})();
+});
 
 function validateEmail(email, feildName) {
   if (!email) return undefined;
