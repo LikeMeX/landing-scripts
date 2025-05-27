@@ -363,7 +363,7 @@ async function debounce(func, delay = 500) {
   };
 }
 
-const isEmailValid = true;
+let isEmailValid = true;
 
 async function handleEmailInput(event) {
   const email = event.target.value;
