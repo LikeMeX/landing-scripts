@@ -342,13 +342,29 @@ function validatePhone(phone, feildName) {
   return phone;
 }
 
-function validateEmail(email, feildName) {
+async function validateEmailWithZeroBounce(email) {
+  if (!email) return false;
+  const api_key = "85b5a9d5f22746b4906a30a7a33fe7ff";
+  const response = await fetch(
+    `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}}`
+  );
+  const responseData = await response.json();
+  if (responseData && responseData.status == "valid") {
+    return true;
+  }
+  return false;
+}
+
+async function validateEmail(email, feildName) {
   if (!email) return undefined;
   const regex =
     /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
-  if (!regex.test(email)) {
+
+  const isEmailValid = await validateEmailWithZeroBounce(email);
+  if (!regex.test(email) || !isEmailValid) {
     return undefined;
   }
+
   document
     .querySelectorAll(`input[name="${feildName}"]`)
     .forEach(function (element) {
