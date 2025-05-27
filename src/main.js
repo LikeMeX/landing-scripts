@@ -375,9 +375,10 @@ const debouncedEmailInput = debounce(handleEmailInput, 500);
 
 (function () {
   console.log("validate email!!");
-  document
-    .getElementsByName("email")
-    .addEventListener("input", async () => await debouncedEmailInput());
+  const emailInputs = document.getElementsByName("email");
+  emailInputs.forEach((input) => {
+    input.addEventListener("input", async () => await debouncedEmailInput());
+  });
 })();
 
 function validateEmail(email, feildName) {
