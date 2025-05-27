@@ -355,25 +355,26 @@ async function validateEmailWithZeroBounce(email) {
   return false;
 }
 
-function debounce(func, delay = 500) {
+async function debounce(func, delay = 500) {
   let timeout;
   return function (...args) {
     clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
+    timeout = setTimeout(async () => await func.apply(this, args), delay);
   };
 }
 
-const isEmailValid = false;
+const isEmailValid = true;
 
 async function handleEmailInput(event) {
   const email = event.target.value;
   isEmailValid = await validateEmailWithZeroBounce(email);
+  console.log("🚀 ~ handleEmailInput ~ isEmailValid:", isEmailValid);
 }
 
 const debouncedEmailInput = debounce(handleEmailInput, 500);
 
 document.querySelectorAll('select[name="email"]').forEach(function (element) {
-  element.addEventListener("input", debouncedEmailInput);
+  element.addEventListener("input", async () => await debouncedEmailInput());
 });
 
 function validateEmail(email, feildName) {
