@@ -453,10 +453,10 @@ function listenerForm(feildNames) {
           const name = correctName(formProps[feildName]);
           localStorage.setItem(feildName, name);
         } else if (feildName === "email") {
+          event.preventDefault();
           const email = await validateEmail(formProps[feildName], feildName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
-            event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
             clearDataLocalStorage(feildNames);
