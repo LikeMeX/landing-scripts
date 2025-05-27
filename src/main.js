@@ -373,9 +373,12 @@ async function handleEmailInput(event) {
 
 const debouncedEmailInput = debounce(handleEmailInput, 500);
 
-document.querySelectorAll('input[name="email"]').forEach(function (element) {
-  element.addEventListener("input", async () => await debouncedEmailInput());
-});
+(function () {
+  console.log("validate email!!");
+  document
+    .getElementsByName("email")
+    .addEventListener("input", async () => await debouncedEmailInput());
+})();
 
 function validateEmail(email, feildName) {
   if (!email) return undefined;
