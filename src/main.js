@@ -349,7 +349,10 @@ async function validateEmailWithZeroBounce(email) {
     `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
   );
   const responseData = await response.json();
-  if (responseData && responseData.status == "valid") {
+  if (
+    responseData &&
+    (responseData.status == "valid" || responseData.status == "catch-all")
+  ) {
     return true;
   }
   return false;
