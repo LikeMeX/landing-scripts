@@ -1,0 +1,52 @@
+# .github/workflows/backup.yml
+# This is the CALLING workflow that lives in your application repository.
+
+name: Backup Source Code
+
+# Trigger on a push to main or on a schedule (e.g., weekly)
+on:
+    push:
+      branches:
+        - main
+    schedule:
+        - cron: '30 20 * * 0' # Triggers every Monday, but the job logic below makes it bi-weekly
+
+jobs:
+    check_week:
+        runs-on: ubuntu-latest
+        outputs:
+            # This output will be 'true' on even weeks, and empty on odd weeks.
+            run_backup: ${{ steps.check.outputs.run_job }}
+        steps:
+            - name: Check if week number is even
+              id: check
+              # The formula calculates the week number (00-53) and checks if it's divisible by 2.
+              # It sets an output variable named 'run_job' to 'true' if the condition is met.
+              run: |
+                  if [ "${{ github.event_name }}" == "release" ]; then
+                    echo "RUN_JOB=true"
+                    echo "run_job=true" >> "$GITHUB_OUTPUT"
+                  elif [ $(expr $(date +%W) % 2) -eq 0 ]; then
+                    echo "RUN_JOB=true (even week)"
+                    echo "run_job=true" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "RUN_JOB=false (odd week, skipping)"
+                  fi
+    call-backup-workflow:
+        needs: check_week
+        # This is the crucial condition for the bi-weekly schedule.
+        if: needs.check_week.outputs.run_backup == 'true'
+        permissions:
+            contents: read # The job needs to read contents to check out the code
+            id-token: write # Required for authenticating to GCP
+
+        # This 'uses' keyword calls the reusable workflow
+        uses: LikeMeX/github-reuse-workflow/.github/workflows/backup-to-gcp.yaml@main
+        # IMPORTANT: For production, use a specific tag or commit SHA instead of @main
+        # e.g., uses: your-org/central-workflows/.github/workflows/reusable-gcs-backup.yml@v1.0
+        # Provide the required inputs
+        with:
+            gcs-bucket: 'fs-backup-source-code' # Your actual bucket name
+            gcs-path: 'payment-web' # Folder for this specific repo's backups
+            workload_identity_provider: projects/9483466744/locations/global/workloadIdentityPools/gha-pool/providers/gha-prod
+            service_account: gha-sa@futureskill-211009.iam.gserviceaccount.com
