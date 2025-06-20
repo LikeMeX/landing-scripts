@@ -609,7 +609,7 @@ function getDataFromLocalStorage(localStorageItems) {
   return dataFromLocalStorage;
 }
 async function createCart(cart) {
-  var data = await fetchPost('https://dev-pay-api.futureskill.live/api/cart/create', cart, {
+  var data = await fetchPost('https://uat-pay-api.futureskill.live/api/cart/create', cart, {
     'Content-Type': 'application/json',
     Authorization: 'Basic MjUwNjY2MDU4NTY5MDQ1ODg6RHp0VzVNWm5VUjBEY1pVbjBjWFc=',
   });
