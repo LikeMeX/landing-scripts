@@ -568,7 +568,7 @@ async function submitPayment(localStorageItems) {
         ...(dataFromLocalStorage['orderbump'] === 'on' ? {} : {discountCode: dataFromLocalStorage['discountCode']}),
       };
 
-      const sendEmailLine = 'https://futureskill.app.n8n.cloud/webhook/line/email';
+      const sendEmailLine = 'https://futureskill.app.n8n.cloud/webhook-test/uat/line/message-cart';
       await fetchPost(
         sendEmailLine,
         {
