@@ -155,6 +155,12 @@ function init(arguments, callback) {
   //==================== End => add landing_url into all input landing_url elements
   // ====================
 
+  // ==================== set localstorage hidden
+  window.localStorage.setItem(
+    "hidden",
+    JSON.stringify(arguments?.hiddenFieldConfig)
+  );
+
   if (callback) callback();
   return {
     userAgent,
@@ -287,8 +293,7 @@ function checkFieldsRequireFully(
         element.value = hiddenFieldConfig[hiddenField];
       });
   }
-  console.log("log hiddenFieldConfig");
-  console.log(hiddenFieldConfig);
+
   document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
     element.value = JSON.stringify(hiddenFieldConfig);
   });
@@ -533,7 +538,8 @@ function listenerForm(fieldNames) {
       localStorage.setItem("landing_url", formProps["landing_url"] || "");
 
       // =============== Hidden Field support for forget setting other fields ===============
-      localStorage.setItem("hidden", formProps["hidden"] || "");
+      const hiddenConfig = formProps["hidden"];
+      localStorage.setItem("hidden", hiddenConfig || "");
     },
     true
   );
