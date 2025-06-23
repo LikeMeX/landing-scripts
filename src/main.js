@@ -287,6 +287,8 @@ function checkFieldsRequireFully(
         element.value = hiddenFieldConfig[hiddenField];
       });
   }
+  console.log("log hiddenFieldConfig");
+  console.log(hiddenFieldConfig);
   document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
     element.value = JSON.stringify(hiddenFieldConfig);
   });
