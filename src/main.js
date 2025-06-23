@@ -52,9 +52,11 @@ function initAffiliateScript() {
   const aff = urlParams.get(AFFILIATE_KEY);
   if (aff) {
     window.localStorage.setItem(AFFILIATE_KEY, aff);
-    document.querySelectorAll(`input[name="mkter"]`).forEach(function (element) {
-      element.value = AFFILIATE_CHANNEL;
-    });
+    document
+      .querySelectorAll(`input[name="mkter"]`)
+      .forEach(function (element) {
+        element.value = AFFILIATE_CHANNEL;
+      });
   }
 }
 
@@ -115,7 +117,10 @@ function init(arguments, callback) {
       dealIdElement.value = dealId;
     }
   } else {
-    console.log('%cinput "deal_id" not define!', "color: red; font-size: larger");
+    console.log(
+      '%cinput "deal_id" not define!',
+      "color: red; font-size: larger"
+    );
   }
   //==================== End => add deal_id into all input deal_id elements ====================
 
@@ -137,10 +142,16 @@ function init(arguments, callback) {
       landingUrl.value = window.location.href;
     }
   } else {
-    console.log('%cinput "landing_url" not define!', "color: red; font-size: larger");
+    console.log(
+      '%cinput "landing_url" not define!',
+      "color: red; font-size: larger"
+    );
   }
   includeJqueryAddressScript();
-  console.log('%cinput "includeJqueryAddressScript" start.!', "color: yellow; font-size: larger");
+  console.log(
+    '%cinput "includeJqueryAddressScript" start.!',
+    "color: yellow; font-size: larger"
+  );
   //==================== End => add landing_url into all input landing_url elements ====================
   if (callback) callback();
   return {
@@ -155,7 +166,14 @@ function checkFieldsRequireFully(
   landingPageType = "SGC"
 ) {
   // ================ static fields =====================
-  const different = ["search", "address", "sub_district", "district", "province", "zipcode"];
+  const different = [
+    "search",
+    "address",
+    "sub_district",
+    "district",
+    "province",
+    "zipcode",
+  ];
   const defaultHiddenFields = [
     "px",
     "sub_district",
@@ -244,19 +262,28 @@ function checkFieldsRequireFully(
   // ================ get params URL =====================
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
-      alert(`คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration หรือ Hidden Field`);
+      alert(
+        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration หรือ Hidden Field`
+      );
       return false;
     }
-    if (remainingFields[hiddenField] !== undefined && !hiddenFieldConfig[hiddenField].length) {
-      alert(`คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`);
+    if (
+      remainingFields[hiddenField] !== undefined &&
+      !hiddenFieldConfig[hiddenField].length
+    ) {
+      alert(
+        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`
+      );
       return false;
     }
     if (hiddenField === "discountCode" && discountCode) {
       hiddenFieldConfig[hiddenField] = discountCode;
     }
-    document.querySelectorAll(`input[name="${hiddenField}"]`).forEach(function (element) {
-      element.value = hiddenFieldConfig[hiddenField];
-    });
+    document
+      .querySelectorAll(`input[name="${hiddenField}"]`)
+      .forEach(function (element) {
+        element.value = hiddenFieldConfig[hiddenField];
+      });
   }
   return true;
 }
@@ -267,7 +294,10 @@ function blockSpam(formProps) {
       "charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com|wanvisa@gmail.com|lampong251731@gmail.com|sinmue89@gmail.com|payungpong.1986@gmail.com",
     name: "ชรัญเพ็ง|ชัณเพ็ง|ชรัณ เพ็งนวม|ชรัณ|เพ็งนวม|อนุพงษ์ พุงพงษ์",
   };
-  if (RegExp(dataSpam.email).test(formProps.email) || RegExp(dataSpam.name).test(formProps.name))
+  if (
+    RegExp(dataSpam.email).test(formProps.email) ||
+    RegExp(dataSpam.name).test(formProps.name)
+  )
     return false;
   return true;
 }
@@ -283,7 +313,14 @@ function genDealId() {
 function appendUserAgent(PXID) {
   const l = window.location;
   const px =
-    PXID + "|" + window.navigator.userAgent + "|" + l.protocol + "//" + l.host + l.pathname;
+    PXID +
+    "|" +
+    window.navigator.userAgent +
+    "|" +
+    l.protocol +
+    "//" +
+    l.host +
+    l.pathname;
   return px;
 }
 
@@ -296,9 +333,11 @@ function clearDataLocalStorage(fields) {
 function validatePhone(phone, feildName) {
   if (!phone) return undefined;
   phone = phone.replace(/(\s+|-|\+66|^66|^0)/g, "");
-  document.querySelectorAll(`input[name="${feildName}"]`).forEach(function (element) {
-    element.value = phone;
-  });
+  document
+    .querySelectorAll(`input[name="${feildName}"]`)
+    .forEach(function (element) {
+      element.value = phone;
+    });
   if (phone.length !== 9) return undefined;
   return phone;
 }
@@ -310,7 +349,10 @@ async function validateEmailWithZeroBounce(email) {
     `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
   );
   const responseData = await response.json();
-  if (responseData && (responseData.status == "valid" || responseData.status == "catch-all")) {
+  if (
+    responseData &&
+    (responseData.status == "valid" || responseData.status == "catch-all")
+  ) {
     return true;
   }
   return false;
@@ -320,7 +362,8 @@ let isEmailValid = true;
 
 async function handleEmailInput(event) {
   const email = event.target.value;
-  const regex = /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+  const regex =
+    /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
   if (!email) {
     isEmailValid = false;
     return;
@@ -344,15 +387,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function validateEmail(email, feildName) {
   if (!email) return undefined;
-  const regex = /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+  const regex =
+    /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
 
   if (!regex.test(email) || !isEmailValid) {
     return undefined;
   }
 
-  document.querySelectorAll(`input[name="${feildName}"]`).forEach(function (element) {
-    element.value = email;
-  });
+  document
+    .querySelectorAll(`input[name="${feildName}"]`)
+    .forEach(function (element) {
+      element.value = email;
+    });
   return email;
 }
 
@@ -372,29 +418,40 @@ function listenerForm(feildNames) {
   if (defaultPackage) {
     const _defaultPackage = defaultPackage.value.split("/");
 
-    document.querySelectorAll('select[name="package"]').forEach(function (element) {
-      element.value = defaultPackage.value;
-    });
-    document.querySelectorAll('input[name="discountCode"]').forEach(function (element) {
-      element.value = _defaultPackage[2] || "";
-    });
-    document.querySelectorAll('input[name="course"]').forEach(function (element) {
-      element.value = _defaultPackage[0];
-    });
-    document.querySelectorAll('input[name="price"]').forEach(function (element) {
-      element.value = _defaultPackage[1];
-    });
+    document
+      .querySelectorAll('select[name="package"]')
+      .forEach(function (element) {
+        element.value = defaultPackage.value;
+      });
+    document
+      .querySelectorAll('input[name="discountCode"]')
+      .forEach(function (element) {
+        element.value = _defaultPackage[2] || "";
+      });
+    document
+      .querySelectorAll('input[name="course"]')
+      .forEach(function (element) {
+        element.value = _defaultPackage[0];
+      });
+    document
+      .querySelectorAll('input[name="price"]')
+      .forEach(function (element) {
+        element.value = _defaultPackage[1];
+      });
 
     //=========== set default package into package select option ============
 
     document.body.addEventListener("change", function (event) {
       //========= package select option on change into other package select option =============
       if (event.target.name === "package") {
-        document.querySelectorAll('select[name="package"]').forEach(function (element) {
-          element.value = event.target.value;
-        });
+        document
+          .querySelectorAll('select[name="package"]')
+          .forEach(function (element) {
+            element.value = event.target.value;
+          });
         const _package = event.target.value.split("/");
-        document.querySelector('input[name="discountCode"]').value = _package[2] || "";
+        document.querySelector('input[name="discountCode"]').value =
+          _package[2] || "";
         document.querySelector('input[name="course"]').value = _package[0];
         document.querySelector('input[name="price"]').value = _package[1];
       }
@@ -538,12 +595,15 @@ async function createPaymentWith(formData) {
       paymentSuccessRedirectUrl: paymentSuccessRedirectUrl.toString(),
     };
 
-    if (formData["type"] && formData["type"]?.length) data.userdata.payload = payload;
+    if (formData["type"] && formData["type"]?.length)
+      data.userdata.payload = payload;
 
-    if (formData["callback_url"]) data.paymentSuccessCallbackUrl = formData["callback_url"];
+    if (formData["callback_url"])
+      data.paymentSuccessCallbackUrl = formData["callback_url"];
 
     let { url } = await createCart(data);
-    if (formData["discountCode"]) url = `${url}?discountCode=${formData["discountCode"]}`;
+    if (formData["discountCode"])
+      url = `${url}?discountCode=${formData["discountCode"]}`;
 
     return url;
   }
@@ -567,7 +627,9 @@ async function submitPayment(localStorageItems) {
     discountCode: dataFromLocalStorage["discountCode"],
   }).toString();
 
-  const courses = dataFromLocalStorage["course"] ? dataFromLocalStorage["course"].split(",") : [];
+  const courses = dataFromLocalStorage["course"]
+    ? dataFromLocalStorage["course"].split(",")
+    : [];
 
   if (dataFromLocalStorage["orderbump"] === "on") {
     const orderbumpCourse = dataFromLocalStorage["orderbumpdetail"].split(",");
@@ -649,7 +711,8 @@ async function submitPayment(localStorageItems) {
           : { discountCode: dataFromLocalStorage["discountCode"] }),
       };
 
-      const sendEmailLine = "https://futureskill.app.n8n.cloud/webhook/line/email";
+      const sendEmailLine =
+        "https://futureskill.app.n8n.cloud/webhook/uat/line/email";
       await fetchPost(
         sendEmailLine,
         {
@@ -665,7 +728,7 @@ async function submitPayment(localStorageItems) {
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
-      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
+      const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
 
       setTimeout(function () {
         window.location.replace(urlLiff);
@@ -686,16 +749,22 @@ function getDataFromLocalStorage(localStorageItems) {
         localStorage.getItem(localStorageItem) || "{}"
       );
     } else {
-      dataFromLocalStorage[localStorageItem] = localStorage.getItem(localStorageItem);
+      dataFromLocalStorage[localStorageItem] =
+        localStorage.getItem(localStorageItem);
     }
   }
   return dataFromLocalStorage;
 }
 async function createCart(cart) {
-  var data = await fetchPost("https://pay-api.futureskill.co/api/cart/create", cart, {
-    "Content-Type": "application/json",
-    Authorization: "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
-  });
+  var data = await fetchPost(
+    "https://uat.futureskill.live/pay-api/cart/create",
+    cart,
+    {
+      "Content-Type": "application/json",
+      Authorization:
+        "Basic MjUwNjY2MDU4NTY5MDQ1ODg6cE5DV3E0YnRxU09Bb05zM1VEaHM=",
+    }
+  );
   return data;
 }
 
@@ -810,12 +879,25 @@ function includeJqueryAddressScript() {
       }
       var l = function (e, t, a) {
         for (
-          var n, i, o, r = 0, c = 0, s = 0, p = (e += "").length, d = (t += "").length, h = 0;
+          var n,
+            i,
+            o,
+            r = 0,
+            c = 0,
+            s = 0,
+            p = (e += "").length,
+            d = (t += "").length,
+            h = 0;
           h < p;
           h += 1
         )
           for (n = 0; n < d; n += 1) {
-            for (i = 0; h + i < p && n + i < d && e.charAt(h + i) === t.charAt(n + i); ) i += 1;
+            for (
+              i = 0;
+              h + i < p && n + i < d && e.charAt(h + i) === t.charAt(n + i);
+
+            )
+              i += 1;
             s < i && ((s = i), (r = h), (c = n));
           }
         return (
@@ -823,7 +905,11 @@ function includeJqueryAddressScript() {
             (r && c && (o += l(e.substr(0, c), t.substr(0, c), !1)),
             r + s < p &&
               c + s < d &&
-              (o += l(e.substr(r + s, p - r - s), t.substr(c + s, d - c - s), !1))),
+              (o += l(
+                e.substr(r + s, p - r - s),
+                t.substr(c + s, d - c - s),
+                !1
+              ))),
           !1 === a
             ? o
             : e === t
@@ -836,7 +922,9 @@ function includeJqueryAddressScript() {
       !(function (a) {
         var e,
           t = o.database_type.toLowerCase();
-        switch (("json" !== t && "zip" !== t && (t = o.database.split(".").pop()), t)) {
+        switch (
+          ("json" !== t && "zip" !== t && (t = o.database.split(".").pop()), t)
+        ) {
           case "json":
             $.getJSON(o.database, function (e) {
               a(new JQL(n(e)));
@@ -848,23 +936,28 @@ function includeJqueryAddressScript() {
             o.zip_worker_path ||
               $("script").each(function () {
                 var e = this.src.split("/");
-                "zip.js" === e.pop() && (zip.workerScriptsPath = e.join("/") + "/");
+                "zip.js" === e.pop() &&
+                  (zip.workerScriptsPath = e.join("/") + "/");
               }),
               ((e = new XMLHttpRequest()).responseType = "blob"),
               (e.onreadystatechange = function () {
                 if (4 === e.readyState) {
-                  if (200 !== e.status) throw new Error('File "' + o.database + '" is not exists.');
-                  zip.createReader(new zip.BlobReader(e.response), function (e) {
-                    e.getEntries(function (e) {
-                      e[0].getData(new zip.BlobWriter(), function (e) {
-                        var t = new FileReader();
-                        (t.onload = function () {
-                          a(new JQL(n(JSON.parse(t.result))));
-                        }),
-                          t.readAsText(e);
+                  if (200 !== e.status)
+                    throw new Error('File "' + o.database + '" is not exists.');
+                  zip.createReader(
+                    new zip.BlobReader(e.response),
+                    function (e) {
+                      e.getEntries(function (e) {
+                        e[0].getData(new zip.BlobWriter(), function (e) {
+                          var t = new FileReader();
+                          (t.onload = function () {
+                            a(new JQL(n(JSON.parse(t.result))));
+                          }),
+                            t.readAsText(e);
+                        });
                       });
-                    });
-                  });
+                    }
+                  );
                 }
               }),
               e.open("GET", o.database),
@@ -988,7 +1081,8 @@ function includeJqueryAddressScript() {
                       o[a] &&
                       t[n] &&
                       o[a].typeahead("val", t[n]).trigger("change");
-                "function" == typeof o.onDataFill && (delete t.likely, o.onDataFill(t));
+                "function" == typeof o.onDataFill &&
+                  (delete t.likely, o.onDataFill(t));
               })
               .blur(function () {
                 this.value || $(this).parent().find(".tt-dataset").html("");
@@ -1027,7 +1121,13 @@ function includeJqueryAddressScript() {
       $search: $(".widget-form input[name='search']"),
       onDataFill: function (data) {
         var show =
-          data.district + " » " + data.amphoe + " » " + data.province + " » " + data.zipcode;
+          data.district +
+          " » " +
+          data.amphoe +
+          " » " +
+          data.province +
+          " » " +
+          data.zipcode;
         $(".widget-form input[name='sub_district']").val(data.district);
         $(".widget-form input[name='district']").val(data.amphoe);
         $(".widget-form input[name='province']").val(data.province);
