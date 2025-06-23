@@ -538,8 +538,19 @@ function listenerForm(fieldNames) {
       localStorage.setItem("landing_url", formProps["landing_url"] || "");
 
       // =============== Hidden Field support for forget setting other fields ===============
-      const hiddenConfig = formProps["hidden"];
-      localStorage.setItem("hidden", hiddenConfig || "");
+      localStorage.setItem("hidden", formProps["hidden"] || "");
+
+      // =============== Start = > set qty to localStorage =====================
+      const cartItems = [];
+      const qtyKey = "qty_";
+      for (const [key, val] of Object.entries(formProps)) {
+        if (key.startsWith(qtyKey)) {
+          const cItem = { product: key.replace(qtyKey, ""), qty: val };
+          cartItems.push(cItem);
+        }
+      }
+      localStorage.setItem("items", JSON.stringify(cartItems));
+      // =============== End = > set qty to localStorage =====================
     },
     true
   );
