@@ -1241,6 +1241,7 @@ window.addEventListener("datalayerpush", async (event) => {
       "type",
       "landing_url",
       "hidden",
+      "items",
     ];
     await submitPayment(localStorageItems);
   }
