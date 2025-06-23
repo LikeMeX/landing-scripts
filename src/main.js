@@ -679,10 +679,16 @@ async function submitPayment(localStorageItems) {
   };
 
   if (courses.length) {
+    const _items = JSON.parse(dataFromLocalStorage["items"]);
     const cartItems = courses.map((product) => {
+      let qty = 1;
+      const _item = _items?.find((item) => item["product"] === product);
+      if (_item) {
+        qty = _item["qty"] ?? 1;
+      }
       return {
         product: product,
-        quantity: 1,
+        quantity: qty,
       };
     });
 
