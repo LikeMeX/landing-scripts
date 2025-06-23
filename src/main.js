@@ -263,7 +263,7 @@ function checkFieldsRequireFully(
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
       alert(
-        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration หรือ Hidden Field`
+        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Marketer Configuration หรือ Hidden Field`
       );
       return false;
     }
@@ -272,7 +272,7 @@ function checkFieldsRequireFully(
       !hiddenFieldConfig[hiddenField].length
     ) {
       alert(
-        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`
+        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Marketer Configuration`
       );
       return false;
     }
@@ -283,6 +283,12 @@ function checkFieldsRequireFully(
       .querySelectorAll(`input[name="${hiddenField}"]`)
       .forEach(function (element) {
         element.value = hiddenFieldConfig[hiddenField];
+      });
+    // add hidden for support forgot add many mkt setting hidden fields
+    document
+      .querySelectorAll(`input[name="hidden"]`)
+      .forEach(function (element) {
+        element.value = JSON.stringify(hiddenFieldConfig);
       });
   }
   return true;
@@ -330,11 +336,11 @@ function clearDataLocalStorage(fields) {
   });
 }
 
-function validatePhone(phone, feildName) {
+function validatePhone(phone, fieldName) {
   if (!phone) return undefined;
   phone = phone.replace(/(\s+|-|\+66|^66|^0)/g, "");
   document
-    .querySelectorAll(`input[name="${feildName}"]`)
+    .querySelectorAll(`input[name="${fieldName}"]`)
     .forEach(function (element) {
       element.value = phone;
     });
@@ -385,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function validateEmail(email, feildName) {
+function validateEmail(email, fieldName) {
   if (!email) return undefined;
   const regex =
     /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
@@ -395,7 +401,7 @@ function validateEmail(email, feildName) {
   }
 
   document
-    .querySelectorAll(`input[name="${feildName}"]`)
+    .querySelectorAll(`input[name="${fieldName}"]`)
     .forEach(function (element) {
       element.value = email;
     });
@@ -412,7 +418,7 @@ function correctName(name) {
 
 //==========================================================================================================================
 
-function listenerForm(feildNames) {
+function listenerForm(fieldNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
@@ -477,53 +483,56 @@ function listenerForm(feildNames) {
       delete formProps.package;
 
       // ===================== Start = > set localStorage =====================
-      for (const feildName of feildNames) {
-        if (feildName === "fullname") {
-          const name = correctName(formProps[feildName]);
-          localStorage.setItem(feildName, name);
-        } else if (feildName === "email") {
-          const email = validateEmail(formProps[feildName], feildName);
+      for (const fieldName of fieldNames) {
+        if (fieldName === "fullname") {
+          const name = correctName(formProps[fieldName]);
+          localStorage.setItem(fieldName, name);
+        } else if (fieldName === "email") {
+          const email = validateEmail(formProps[fieldName], fieldName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
-          localStorage.setItem(feildName, email);
-        } else if (feildName === "phone") {
-          const phone = validatePhone(formProps[feildName], feildName);
+          localStorage.setItem(fieldName, email);
+        } else if (fieldName === "phone") {
+          const phone = validatePhone(formProps[fieldName], fieldName);
           if (!phone) {
             alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
-          localStorage.setItem(feildName, `0${phone}`);
-        } else if (feildName === "course") {
+          localStorage.setItem(fieldName, `0${phone}`);
+        } else if (fieldName === "course") {
           if (
             formProps.orderbump &&
             formProps.orderbumpdetail &&
-            !feildNames.includes("orderbump", "orderbumpdetail")
+            !fieldNames.includes("orderbump", "orderbumpdetail")
           ) {
-            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+            formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
           }
-          localStorage.setItem(feildName, formProps[feildName]);
-        } else if (feildName === "params") {
+          localStorage.setItem(fieldName, formProps[fieldName]);
+        } else if (fieldName === "params") {
           const urlSearchParams = new URLSearchParams(window.location.search);
           const params = Object.fromEntries(urlSearchParams.entries());
-          localStorage.setItem(feildName, JSON.stringify(params));
+          localStorage.setItem(fieldName, JSON.stringify(params));
         } else {
-          localStorage.setItem(feildName, formProps[feildName] || "");
+          localStorage.setItem(fieldName, formProps[fieldName] || "");
         }
       }
       // ===================== End = > set localStorage =====================
 
       // =============== Add required fields for LINE landing ===============
       localStorage.setItem("landing_url", formProps["landing_url"] || "");
+
+      // =============== Hidden Field support for forget setting other fields ===============
+      localStorage.setItem("hidden", formProps["hidden"] || "");
     },
     true
   );
@@ -564,9 +573,16 @@ async function createPaymentWith(formData) {
 
   if (courses.length) {
     const cartItems = courses.map((product) => {
+      let qty = 1;
+      if (formData?.hasOwnProperty("qty_" + product)) {
+        const fieldVal = formData["qty_" + product];
+        if (Number.isInteger(fieldVal) && fieldVal > 0) {
+          qty = fieldVal;
+        }
+      }
       return {
         product: product,
-        quantity: 1,
+        quantity: qty,
       };
     });
     var data = {
