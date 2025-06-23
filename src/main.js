@@ -152,7 +152,17 @@ function init(arguments, callback) {
     '%cinput "includeJqueryAddressScript" start.!',
     "color: yellow; font-size: larger"
   );
-  //==================== End => add landing_url into all input landing_url elements ====================
+  //==================== End => add landing_url into all input landing_url elements
+  // ====================
+
+  //==================== Start => assign hidden field with mkt config ====================
+  // add hidden for support forgot add many mkt setting hidden fields
+  document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
+    element.value = JSON.stringify(arguments.hiddenFieldConfig);
+  });
+  //==================== End => assign hidden field with mkt config
+  // ====================
+
   if (callback) callback();
   return {
     userAgent,
@@ -283,12 +293,6 @@ function checkFieldsRequireFully(
       .querySelectorAll(`input[name="${hiddenField}"]`)
       .forEach(function (element) {
         element.value = hiddenFieldConfig[hiddenField];
-      });
-    // add hidden for support forgot add many mkt setting hidden fields
-    document
-      .querySelectorAll(`input[name="hidden"]`)
-      .forEach(function (element) {
-        element.value = JSON.stringify(hiddenFieldConfig);
       });
   }
   return true;
