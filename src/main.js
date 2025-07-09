@@ -368,8 +368,6 @@ async function createPaymentWith(formData) {
   const {ip} = await getIp();
   const affId = getAffiliateIdFromLocalStorage();
   const pxMixed = appendUserAgent(formData['fb_pixel']);
-  //const trackPurchaseUrl = `https://uat-pay.futureskill.live/thankyou/purchase`;
-
   const paymentSuccessRedirectUrl = new URL(formData['redirect_url']);
   const redirectQuery = {
     dealId: formData['deal_id'] || '',
