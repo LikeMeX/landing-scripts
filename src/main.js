@@ -568,7 +568,7 @@ async function submitPayment(localStorageItems) {
         ...(dataFromLocalStorage['orderbump'] === 'on' ? {} : {discountCode: dataFromLocalStorage['discountCode']}),
       };
 
-      const sendEmailLine = 'https://futureskill.app.n8n.cloud/webhook-test/uat/line/message-cart';
+      const sendEmailLine = 'https://futureskill.app.n8n.cloud/webhook/uat/line/email';
       await fetchPost(
         sendEmailLine,
         {
@@ -584,7 +584,7 @@ async function submitPayment(localStorageItems) {
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
-      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
+      const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
 
       setTimeout(function () {
         window.location.replace(urlLiff);
@@ -609,9 +609,9 @@ function getDataFromLocalStorage(localStorageItems) {
   return dataFromLocalStorage;
 }
 async function createCart(cart) {
-  var data = await fetchPost('https://uat-pay-api.futureskill.live/api/cart/create', cart, {
+  var data = await fetchPost('https://uat.futureskill.live/pay-api/cart/create', cart, {
     'Content-Type': 'application/json',
-    Authorization: 'Basic MjUwNjY2MDU4NTY5MDQ1ODg6RHp0VzVNWm5VUjBEY1pVbjBjWFc=',
+    Authorization: 'Basic MjUwNjY2MDU4NTY5MDQ1ODg6cE5DV3E0YnRxU09Bb05zM1VEaHM=',
   });
   return data;
 }
