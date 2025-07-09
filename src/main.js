@@ -149,7 +149,7 @@ function checkFieldsRequireFully(hiddenFieldConfig, defaultFieldsWith = [], land
   // ================ static fields =====================
   const different = ['search', 'address', 'sub_district', 'district', 'province', 'zipcode'];
   const defaultHiddenFields = ['px', 'sub_district', 'district', 'province', 'zipcode', 'deal_id', 'landing_url'];
-  let defaultFields = ['email', 'phone', 'search', 'address'];
+  let defaultFields = ['email', 'fullname', 'phone', 'search', 'address'];
   if (defaultFieldsWith.length) {
     defaultFields = defaultFieldsWith;
   } else {
@@ -202,8 +202,8 @@ function checkFieldsRequireFully(hiddenFieldConfig, defaultFieldsWith = [], land
 
 function blockSpam(formProps) {
   const dataSpam = {
-    email: 'charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com|wanvisa@gmail.com|lampong251731@gmail.com|sinmue89@gmail.com|payungpong.1986@gmail.com',
-    name: 'ชรัญเพ็ง|ชัณเพ็ง|ชรัณ เพ็งนวม|ชรัณ|เพ็งนวม|อนุพงษ์ พุงพงษ์',
+    email: 'charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com|wanvisa@gmail.com|lampong251731@gmail.com|sinmue89@gmail.com',
+    name: 'ชรัญเพ็ง|ชัณเพ็ง|ชรัณ เพ็งนวม|ชรัณ|เพ็งนวม',
   };
   if (RegExp(dataSpam.email).test(formProps.email) || RegExp(dataSpam.name).test(formProps.name)) return false;
   return true;
@@ -242,11 +242,9 @@ function validatePhone(phone, feildName) {
 function validateEmail(email, feildName) {
   if (!email) return undefined;
   const regex = /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
-
-  if (!regex.test(email) || !isEmailValid) {
+  if (!regex.test(email)) {
     return undefined;
   }
-
   document.querySelectorAll(`input[name="${feildName}"]`).forEach(function (element) {
     element.value = email;
   });
@@ -370,10 +368,10 @@ async function createPaymentWith(formData) {
   const {ip} = await getIp();
   const affId = getAffiliateIdFromLocalStorage();
   const pxMixed = appendUserAgent(formData['fb_pixel']);
-  const trackPurchaseUrl = `https://uat-pay.futureskill.live/thankyou/purchase`;
-  const paymentSuccessRedirectUrl = new URL(`${trackPurchaseUrl}`);
+  //const trackPurchaseUrl = `https://uat-pay.futureskill.live/thankyou/purchase`;
+
+  const paymentSuccessRedirectUrl = new URL(formData['redirect_url']);
   const redirectQuery = {
-    refUrl: new URL(formData['redirect_url']).toString(),
     dealId: formData['deal_id'] || '',
     email: formData['email'] || '',
     fullName: formData['fullname'] || '',
