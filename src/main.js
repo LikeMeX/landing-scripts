@@ -939,6 +939,16 @@ window.dataLayer = new Proxy(window.dataLayer || [], {
   },
 });
 
+(function overrideRedirectUrlInLocalStorage() {
+  const currentRedirect = localStorage.getItem('redirect_url');
+  const trackEventUrl = 'https://uat-pay.futureskill.live/thankyou/purchase';
+  if (currentRedirect && !currentRedirect.startsWith(trackEventUrl)) {
+    const encoded = encodeURIComponent(currentRedirect);
+    const newRedirectUrl = `${trackEventUrl}?refUrl=${encoded}`;
+    localStorage.setItem('redirect_url', newRedirectUrl);
+  }
+})();
+
 window.addEventListener('datalayerpush', async (event) => {
   if (event.detail?.event === 'FSCompleteRegistration' && getAffiliateIdFromLocalStorage() && isSubmitPayment === false) {
     const localStorageItems = ['email', 'phone', 'fullname', 'price', 'course', 'seller', 'campaign', 'deal_id', 'px', 'redirect_url', 'callback_url', 'discountCode', 'params', 'type', 'landing_url'];
