@@ -219,8 +219,8 @@ function genDealId() {
 
 function appendUserAgent(PXID) {
   const l = window.location;
-  const px = PXID + '|' + window.navigator.userAgent + '|' + l.protocol + '//' + l.host + l.pathname;
-  return px;
+  const customfieldLanding = {px: PXID, agent: window.navigator.userAgent, landing: l.protocol + '//' + l.host + l.pathname};
+  return JSON.stringify(customfieldLanding);
 }
 
 function clearDataLocalStorage(fields) {
