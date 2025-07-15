@@ -407,10 +407,8 @@ async function createPaymentWith(formData) {
   const {ip} = await getIp();
   const affId = getAffiliateIdFromLocalStorage();
   const pxMixed = appendUserAgent(formData['fb_pixel']);
-  const trackPurchaseUrl = `https://uat-pay.futureskill.live/thankyou/purchase`;
-  const paymentSuccessRedirectUrl = new URL(`${trackPurchaseUrl}`);
+  const paymentSuccessRedirectUrl = new URL(formData['redirect_url']);
   const redirectQuery = {
-    refUrl: new URL(formData['redirect_url']).toString(),
     dealId: formData['deal_id'] || '',
     email: formData['email'] || '',
     fullName: formData['fullname'] || '',
@@ -938,16 +936,6 @@ window.dataLayer = new Proxy(window.dataLayer || [], {
     return Reflect.set(obj, prop, value);
   },
 });
-
-(function overrideRedirectUrlInLocalStorage() {
-  const currentRedirect = localStorage.getItem('redirect_url');
-  const trackEventUrl = 'https://uat-pay.futureskill.live/thankyou/purchase';
-  if (currentRedirect && !currentRedirect.startsWith(trackEventUrl)) {
-    const encoded = encodeURIComponent(currentRedirect);
-    const newRedirectUrl = `${trackEventUrl}?refUrl=${encoded}`;
-    localStorage.setItem('redirect_url', newRedirectUrl);
-  }
-})();
 
 window.addEventListener('datalayerpush', async (event) => {
   if (event.detail?.event === 'FSCompleteRegistration' && getAffiliateIdFromLocalStorage() && isSubmitPayment === false) {
