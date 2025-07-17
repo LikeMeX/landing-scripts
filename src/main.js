@@ -310,8 +310,23 @@ async function validateEmailWithZeroBounce(email) {
     `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
   );
   const responseData = await response.json();
-  if (responseData && (responseData.status == "valid" || responseData.status == "catch-all")) {
-    return true;
+  if (responseData && responseData.status) {
+    switch (responseData.status) {
+      case "valid":
+        return true;
+      case "catch":
+        return true;
+      case "do_not_mail":
+        if (
+          responseData.sub_status === "role_based" ||
+          responseData.sub_status === "role_based_catch_all"
+        )
+          return true;
+        else return false;
+
+      default:
+        return false;
+    }
   }
   return false;
 }
