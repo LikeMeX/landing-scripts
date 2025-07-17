@@ -329,7 +329,6 @@ async function handleEmailInput(event) {
     isEmailValid = await validateEmailWithZeroBounce(email);
     console.log("🚀 ~ handleEmailInput ~ isEmailValid:", isEmailValid);
     return;
-    
   }
   isEmailValid = false;
   return;
@@ -337,10 +336,13 @@ async function handleEmailInput(event) {
 
 document.addEventListener("DOMContentLoaded", function () {
   console.log("validate email!!");
-  const emailInputs = document.querySelectorAll('input[name="email"]')[0];
-  emailInputs.addEventListener("blur", async (event) => {
-    await handleEmailInput(event);
-  });
+  const emailInputs = document.querySelectorAll('input[name="email"]');
+  for (let index = 0; index < emailInputs.length; index++) {
+    const emailInput = emailInputs[index];
+    emailInput.addEventListener("blur", async (event) => {
+      await handleEmailInput(event);
+    });
+  }
 });
 
 function validateEmail(email, feildName) {
