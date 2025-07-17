@@ -329,6 +329,7 @@ async function handleEmailInput(event) {
     isEmailValid = await validateEmailWithZeroBounce(email);
     console.log("🚀 ~ handleEmailInput ~ isEmailValid:", isEmailValid);
     return;
+    
   }
   isEmailValid = false;
   return;
