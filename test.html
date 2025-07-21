@@ -1,0 +1,70 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script>
+    async function validateEmailWithZeroBounce(email) {
+      if (!email) return false;
+      const api_key = "85b5a9d5f22746b4906a30a7a33fe7ff";
+      const response = await fetch(
+        `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
+      );
+      const responseData = await response.json();
+      if (responseData && responseData.status == "valid") {
+        return true;
+      }
+      return false;
+    }
+
+    let isEmailValid = true;
+
+    async function handleEmailInput(event) {
+      const email = event.target.value;
+      const regex = /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+      if (!email) {
+        isEmailValid = false;
+        return;
+      }
+      if (regex.test(email)) {
+        isEmailValid = await validateEmailWithZeroBounce(email);
+        console.log("🚀 ~ handleEmailInput ~ isEmailValid:", isEmailValid);
+        return;
+      }
+      isEmailValid = false;
+      return;
+    }
+
+    function validateEmail(email, feildName) {
+      if (!email) return undefined;
+      const regex = /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+
+      if (!regex.test(email) || !isEmailValid) {
+        return undefined;
+      }
+
+      document.querySelectorAll(`input[name="${feildName}"]`).forEach(function (element) {
+        element.value = email;
+      });
+      return email;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("validate email!!");
+      const emailInputs = document.querySelectorAll('input[name="email"]');
+      for (let index = 0; index < emailInputs.length; index++) {
+        const emailInput = emailInputs[index];
+        emailInput.addEventListener("blur", async (event) => {
+          await handleEmailInput(event);
+        });
+      }
+    });
+  </script>
+  <body>
+    <form action="">
+      <input type="email" name="email" id="email" />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
