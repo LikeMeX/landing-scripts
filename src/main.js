@@ -111,42 +111,42 @@ function init(arguments, callback) {
   //==================== End => add user cookie landing ====================
 
   //==================== Start => add deal_id into all input deal_id elements ====================
-  var dealIdElements = document.getElementsByName("deal_id");
-  if (dealIdElements.length) {
-    for (const dealIdElement of dealIdElements) {
-      dealIdElement.value = dealId;
-    }
-  } else {
-    console.log(
-      '%cinput "deal_id" not define!',
-      "color: red; font-size: larger"
-    );
-  }
+  // var dealIdElements = document.getElementsByName("deal_id");
+  // if (dealIdElements.length) {
+  //   for (const dealIdElement of dealIdElements) {
+  //     dealIdElement.value = dealId;
+  //   }
+  // } else {
+  //   console.log(
+  //     '%cinput "deal_id" not define!',
+  //     "color: red; font-size: larger"
+  //   );
+  // }
   //==================== End => add deal_id into all input deal_id elements ====================
 
   //==================== Start => add px into all input px elements ====================
-  var pxElements = document.getElementsByName("px");
-  if (pxElements.length) {
-    for (const pxElement of pxElements) {
-      pxElement.value = userAgent;
-    }
-  } else {
-    console.log('%cinput "px" not define!', "color: red; font-size: larger");
-  }
+  // var pxElements = document.getElementsByName("px");
+  // if (pxElements.length) {
+  //   for (const pxElement of pxElements) {
+  //     pxElement.value = userAgent;
+  //   }
+  // } else {
+  //   console.log('%cinput "px" not define!', "color: red; font-size: larger");
+  // }
   //==================== End => add px into all input px elements ====================
 
   //==================== Start => add landing_url into all input landing_url elements ====================
-  var landingUrls = document.getElementsByName("landing_url");
-  if (landingUrls.length) {
-    for (const landingUrl of landingUrls) {
-      landingUrl.value = window.location.href;
-    }
-  } else {
-    console.log(
-      '%cinput "landing_url" not define!',
-      "color: red; font-size: larger"
-    );
-  }
+  // var landingUrls = document.getElementsByName("landing_url");
+  // if (landingUrls.length) {
+  //   for (const landingUrl of landingUrls) {
+  //     landingUrl.value = window.location.href;
+  //   }
+  // } else {
+  //   console.log(
+  //     '%cinput "landing_url" not define!',
+  //     "color: red; font-size: larger"
+  //   );
+  // }
   includeJqueryAddressScript();
   console.log(
     '%cinput "includeJqueryAddressScript" start.!',
@@ -156,6 +156,10 @@ function init(arguments, callback) {
   // ====================
 
   // ==================== set localstorage hidden
+  const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig);
+  hiddenConfig["dealId"] = dealId;
+  hiddenConfig["px"] = userAgent;
+  hiddenConfig["landing_url"] = window.location.href;
   window.localStorage.setItem(
     "hidden",
     JSON.stringify(arguments?.hiddenFieldConfig)
@@ -438,7 +442,7 @@ function correctName(name) {
 
 //==========================================================================================================================
 
-function listenerForm(feildNames) {
+function listenerForm(fieldNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
@@ -503,47 +507,47 @@ function listenerForm(feildNames) {
       delete formProps.package;
 
       // ===================== Start = > set localStorage =====================
-      for (const feildName of feildNames) {
-        if (feildName === "fullname") {
-          const name = correctName(formProps[feildName]);
-          localStorage.setItem(feildName, name);
-        } else if (feildName === "email") {
-          const email = validateEmail(formProps[feildName], feildName);
+      for (const fieldName of fieldNames) {
+        if (fieldName === "fullname") {
+          const name = correctName(formProps[fieldName]);
+          localStorage.setItem(fieldName, name);
+        } else if (fieldName === "email") {
+          const email = validateEmail(formProps[fieldName], fieldName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
-          localStorage.setItem(feildName, email);
-        } else if (feildName === "phone") {
-          const phone = validatePhone(formProps[feildName], feildName);
+          localStorage.setItem(fieldName, email);
+        } else if (fieldName === "phone") {
+          const phone = validatePhone(formProps[fieldName], fieldName);
           if (!phone) {
             alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
-          localStorage.setItem(feildName, `0${phone}`);
-        } else if (feildName === "course") {
+          localStorage.setItem(fieldName, `0${phone}`);
+        } else if (fieldName === "course") {
           if (
             formProps.orderbump &&
             formProps.orderbumpdetail &&
-            !feildNames.includes("orderbump", "orderbumpdetail")
+            !fieldNames.includes("orderbump", "orderbumpdetail")
           ) {
-            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+            formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
           }
-          localStorage.setItem(feildName, formProps[feildName]);
-        } else if (feildName === "params") {
+          localStorage.setItem(fieldName, formProps[fieldName]);
+        } else if (fieldName === "params") {
           const urlSearchParams = new URLSearchParams(window.location.search);
           const params = Object.fromEntries(urlSearchParams.entries());
-          localStorage.setItem(feildName, JSON.stringify(params));
+          localStorage.setItem(fieldName, JSON.stringify(params));
         } else {
-          localStorage.setItem(feildName, formProps[feildName] || "");
+          localStorage.setItem(fieldName, formProps[fieldName] || "");
         }
       }
       // ===================== End = > set localStorage =====================
