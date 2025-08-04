@@ -186,15 +186,7 @@ function checkFieldsRequireFully(
     "province",
     "zipcode",
   ];
-  const defaultHiddenFields = [
-    "px",
-    "sub_district",
-    "district",
-    "province",
-    "zipcode",
-    "deal_id",
-    "landing_url",
-  ];
+  const defaultHiddenFields = ["hidden"];
   let defaultFields = ["email", "phone", "search", "address"];
   if (defaultFieldsWith.length) {
     defaultFields = defaultFieldsWith;
