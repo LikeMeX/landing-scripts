@@ -303,12 +303,15 @@ function checkFieldsRequireFully(
 function blockSpam(formProps) {
   const dataSpam = {
     email:
-      "charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com|wanvisa@gmail.com|lampong251731@gmail.com|sinmue89@gmail.com|payungpong.1986@gmail.com",
+      "charan.p|Zz656|Boss3870952199727@gmail.com|zz656633@gmail.com|gupgift22@hotmail.com|wanvisa@gmail.com|lampong251731@gmail.com|sinmue89@gmail.com|payungpong.1986@gmail.compayungpong.1986@gmail.com|rut.6868@gmail.com|rattana@e-merchant.co.th|rinlapatpee@gmail.com|peunghooto@gmail.com|artgo589898@gmail.com|tanawin.w@mcgroupnet.com|dissayanan_meesuk@hotmail.com|phathamma_@hotmail.com|367nspolice.go.th@gmail.com|chuleeporn1014@gmail.com|rutjanee@adhawk-inter.com|ekbumrung@gmail.com|kitthaboon@apexchemicals.co.th|aumpai.pom@apexchemicals.co.th|tusuthong485@gmail.xn--com-gklf09awa3b|whattime2626@gmail.com|nawarat.bl1105@gmail.com|hr@pfm4.com|marin@psh2002.com|pakapol00@gmail.com|gesonpaluck@gmail.com|eervee55@gmail.com|hyagnya@gmail.com|thaeymtang2@gmail.com|lukk05504@gmail.com|anoma88@yahoo.com|payungpong.1986@gmail.com|ruth_4456@gmail.com|ruth_6872@gmail.com|rut.6868@gmail.com",
     name: "ชรัญเพ็ง|ชัณเพ็ง|ชรัณ เพ็งนวม|ชรัณ|เพ็งนวม|อนุพงษ์ พุงพงษ์",
+    phone:
+      "964034620|814092001|624652674|873022602|844309467|994951423|994638932|625412781|928486701|966399963|825478299|906999692|847728820|859581891|615488022|651180830|933991555|988311163|632296154|819975804|825580649|885834135|919352730|962767502|623631528|819126019|66986560424|804176811|809664566",
   };
   if (
     RegExp(dataSpam.email).test(formProps.email) ||
-    RegExp(dataSpam.name).test(formProps.name)
+    RegExp(dataSpam.name).test(formProps.name) ||
+    RegExp(dataSpam.phone).test(formProps.phone)
   )
     return false;
   return true;
@@ -324,16 +327,12 @@ function genDealId() {
 
 function appendUserAgent(PXID) {
   const l = window.location;
-  const px =
-    PXID +
-    "|" +
-    window.navigator.userAgent +
-    "|" +
-    l.protocol +
-    "//" +
-    l.host +
-    l.pathname;
-  return px;
+  const customfieldLanding = {
+    px: PXID,
+    agent: window.navigator.userAgent,
+    landing: l.protocol + "//" + l.host + l.pathname,
+  };
+  return JSON.stringify(customfieldLanding);
 }
 
 function clearDataLocalStorage(fields) {
@@ -361,11 +360,23 @@ async function validateEmailWithZeroBounce(email) {
     `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
   );
   const responseData = await response.json();
-  if (
-    responseData &&
-    (responseData.status == "valid" || responseData.status == "catch-all")
-  ) {
-    return true;
+  if (responseData && responseData.status) {
+    switch (responseData.status) {
+      case "valid":
+        return true;
+      case "catch":
+        return true;
+      case "do_not_mail":
+        if (
+          responseData.sub_status === "role_based" ||
+          responseData.sub_status === "role_based_catch_all"
+        )
+          return true;
+        else return false;
+
+      default:
+        return false;
+    }
   }
   return false;
 }
@@ -391,10 +402,13 @@ async function handleEmailInput(event) {
 
 document.addEventListener("DOMContentLoaded", function () {
   console.log("validate email!!");
-  const emailInputs = document.querySelectorAll('input[name="email"]')[0];
-  emailInputs.addEventListener("blur", async (event) => {
-    await handleEmailInput(event);
-  });
+  const emailInputs = document.querySelectorAll('input[name="email"]');
+  for (let index = 0; index < emailInputs.length; index++) {
+    const emailInput = emailInputs[index];
+    emailInput.addEventListener("blur", async (event) => {
+      await handleEmailInput(event);
+    });
+  }
 });
 
 function validateEmail(email, fieldName) {
