@@ -69,12 +69,18 @@ function getAffiliateIdFromLocalStorage() {
 // ================================================================
 
 function init(arguments, callback) {
-  const isPass = checkFieldsRequireFully(
-    arguments.hiddenFieldConfig,
-    arguments.defaultFields,
-    arguments.landingPageType
-  );
-
+  const isPass =
+    arguments.landingPageType === "Class"
+      ? checkFieldsRequireV2(
+          arguments.hiddenFieldConfig,
+          arguments.defaultFields,
+          arguments.landingPageType
+        )
+      : checkFieldsRequireFully(
+          arguments.hiddenFieldConfig,
+          arguments.defaultFields,
+          arguments.landingPageType
+        );
   if (!arguments?.isStopAffiliate) {
     initAffiliateScript();
   } else {
@@ -125,14 +131,14 @@ function init(arguments, callback) {
   //==================== End => add deal_id into all input deal_id elements ====================
 
   //==================== Start => add px into all input px elements ====================
-  // var pxElements = document.getElementsByName("px");
-  // if (pxElements.length) {
-  //   for (const pxElement of pxElements) {
-  //     pxElement.value = userAgent;
-  //   }
-  // } else {
-  //   console.log('%cinput "px" not define!', "color: red; font-size: larger");
-  // }
+  var pxElements = document.getElementsByName("px");
+  if (pxElements.length) {
+    for (const pxElement of pxElements) {
+      pxElement.value = userAgent;
+    }
+  } else {
+    console.log('%cinput "px" not define!', "color: red; font-size: larger");
+  }
   //==================== End => add px into all input px elements ====================
 
   //==================== Start => add landing_url into all input landing_url elements ====================
@@ -152,12 +158,79 @@ function init(arguments, callback) {
     '%cinput "includeJqueryAddressScript" start.!',
     "color: yellow; font-size: larger"
   );
-  //==================== End => add landing_url into all input landing_url elements ====================
+  //==================== End => add landing_url into all input landing_url elements
+  // ====================
+
+  // ==================== set localstorage hidden
+  const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig, {
+    dealId: dealId,
+    px: userAgent,
+    landing_url: window.location.href,
+  });
+  window.localStorage.setItem("hidden", JSON.stringify(hiddenConfig));
+
   if (callback) callback();
   return {
     userAgent,
     dealId,
   };
+}
+
+function checkFieldsRequireV2(
+  hiddenConfigFields,
+  formFields = [],
+  landingPageType = "SGC"
+) {
+  // ================ Form static fields =====================
+  const addressFields = [
+    "search",
+    "address",
+    "sub_district",
+    "district",
+    "province",
+    "zipcode",
+  ];
+  const defaultFormFields = ["email", "phone", "search", "address", "hidden"];
+  // ================ end Form static fields =====================
+  // ==== Check Form field
+  let checkFormFields = formFields.length
+    ? [...defaultFormFields, ...formFields]
+    : [...defaultFormFields];
+  checkFormFields = checkFormFields.filter(
+    (item) => !addressFields.includes(item)
+  );
+  checkFormFields = [...new Set(checkFormFields)];
+  const notFoundFormFields = checkFormFields.filter((formField) => {
+    return !document.querySelectorAll(`input[name="${formField}"]`).length;
+  });
+  if (notFoundFormFields.length > 0) {
+    alert(`ไม่พบ Field ${notFoundFormFields.join(", ")} ในฟอร์ม`);
+    return false;
+  }
+  // ================ Hidden static fields =====================
+  const requiredHiddenFields = [
+    "ads_opt",
+    "content_MKT",
+    "sku",
+    "price",
+    "campaign_id",
+    "zipcode",
+  ];
+  // ================ end Hidden static fields =====================
+  //=== Check Hidden Fields
+  const notFoundHiddenFields = requiredHiddenFields.filter((field) => {
+    return !hiddenConfigFields[field]?.length;
+  });
+
+  if (notFoundHiddenFields.length > 0) {
+    alert(`ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`);
+    return false;
+  }
+
+  document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
+    element.value = JSON.stringify(hiddenConfigFields);
+  });
+  return true;
 }
 
 function checkFieldsRequireFully(
@@ -263,7 +336,7 @@ function checkFieldsRequireFully(
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
       alert(
-        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Maketer Configuration หรือ Hidden Field`
+        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Marketer Configuration หรือ Hidden Field`
       );
       return false;
     }
@@ -272,7 +345,7 @@ function checkFieldsRequireFully(
       !hiddenFieldConfig[hiddenField].length
     ) {
       alert(
-        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Maketer Configuration`
+        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Marketer Configuration`
       );
       return false;
     }
@@ -285,6 +358,10 @@ function checkFieldsRequireFully(
         element.value = hiddenFieldConfig[hiddenField];
       });
   }
+
+  document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
+    element.value = JSON.stringify(hiddenFieldConfig);
+  });
   return true;
 }
 
@@ -426,7 +503,7 @@ function correctName(name) {
 
 //==========================================================================================================================
 
-function listenerForm(fieldNames) {
+function listenerForm(feildNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
@@ -491,53 +568,57 @@ function listenerForm(fieldNames) {
       delete formProps.package;
 
       // ===================== Start = > set localStorage =====================
-      for (const fieldName of fieldNames) {
-        if (fieldName === "fullname") {
-          const name = correctName(formProps[fieldName]);
-          localStorage.setItem(fieldName, name);
-        } else if (fieldName === "email") {
-          const email = validateEmail(formProps[fieldName], fieldName);
+      for (const feildName of feildNames) {
+        if (feildName === "fullname") {
+          const name = correctName(formProps[feildName]);
+          localStorage.setItem(feildName, name);
+        } else if (feildName === "email") {
+          const email = validateEmail(formProps[feildName], feildName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(fieldNames);
+            clearDataLocalStorage(feildNames);
             return false;
           }
-          localStorage.setItem(fieldName, email);
-        } else if (fieldName === "phone") {
-          const phone = validatePhone(formProps[fieldName], fieldName);
+          localStorage.setItem(feildName, email);
+        } else if (feildName === "phone") {
+          const phone = validatePhone(formProps[feildName], feildName);
           if (!phone) {
             alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(fieldNames);
+            clearDataLocalStorage(feildNames);
             return false;
           }
-          localStorage.setItem(fieldName, `0${phone}`);
-        } else if (fieldName === "course") {
+          localStorage.setItem(feildName, `0${phone}`);
+        } else if (feildName === "course") {
           if (
             formProps.orderbump &&
             formProps.orderbumpdetail &&
-            !fieldNames.includes("orderbump", "orderbumpdetail")
+            !feildNames.includes("orderbump", "orderbumpdetail")
           ) {
-            formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
+            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
           }
-          localStorage.setItem(fieldName, formProps[fieldName]);
-        } else if (fieldName === "params") {
+          localStorage.setItem(feildName, formProps[feildName]);
+        } else if (feildName === "params") {
           const urlSearchParams = new URLSearchParams(window.location.search);
           const params = Object.fromEntries(urlSearchParams.entries());
-          localStorage.setItem(fieldName, JSON.stringify(params));
+          localStorage.setItem(feildName, JSON.stringify(params));
         } else {
-          localStorage.setItem(fieldName, formProps[fieldName] || "");
+          localStorage.setItem(feildName, formProps[feildName] || "");
         }
       }
       // ===================== End = > set localStorage =====================
 
       // =============== Add required fields for LINE landing ===============
       localStorage.setItem("landing_url", formProps["landing_url"] || "");
+
+      // =============== Hidden Field support for forget setting other fields ===============
+      const hiddenConfig = formProps["hidden"];
+      localStorage.setItem("hidden", hiddenConfig || "");
     },
     true
   );
