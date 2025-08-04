@@ -210,11 +210,12 @@ function checkFieldsRequireV2(
   // ================ Hidden static fields =====================
   const requiredHiddenFields = [
     "ads_opt",
-    "content_MKT",
+    "content_mkt",
     "sku",
     "price",
     "campaign_id",
     "zipcode",
+    "landing_type",
   ];
   // ================ end Hidden static fields =====================
   //=== Check Hidden Fields
