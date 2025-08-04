@@ -214,7 +214,6 @@ function checkFieldsRequireV2(
     "sku",
     "price",
     "campaign_id",
-    "zipcode",
     "landing_type",
   ];
   // ================ end Hidden static fields =====================
