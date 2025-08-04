@@ -111,17 +111,17 @@ function init(arguments, callback) {
   //==================== End => add user cookie landing ====================
 
   //==================== Start => add deal_id into all input deal_id elements ====================
-  // var dealIdElements = document.getElementsByName("deal_id");
-  // if (dealIdElements.length) {
-  //   for (const dealIdElement of dealIdElements) {
-  //     dealIdElement.value = dealId;
-  //   }
-  // } else {
-  //   console.log(
-  //     '%cinput "deal_id" not define!',
-  //     "color: red; font-size: larger"
-  //   );
-  // }
+  var dealIdElements = document.getElementsByName("deal_id");
+  if (dealIdElements.length) {
+    for (const dealIdElement of dealIdElements) {
+      dealIdElement.value = dealId;
+    }
+  } else {
+    console.log(
+      '%cinput "deal_id" not define!',
+      "color: red; font-size: larger"
+    );
+  }
   //==================== End => add deal_id into all input deal_id elements ====================
 
   //==================== Start => add px into all input px elements ====================
@@ -136,35 +136,23 @@ function init(arguments, callback) {
   //==================== End => add px into all input px elements ====================
 
   //==================== Start => add landing_url into all input landing_url elements ====================
-  // var landingUrls = document.getElementsByName("landing_url");
-  // if (landingUrls.length) {
-  //   for (const landingUrl of landingUrls) {
-  //     landingUrl.value = window.location.href;
-  //   }
-  // } else {
-  //   console.log(
-  //     '%cinput "landing_url" not define!',
-  //     "color: red; font-size: larger"
-  //   );
-  // }
+  var landingUrls = document.getElementsByName("landing_url");
+  if (landingUrls.length) {
+    for (const landingUrl of landingUrls) {
+      landingUrl.value = window.location.href;
+    }
+  } else {
+    console.log(
+      '%cinput "landing_url" not define!',
+      "color: red; font-size: larger"
+    );
+  }
   includeJqueryAddressScript();
   console.log(
     '%cinput "includeJqueryAddressScript" start.!',
     "color: yellow; font-size: larger"
   );
-  //==================== End => add landing_url into all input landing_url elements
-  // ====================
-
-  // ==================== set localstorage hidden
-  const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig);
-  hiddenConfig["dealId"] = dealId;
-  hiddenConfig["px"] = userAgent;
-  hiddenConfig["landing_url"] = window.location.href;
-  window.localStorage.setItem(
-    "hidden",
-    JSON.stringify(arguments?.hiddenFieldConfig)
-  );
-
+  //==================== End => add landing_url into all input landing_url elements ====================
   if (callback) callback();
   return {
     userAgent,
@@ -186,7 +174,15 @@ function checkFieldsRequireFully(
     "province",
     "zipcode",
   ];
-  const defaultHiddenFields = ["hidden"];
+  const defaultHiddenFields = [
+    "px",
+    "sub_district",
+    "district",
+    "province",
+    "zipcode",
+    "deal_id",
+    "landing_url",
+  ];
   let defaultFields = ["email", "phone", "search", "address"];
   if (defaultFieldsWith.length) {
     defaultFields = defaultFieldsWith;
@@ -289,10 +285,6 @@ function checkFieldsRequireFully(
         element.value = hiddenFieldConfig[hiddenField];
       });
   }
-
-  document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
-    element.value = JSON.stringify(hiddenFieldConfig);
-  });
   return true;
 }
 
@@ -546,10 +538,6 @@ function listenerForm(fieldNames) {
 
       // =============== Add required fields for LINE landing ===============
       localStorage.setItem("landing_url", formProps["landing_url"] || "");
-
-      // =============== Hidden Field support for forget setting other fields ===============
-      const hiddenConfig = formProps["hidden"];
-      localStorage.setItem("hidden", hiddenConfig || "");
     },
     true
   );
