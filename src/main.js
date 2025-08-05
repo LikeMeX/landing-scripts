@@ -101,6 +101,7 @@ function init(arguments, callback) {
   }
 
   if (!isPass) return isPass;
+  isSubmitPayment = false;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
@@ -768,7 +769,9 @@ const checkIsLineLanding = () => {
 
 async function submitPayment() {
   if (isSubmitPayment) {
-    return Promise.reject(new Error("already submit payment"));
+    const err = new Error("already submit payment");
+    console.error(err);
+    return Promise.reject(err);
   }
   isSubmitPayment = true;
   const fieldNames = [
@@ -1388,7 +1391,7 @@ window.addEventListener("datalayerpush", async (event) => {
       const landing_type = dataFromLocalStorage["landing_type"];
       if (
         landing_type &&
-        [("linkpay", "line")].includes(landing_type?.toLowerCase())
+        ["linkpay", "line"].includes(landing_type?.toLowerCase().trim())
       ) {
         await submitPayment();
       }
