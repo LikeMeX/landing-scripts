@@ -651,17 +651,17 @@ function listenerForm(fieldNames) {
           // Add courses
           const courses = [];
           if (hiddenConfig["course"]) {
-            courses.push(hiddenConfig["course"].split(","));
+            courses.push(...hiddenConfig["course"].split(","));
             if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
-              courses.push(hiddenConfig["orderbumpdetail"].split(","));
+              courses.push(...hiddenConfig["orderbumpdetail"].split(","));
             }
           } else if (hiddenConfig["sku"]) {
-            courses.push(hiddenConfig["sku"].split(","));
+            courses.push(...hiddenConfig["sku"].split(","));
             if (
               hiddenConfig["orderbump_choice"] &&
               hiddenConfig["orderbump_sku"]
             ) {
-              courses.push(hiddenConfig["orderbump_sku"].split(","));
+              courses.push(...hiddenConfig["orderbump_sku"].split(","));
             }
           }
           // clean courses data
