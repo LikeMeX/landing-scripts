@@ -195,6 +195,7 @@ function checkFieldsRequireV2(
   formFields = [],
   landingPageType = "SGC"
 ) {
+  console.log("Check Settings ver.2");
   // ================ Form static fields =====================
   const addressFields = [
     "search",
@@ -252,6 +253,7 @@ function checkFieldsRequireFully(
   defaultFieldsWith = [],
   landingPageType = "SGC"
 ) {
+  console.log("Check Settings ver.1");
   // ================ static fields =====================
   const different = [
     "search",
@@ -664,7 +666,7 @@ function listenerForm(fieldNames) {
               courses.push(...hiddenConfig["orderbump_sku"].split(","));
             }
           }
-          console.log({ courses });
+          console.log("courses: " + JSON.stringify(courses));
           // clean courses data
           const trimCourses = courses.map((item) => item?.trim());
           localStorage.setItem("course", trimCourses.join(","));
