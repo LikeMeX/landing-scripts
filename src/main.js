@@ -271,7 +271,7 @@ function checkFieldsRequireFully(
   const noHiddenFields = Object.keys(remainingFields).filter(
     (field) => !document.querySelectorAll(`input[name="${field}"]`).length
   );
-  if (field.length) {
+  if (noHiddenFields.length) {
     alert(
       `คุณไม่ได้ใส่ Field ${noHiddenFields.join(
         ", "
