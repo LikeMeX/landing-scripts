@@ -637,15 +637,17 @@ function listenerForm(fieldNames) {
         try {
           const hiddenProps = Object.entries(hiddenConfig);
           for (const [fieldName, val] of hiddenProps) {
-            if (fieldName === "course") {
+            if (fieldName === "course" || fieldName === "sku") {
               if (
-                formProps.orderbump &&
-                formProps.orderbumpdetail &&
+                formProps["orderbump"] &&
+                formProps["orderbumpdetail"] &&
                 !fieldNames.includes("orderbump", "orderbumpdetail")
               ) {
-                formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
+                formProps["course"] += `,${formProps[
+                  "orderbumpdetail"
+                ].trim()}`;
               }
-              localStorage.setItem(fieldName, formProps[fieldName]);
+              localStorage.setItem("course", formProps[fieldName]);
             } else if (fieldName === "params") {
               const urlSearchParams = new URLSearchParams(
                 window.location.search
@@ -933,6 +935,9 @@ async function createCart(cart) {
         "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
     }
   );
+
+  console.log({ cart });
+  console.log({ data });
   return data;
 }
 
