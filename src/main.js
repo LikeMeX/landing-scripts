@@ -767,6 +767,9 @@ const checkIsLineLanding = () => {
 };
 
 async function submitPayment() {
+  if (isSubmitPayment) {
+    return Promise.reject(new Error("already submit payment"));
+  }
   isSubmitPayment = true;
   const fieldNames = [
     "deal_id",
@@ -1378,17 +1381,18 @@ window.addEventListener("datalayerpush", async (event) => {
     event.detail?.event === "FSCompleteRegistration" &&
     isSubmitPayment === false
   ) {
-    const dataFromLocalStorage = getDataFromLocalStorage(["landing_type"]);
-    console.log(
-      `Listen FSCompleteRegistration with landing type: ${dataFromLocalStorage["landing_type"]}`
-    );
-  }
-  if (
-    event.detail?.event === "FSCompleteRegistration" &&
-    getAffiliateIdFromLocalStorage() &&
-    isSubmitPayment === false
-  ) {
-    await submitPayment();
+    if (getAffiliateIdFromLocalStorage()) {
+      await submitPayment();
+    } else {
+      const dataFromLocalStorage = getDataFromLocalStorage(["landing_type"]);
+      const landing_type = dataFromLocalStorage["landing_type"];
+      if (
+        landing_type &&
+        [("linkpay", "line")].includes(landing_type?.toLowerCase())
+      ) {
+        await submitPayment();
+      }
+    }
   }
 });
 // ========= END ADD EVENT LISTENER ON PUSH DATA LAYER =========
