@@ -774,7 +774,7 @@ async function submitPayment(localStorageItems) {
   const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
   const affId = getAffiliateIdFromLocalStorage();
   const hiddenConfig = getHiddenFromLocalStorage();
-  for (const [key, val] of hiddenConfig.entries()) {
+  for (const [key, val] of Object.entries(hiddenConfig)) {
     dataFromLocalStorage[key] = val;
     if (key === "ads_opt") {
       dataFromLocalStorage["mkter"] = val;
