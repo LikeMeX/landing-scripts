@@ -760,10 +760,14 @@ async function createPaymentWith(formData) {
 }
 
 const checkIsLineLanding = () => {
-  return hiddenFieldConfig?.email_cf_channel === "line";
+  return (
+    hiddenFieldConfig?.email_cf_channel === "line" ||
+    hiddenFieldConfig?.landing_type === "line"
+  );
 };
 
-async function submitPayment(localStorageItems) {
+async function submitPayment() {
+  isSubmitPayment = true;
   const fieldNames = [
     "deal_id",
     "email",
@@ -783,7 +787,6 @@ async function submitPayment(localStorageItems) {
     "callback_url",
     "landing_url",
   ];
-  isSubmitPayment = true;
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
   const affId = getAffiliateIdFromLocalStorage();
@@ -941,6 +944,7 @@ function getDataFromLocalStorage(localStorageItems) {
   }
   return dataFromLocalStorage;
 }
+
 async function createCart(cart) {
   var data = await fetchPost(
     "https://pay-api.futureskill.co/api/cart/create",
@@ -951,9 +955,6 @@ async function createCart(cart) {
         "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
     }
   );
-
-  console.log("cart: " + JSON.stringify(cart));
-  console.log("data: " + JSON.stringify(data));
   return data;
 }
 
@@ -1368,7 +1369,6 @@ window.dataLayer = new Proxy(window.dataLayer || [], {
       });
       window.dispatchEvent(pushEvent);
     }
-
     return Reflect.set(obj, prop, value);
   },
 });
@@ -1376,27 +1376,19 @@ window.dataLayer = new Proxy(window.dataLayer || [], {
 window.addEventListener("datalayerpush", async (event) => {
   if (
     event.detail?.event === "FSCompleteRegistration" &&
+    isSubmitPayment === false
+  ) {
+    const dataFromLocalStorage = getDataFromLocalStorage(["landing_type"]);
+    console.log(
+      `Listen FSCompleteRegistration with landing type: ${dataFromLocalStorage["landing_type"]}`
+    );
+  }
+  if (
+    event.detail?.event === "FSCompleteRegistration" &&
     getAffiliateIdFromLocalStorage() &&
     isSubmitPayment === false
   ) {
-    const localStorageItems = [
-      "email",
-      "phone",
-      "fullname",
-      "price",
-      "course",
-      "seller",
-      "campaign",
-      "deal_id",
-      "px",
-      "redirect_url",
-      "callback_url",
-      "discountCode",
-      "params",
-      "type",
-      "landing_url",
-    ];
-    await submitPayment(localStorageItems);
+    await submitPayment();
   }
 });
 // ========= END ADD EVENT LISTENER ON PUSH DATA LAYER =========
