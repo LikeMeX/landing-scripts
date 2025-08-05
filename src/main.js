@@ -635,7 +635,7 @@ function listenerForm(fieldNames) {
       const hiddenConfig = getHiddenFromLocalStorage();
       if (hiddenConfig) {
         try {
-          const hiddenProps = Object.fromEntries(hiddenConfig);
+          const hiddenProps = Object.entries(hiddenConfig);
           for (const [fieldName, val] of hiddenProps) {
             if (fieldName === "course") {
               if (
