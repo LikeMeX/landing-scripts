@@ -666,7 +666,7 @@ function listenerForm(fieldNames) {
           }
           console.log({ courses });
           // clean courses data
-          const trimCourses = courses.map((item) => item.trim());
+          const trimCourses = courses.map((item) => item?.trim());
           localStorage.setItem("course", trimCourses.join(","));
         } catch (e) {
           console.error(e);
