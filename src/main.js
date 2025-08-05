@@ -268,15 +268,10 @@ function checkFieldsRequireFully(
     );
     remainingFields = Object.fromEntries(filtered);
   }
-  // ================ get params URL =====================
-  const urlParams = new URLSearchParams(window.location.search);
-  const discountCode = urlParams.get("discountCode");
-  // ================ get params URL =====================
-  const noHiddenFields = Object.keys(hiddenFieldConfig).filter(
-    (hiddenField) =>
-      !document.querySelectorAll(`input[name="${hiddenField}"]`).length
+  const noHiddenFields = Object.keys(remainingFields).filter(
+    (field) => !document.querySelectorAll(`input[name="${field}"]`).length
   );
-  if (noHiddenFields.length) {
+  if (field.length) {
     alert(
       `คุณไม่ได้ใส่ Field ${noHiddenFields.join(
         ", "
@@ -284,6 +279,11 @@ function checkFieldsRequireFully(
     );
     return false;
   }
+  // ================ get params URL =====================
+  const urlParams = new URLSearchParams(window.location.search);
+  const discountCode = urlParams.get("discountCode");
+  // ================ get params URL =====================
+
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (hiddenField === "discountCode" && discountCode) {
       hiddenFieldConfig[hiddenField] = discountCode;
