@@ -711,6 +711,9 @@ async function submitPayment(localStorageItems) {
       "initial_sku"
     ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
 
+    const redirect = dataFromLocalStorage["redirect_url"]
+      ? `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`
+      : "";
     var data = {
       cartItems,
       userdata: {
@@ -734,7 +737,7 @@ async function submitPayment(localStorageItems) {
         customField2: dataFromLocalStorage["px"],
         customField3: dataFromLocalStorage["initial_sku"] || undefined,
       },
-      paymentSuccessRedirectUrl: `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`,
+      paymentSuccessRedirectUrl: redirect,
     };
 
     if (dataFromLocalStorage["type"] && dataFromLocalStorage["type"]?.length)
