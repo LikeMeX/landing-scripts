@@ -175,13 +175,14 @@ function init(arguments, callback) {
   //==================== End => add landing_url into all input landing_url elements
   // ====================
 
-  // ==================== set localstorage hidden
+  //==================== Start => set localstorage hidden ====================
   const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig, {
     dealId: dealId,
     px: userAgent,
     landing_url: window.location.href,
   });
   window.localStorage.setItem("hidden", JSON.stringify(hiddenConfig));
+  //==================== End =>  set localstorage hidden ====================
 
   if (callback) callback();
   return {
@@ -631,12 +632,10 @@ function listenerForm(fieldNames) {
       localStorage.setItem("landing_url", formProps["landing_url"] || "");
 
       // =============== Hidden Field support for forget setting other fields ===============
-      const hiddenConfig = formProps["hidden"];
-      localStorage.setItem("hidden", hiddenConfig || "");
+      const hiddenConfig = getHiddenFromLocalStorage();
       if (hiddenConfig) {
         try {
-          const hiddenConfigJson = JSON.parse(hiddenConfig);
-          const hiddenProps = Object.fromEntries(hiddenConfigJson);
+          const hiddenProps = Object.fromEntries(hiddenConfig);
           for (const [fieldName, val] of hiddenProps) {
             if (fieldName === "course") {
               if (
