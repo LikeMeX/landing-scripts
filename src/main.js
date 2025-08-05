@@ -635,8 +635,7 @@ function listenerForm(fieldNames) {
       const hiddenConfig = getHiddenFromLocalStorage();
       if (hiddenConfig) {
         try {
-          const hiddenProps = Object.entries(hiddenConfig);
-          for (const [fieldName, val] of hiddenProps) {
+          for (const [fieldName, val] of Object.entries(hiddenConfig)) {
             if (fieldName === "ads_opt") {
               localStorage.setItem("mkter", val);
             } else if (fieldName === "params") {
@@ -651,18 +650,18 @@ function listenerForm(fieldNames) {
           }
           // Add courses
           const courses = [];
-          if (hiddenProps["course"]) {
-            courses.push(hiddenProps["course"].split(","));
-            if (hiddenProps["orderbump"] && hiddenProps["orderbumpdetail"]) {
-              courses.push(hiddenProps["orderbumpdetail"].split(","));
+          if (hiddenConfig["course"]) {
+            courses.push(hiddenConfig["course"].split(","));
+            if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
+              courses.push(hiddenConfig["orderbumpdetail"].split(","));
             }
-          } else if (hiddenProps["sku"]) {
-            courses.push(hiddenProps["sku"].split(","));
+          } else if (hiddenConfig["sku"]) {
+            courses.push(hiddenConfig["sku"].split(","));
             if (
-              hiddenProps["orderbump_choice"] &&
-              hiddenProps["orderbump_sku"]
+              hiddenConfig["orderbump_choice"] &&
+              hiddenConfig["orderbump_sku"]
             ) {
-              courses.push(hiddenProps["orderbump_sku"].split(","));
+              courses.push(hiddenConfig["orderbump_sku"].split(","));
             }
           }
           // clean courses data
