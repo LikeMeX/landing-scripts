@@ -284,15 +284,6 @@ function checkFieldsRequireFully(
     return false;
   }
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
-    if (
-      remainingFields[hiddenField] !== undefined &&
-      !hiddenFieldConfig[hiddenField].length
-    ) {
-      alert(
-        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Marketer Configuration`
-      );
-      return false;
-    }
     if (hiddenField === "discountCode" && discountCode) {
       hiddenFieldConfig[hiddenField] = discountCode;
     }
