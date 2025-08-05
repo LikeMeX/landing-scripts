@@ -664,6 +664,7 @@ function listenerForm(fieldNames) {
               courses.push(...hiddenConfig["orderbump_sku"].split(","));
             }
           }
+          console.log({ courses });
           // clean courses data
           const trimCourses = courses.map((item) => item.trim());
           localStorage.setItem("course", trimCourses.join(","));
