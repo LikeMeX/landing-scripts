@@ -252,6 +252,7 @@ function checkFieldsRequireFully(
       "channel_name",
       "type",
       "landing_type",
+      "redirect_url",
       "callback_url",
       "category",
       "email_cf_channel",
