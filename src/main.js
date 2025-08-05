@@ -202,12 +202,15 @@ function checkFieldsRequireFully(
   if (landingPageType === "YR") {
     defaultFields = defaultFields.filter((item) => !different.includes(item));
   }
-  for (const defaultField of defaultFields) {
-    if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
-      alert(`คุณไม่ได้ใส่ Field ${defaultField}`);
-      return false;
-    }
+  const noFields = defaultFields.filter(
+    (defaultField) =>
+      !document.querySelectorAll(`input[name="${defaultField}"]`).length
+  );
+  if (noFields.length) {
+    alert(`คุณไม่ได้ใส่ Field ${noFields.join(", ")}`);
+    return false;
   }
+
   // check optional fields AND splite into remainingFields
   let remainingFields;
   if (landingPageType === "YR") {
@@ -268,13 +271,19 @@ function checkFieldsRequireFully(
   const urlParams = new URLSearchParams(window.location.search);
   const discountCode = urlParams.get("discountCode");
   // ================ get params URL =====================
+  const noHiddenFields = Object.keys(hiddenFieldConfig).filter(
+    (hiddenField) =>
+      !document.querySelectorAll(`input[name="${hiddenField}"]`).length
+  );
+  if (noHiddenFields.length) {
+    alert(
+      `คุณไม่ได้ใส่ Field ${noHiddenFields.join(
+        ", "
+      )} ใน Marketer Configuration หรือ Hidden Field`
+    );
+    return false;
+  }
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
-    if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
-      alert(
-        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Marketer Configuration หรือ Hidden Field`
-      );
-      return false;
-    }
     if (
       remainingFields[hiddenField] !== undefined &&
       !hiddenFieldConfig[hiddenField].length
