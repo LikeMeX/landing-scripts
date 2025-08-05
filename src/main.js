@@ -946,8 +946,8 @@ async function createCart(cart) {
     }
   );
 
-  console.log({ cart });
-  console.log({ data });
+  console.log("cart: " + JSON.stringify(cart));
+  console.log("data: " + JSON.stringify(data));
   return data;
 }
 
