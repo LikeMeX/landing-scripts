@@ -713,7 +713,7 @@ async function submitPayment(localStorageItems) {
 
     const redirect = dataFromLocalStorage["redirect_url"]
       ? `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`
-      : "";
+      : null;
     var data = {
       cartItems,
       userdata: {
