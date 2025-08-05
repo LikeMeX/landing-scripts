@@ -416,7 +416,7 @@ function appendUserAgent(PXID) {
 
 function clearDataLocalStorage(fields) {
   fields.map((field) => {
-    localStorage.setItem(field, "");
+    if (field != "hidden") localStorage.setItem(field, "");
   });
 }
 
