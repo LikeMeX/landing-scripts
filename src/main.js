@@ -787,19 +787,6 @@ async function submitPayment(localStorageItems) {
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
   const affId = getAffiliateIdFromLocalStorage();
-  const hiddenConfig = getHiddenFromLocalStorage();
-  for (const [key, val] of Object.entries(hiddenConfig)) {
-    dataFromLocalStorage[key] = val;
-    if (key === "ads_opt") {
-      dataFromLocalStorage["mkter"] = val;
-    } else if (key === "sku") {
-      dataFromLocalStorage["course"] = val;
-    } else if (key === "orderbump_sku") {
-      dataFromLocalStorage["orderbumpdetail"] = val;
-    } else if (key === "orderbump_choice") {
-      dataFromLocalStorage["orderbump"] = val;
-    }
-  }
   const redirectQuery = new URLSearchParams({
     dealId: dataFromLocalStorage["deal_id"],
     email: dataFromLocalStorage["email"],
@@ -878,52 +865,51 @@ async function submitPayment(localStorageItems) {
       url = `${url}?discountCode=${dataFromLocalStorage["discountCode"]}`;
 
     if (checkIsLineLanding()) {
-      const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
-      const cartParams = {
-        cartNo,
-        deal_id: dataFromLocalStorage["deal_id"],
-        email: dataFromLocalStorage["email"],
-        fullname: dataFromLocalStorage["fullname"],
-        phone: dataFromLocalStorage["phone"],
-        course: dataFromLocalStorage["course"],
-        price: dataFromLocalStorage["price"],
-        title: dataFromLocalStorage["campaign"],
-        orderbump: dataFromLocalStorage["orderbump"],
-        orderbumpdetail: dataFromLocalStorage["orderbumpdetail"],
-        bonusdetail: dataFromLocalStorage["bonusdetail"],
-        ...(dataFromLocalStorage["orderbump"] === "on"
-          ? {}
-          : { discountCode: dataFromLocalStorage["discountCode"] }),
-      };
-
-      const sendEmailLine =
-        "https://futureskill.app.n8n.cloud/webhook/line/email";
-      await fetchPost(
-        sendEmailLine,
-        {
-          ...cartParams,
-          dealId: cartParams.deal_id,
-          name: cartParams.fullname,
-          landingUrl: dataFromLocalStorage["landing_url"],
-        },
-        {
-          "content-type": "application/json",
-        }
-      );
-
-      const redirectQuery = new URLSearchParams(cartParams).toString();
-
-      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
-
-      setTimeout(function () {
-        window.location.replace(urlLiff);
-      }, 1500);
-    } else {
+      await LineRedirect(cartNo);
+    } else if (url) {
       setTimeout(function () {
         window.location.replace(url);
       }, 1500);
     }
   }
+}
+
+async function LineRedirect(cartNo) {
+  const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
+  const cartParams = {
+    cartNo,
+    deal_id: dataFromLocalStorage["deal_id"],
+    email: dataFromLocalStorage["email"],
+    fullname: dataFromLocalStorage["fullname"],
+    phone: dataFromLocalStorage["phone"],
+    course: dataFromLocalStorage["course"],
+    price: dataFromLocalStorage["price"],
+    title: dataFromLocalStorage["campaign"],
+    orderbump: dataFromLocalStorage["orderbump"],
+    orderbumpdetail: dataFromLocalStorage["orderbumpdetail"],
+    bonusdetail: dataFromLocalStorage["bonusdetail"],
+    ...(dataFromLocalStorage["orderbump"] === "on"
+      ? {}
+      : { discountCode: dataFromLocalStorage["discountCode"] }),
+  };
+  const sendEmailLine = "https://futureskill.app.n8n.cloud/webhook/line/email";
+  await fetchPost(
+    sendEmailLine,
+    {
+      ...cartParams,
+      dealId: cartParams.deal_id,
+      name: cartParams.fullname,
+      landingUrl: dataFromLocalStorage["landing_url"],
+    },
+    {
+      "content-type": "application/json",
+    }
+  );
+  const redirectQuery = new URLSearchParams(cartParams).toString();
+  const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
+  setTimeout(function () {
+    window.location.replace(urlLiff);
+  }, 1500);
 }
 
 function getDataFromLocalStorage(localStorageItems) {
@@ -936,6 +922,21 @@ function getDataFromLocalStorage(localStorageItems) {
     } else {
       dataFromLocalStorage[localStorageItem] =
         localStorage.getItem(localStorageItem);
+    }
+  }
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (hiddenConfig) {
+    for (const [key, val] of Object.entries(hiddenConfig)) {
+      dataFromLocalStorage[key] = val;
+      if (key === "ads_opt") {
+        dataFromLocalStorage["mkter"] = val;
+      } else if (key === "sku") {
+        dataFromLocalStorage["course"] = val;
+      } else if (key === "orderbump_sku") {
+        dataFromLocalStorage["orderbumpdetail"] = val;
+      } else if (key === "orderbump_choice") {
+        dataFromLocalStorage["orderbump"] = val;
+      }
     }
   }
   return dataFromLocalStorage;
