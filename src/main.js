@@ -66,16 +66,15 @@ function getAffiliateIdFromLocalStorage() {
 
 function getHiddenFromLocalStorage() {
   const hiddenString = window.localStorage.getItem("hidden");
+  let hiddenObj = {};
   if (hiddenString) {
     try {
-      const hiddenObj = JSON.parse(hiddenString);
-      return hiddenObj;
+      hiddenObj = JSON.parse(hiddenString);
     } catch (e) {
       console.error(e);
-      return {};
     }
   }
-  return {};
+  return hiddenObj;
 }
 
 // ================================================================
@@ -568,6 +567,7 @@ function listenerForm(fieldNames) {
   document.addEventListener(
     "submit",
     (event) => {
+      console.log("Action: Submit");
       const formData = new FormData(event.target);
       const formProps = Object.fromEntries(formData);
       const block = blockSpam(formProps);
@@ -637,17 +637,8 @@ function listenerForm(fieldNames) {
         try {
           const hiddenProps = Object.entries(hiddenConfig);
           for (const [fieldName, val] of hiddenProps) {
-            if (fieldName === "course" || fieldName === "sku") {
-              if (
-                formProps["orderbump"] &&
-                formProps["orderbumpdetail"] &&
-                !fieldNames.includes("orderbump", "orderbumpdetail")
-              ) {
-                formProps["course"] += `,${formProps[
-                  "orderbumpdetail"
-                ].trim()}`;
-              }
-              localStorage.setItem("course", formProps[fieldName]);
+            if (fieldName === "ads_opt") {
+              localStorage.setItem("mkter", val);
             } else if (fieldName === "params") {
               const urlSearchParams = new URLSearchParams(
                 window.location.search
@@ -658,6 +649,25 @@ function listenerForm(fieldNames) {
               localStorage.setItem(fieldName, formProps[fieldName] || "");
             }
           }
+          // Add courses
+          const courses = [];
+          if (hiddenProps["course"]) {
+            courses.push(hiddenProps["course"].split(","));
+            if (hiddenProps["orderbump"] && hiddenProps["orderbumpdetail"]) {
+              courses.push(hiddenProps["orderbumpdetail"].split(","));
+            }
+          } else if (hiddenProps["sku"]) {
+            courses.push(hiddenProps["sku"].split(","));
+            if (
+              hiddenProps["orderbump_choice"] &&
+              hiddenProps["orderbump_sku"]
+            ) {
+              courses.push(hiddenProps["orderbump_sku"].split(","));
+            }
+          }
+          // clean courses data
+          const trimCourses = courses.map((item) => item.trim());
+          localStorage.setItem("course", trimCourses.join(","));
         } catch (e) {
           console.error(e);
         }
