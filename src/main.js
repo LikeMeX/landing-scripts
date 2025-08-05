@@ -64,6 +64,20 @@ function getAffiliateIdFromLocalStorage() {
   return window.localStorage.getItem(AFFILIATE_KEY);
 }
 
+function getHiddenFromLocalStorage() {
+  const hiddenString = window.localStorage.getItem("hidden");
+  if (hiddenString) {
+    try {
+      const hiddenObj = JSON.parse(hiddenString);
+      return hiddenObj;
+    } catch (e) {
+      console.error(e);
+      return {};
+    }
+  }
+  return {};
+}
+
 // ================================================================
 // =================== end affiliate script =======================
 // ================================================================
@@ -503,7 +517,7 @@ function correctName(name) {
 
 //==========================================================================================================================
 
-function listenerForm(feildNames) {
+function listenerForm(fieldNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
@@ -568,47 +582,47 @@ function listenerForm(feildNames) {
       delete formProps.package;
 
       // ===================== Start = > set localStorage =====================
-      for (const feildName of feildNames) {
-        if (feildName === "fullname") {
-          const name = correctName(formProps[feildName]);
-          localStorage.setItem(feildName, name);
-        } else if (feildName === "email") {
-          const email = validateEmail(formProps[feildName], feildName);
+      for (const fieldName of fieldNames) {
+        if (fieldName === "fullname") {
+          const name = correctName(formProps[fieldName]);
+          localStorage.setItem(fieldName, name);
+        } else if (fieldName === "email") {
+          const email = validateEmail(formProps[fieldName], fieldName);
           if (!email) {
             alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
-          localStorage.setItem(feildName, email);
-        } else if (feildName === "phone") {
-          const phone = validatePhone(formProps[feildName], feildName);
+          localStorage.setItem(fieldName, email);
+        } else if (fieldName === "phone") {
+          const phone = validatePhone(formProps[fieldName], fieldName);
           if (!phone) {
             alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
-          localStorage.setItem(feildName, `0${phone}`);
-        } else if (feildName === "course") {
+          localStorage.setItem(fieldName, `0${phone}`);
+        } else if (fieldName === "course") {
           if (
             formProps.orderbump &&
             formProps.orderbumpdetail &&
-            !feildNames.includes("orderbump", "orderbumpdetail")
+            !fieldNames.includes("orderbump", "orderbumpdetail")
           ) {
-            formProps[feildName] += `,${formProps.orderbumpdetail.trim()}`;
+            formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
           }
-          localStorage.setItem(feildName, formProps[feildName]);
-        } else if (feildName === "params") {
+          localStorage.setItem(fieldName, formProps[fieldName]);
+        } else if (fieldName === "params") {
           const urlSearchParams = new URLSearchParams(window.location.search);
           const params = Object.fromEntries(urlSearchParams.entries());
-          localStorage.setItem(feildName, JSON.stringify(params));
+          localStorage.setItem(fieldName, JSON.stringify(params));
         } else {
-          localStorage.setItem(feildName, formProps[feildName] || "");
+          localStorage.setItem(fieldName, formProps[fieldName] || "");
         }
       }
       // ===================== End = > set localStorage =====================
@@ -619,6 +633,34 @@ function listenerForm(feildNames) {
       // =============== Hidden Field support for forget setting other fields ===============
       const hiddenConfig = formProps["hidden"];
       localStorage.setItem("hidden", hiddenConfig || "");
+      if (hiddenConfig) {
+        try {
+          const hiddenConfigJson = JSON.parse(hiddenConfig);
+          const hiddenProps = Object.fromEntries(hiddenConfigJson);
+          for (const [fieldName, val] of hiddenProps) {
+            if (fieldName === "course") {
+              if (
+                formProps.orderbump &&
+                formProps.orderbumpdetail &&
+                !fieldNames.includes("orderbump", "orderbumpdetail")
+              ) {
+                formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
+              }
+              localStorage.setItem(fieldName, formProps[fieldName]);
+            } else if (fieldName === "params") {
+              const urlSearchParams = new URLSearchParams(
+                window.location.search
+              );
+              const params = Object.fromEntries(urlSearchParams.entries());
+              localStorage.setItem(fieldName, JSON.stringify(params));
+            } else {
+              localStorage.setItem(fieldName, formProps[fieldName] || "");
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
     },
     true
   );
@@ -664,7 +706,7 @@ async function createPaymentWith(formData) {
         quantity: 1,
       };
     });
-    var data = {
+    const data = {
       cartItems,
       userdata: {
         email: formData["email"],
@@ -709,10 +751,42 @@ const checkIsLineLanding = () => {
 };
 
 async function submitPayment(localStorageItems) {
+  const fieldNames = [
+    "deal_id",
+    "email",
+    "fullname",
+    "phone",
+    "price",
+    "discountCode",
+    "course",
+    "orderbump",
+    "orderbumpdetail",
+    "type",
+    "campaign",
+    "mkter",
+    "params",
+    "px",
+    "redirect_url",
+    "callback_url",
+    "landing_url",
+  ];
   isSubmitPayment = true;
   const { ip } = await getIp();
-  const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
+  const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
   const affId = getAffiliateIdFromLocalStorage();
+  const hiddenConfig = getHiddenFromLocalStorage();
+  for (const [key, val] of hiddenConfig.entries()) {
+    dataFromLocalStorage[key] = val;
+    if (key === "ads_opt") {
+      dataFromLocalStorage["mkter"] = val;
+    } else if (key === "sku") {
+      dataFromLocalStorage["course"] = val;
+    } else if (key === "orderbump_sku") {
+      dataFromLocalStorage["orderbumpdetail"] = val;
+    } else if (key === "orderbump_choice") {
+      dataFromLocalStorage["orderbump"] = val;
+    }
+  }
   const redirectQuery = new URLSearchParams({
     dealId: dataFromLocalStorage["deal_id"],
     email: dataFromLocalStorage["email"],
@@ -728,7 +802,7 @@ async function submitPayment(localStorageItems) {
 
   if (dataFromLocalStorage["orderbump"] === "on") {
     const orderbumpCourse = dataFromLocalStorage["orderbumpdetail"].split(",");
-    if (!courses.includes(...orderbumpCourse)) {
+    if (orderbumpCourse.length > 0 && !courses.includes(...orderbumpCourse)) {
       courses.push(...orderbumpCourse);
     }
   }
@@ -751,7 +825,7 @@ async function submitPayment(localStorageItems) {
       "initial_sku"
     ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
 
-    var data = {
+    const data = {
       cartItems,
       userdata: {
         email: dataFromLocalStorage["email"],
