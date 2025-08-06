@@ -279,11 +279,7 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
     alert(`ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`);
     return false;
   }
-  const errorProducts = validateProductItems(productSetting, [
-    "sku",
-    "price",
-    "discountCode",
-  ]);
+  const errorProducts = validateProductItems(productSetting);
   if (errorProducts.length > 0) {
     alert("Incorrect Product Settings : " + errorProducts.join(", "));
     return false;
@@ -292,10 +288,7 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
   // ================ Check Orderbump Config if found =====================
   const orderbumpSetting = hiddenConfigFields["orderbump"];
   if (orderbumpSetting) {
-    const errorOrderbump = validateProductItems(orderbumpSetting, [
-      "sku",
-      "price",
-    ]);
+    const errorOrderbump = validateProductItems(orderbumpSetting);
     if (errorOrderbump.length > 0) {
       alert("Incorrect Orderbump Settings : " + errorOrderbump.join(", "));
       return false;
@@ -305,7 +298,8 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
   return true;
 }
 
-function validateProductItems(data, fields = ["sku", "price"]) {
+function validateProductItems(data) {
+  const fields = ["sku", "price"];
   const items = Object.keys(data);
   if (items.length === 0) {
     return ["No data"];
