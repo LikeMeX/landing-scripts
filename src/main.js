@@ -58,6 +58,7 @@ function initAffiliateScript() {
         element.value = AFFILIATE_CHANNEL;
       });
   }
+  return aff;
 }
 
 function getAffiliateIdFromLocalStorage() {
@@ -81,27 +82,39 @@ function getHiddenFromLocalStorage() {
 // =================== end affiliate script =======================
 // ================================================================
 
+/** 
+    arguments 
+    - PXID : string
+    - hiddenFieldConfig : object
+    - landingPageType : string
+    - clearDataFields : string[]
+    - defaultFields : string[]
+    - isStopAffiliate: boolean
+    - version: number
+**/
 function init(arguments, callback) {
+  isSubmitPayment = false;
+  const version = arguments?.version || 1;
   const isPass =
-    arguments.landingPageType === "Class"
+    version === 2
       ? checkFieldsRequireV2(
-          arguments.hiddenFieldConfig,
-          arguments.defaultFields,
+          arguments?.hiddenFieldConfig,
+          arguments?.defaultFields,
           arguments.landingPageType
         )
       : checkFieldsRequireFully(
-          arguments.hiddenFieldConfig,
-          arguments.defaultFields,
+          arguments?.hiddenFieldConfig,
+          arguments?.defaultFields,
           arguments.landingPageType
         );
+
+  let aff = "";
   if (!arguments?.isStopAffiliate) {
-    initAffiliateScript();
+    aff = initAffiliateScript();
   } else {
     window.localStorage.removeItem(AFFILIATE_KEY);
   }
-
   if (!isPass) return isPass;
-  isSubmitPayment = false;
   const userAgent = appendUserAgent(arguments.PXID);
   const dealId = genDealId();
   clearDataLocalStorage(arguments.clearDataFields);
@@ -124,7 +137,10 @@ function init(arguments, callback) {
       element.value = user.email || "";
     });
     document.getElementsByName("fullname").forEach((element) => {
-      const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+      const fullName = [
+        (user.firstName || "").trim(),
+        (user.lastName || "").trim(),
+      ].join(" ");
       element.value = fullName;
     });
   }
@@ -180,22 +196,22 @@ function init(arguments, callback) {
     dealId: dealId,
     px: userAgent,
     landing_url: window.location.href,
+    aff: aff,
   });
-  window.localStorage.setItem("hidden", JSON.stringify(hiddenConfig));
+  const hiddenConfigStr = JSON.stringify(hiddenConfig);
+  window.localStorage.setItem("hidden", hiddenConfigStr);
+  document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
+    element.value = hiddenConfigStr;
+  });
   //==================== End =>  set localstorage hidden ====================
-
-  if (callback) callback();
+  if (callback && typeof callback === "function") callback();
   return {
     userAgent,
     dealId,
   };
 }
 
-function checkFieldsRequireV2(
-  hiddenConfigFields,
-  formFields = [],
-  landingPageType = "SGC"
-) {
+function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
   console.log("Check Settings ver.2");
   // ================ Form static fields =====================
   const addressFields = [
@@ -206,9 +222,20 @@ function checkFieldsRequireV2(
     "province",
     "zipcode",
   ];
-  const defaultFormFields = ["email", "phone", "search", "address", "hidden"];
+  const defaultFormFields = [
+    "email",
+    "phone",
+    "search",
+    "address",
+    "sku",
+    "price",
+    "discountCode",
+    "orderbump_sku",
+    "orderbump_price",
+    "hidden",
+  ];
   // ================ end Form static fields =====================
-  // ==== Check Form field
+  // ================ Check Form field
   let checkFormFields = formFields.length
     ? [...defaultFormFields, ...formFields]
     : [...defaultFormFields];
@@ -223,30 +250,82 @@ function checkFieldsRequireV2(
     alert(`ไม่พบ Field ${notFoundFormFields.join(", ")} ในฟอร์ม`);
     return false;
   }
-  // ================ Hidden static fields =====================
-  const requiredHiddenFields = [
+  // ================ End Check Form field
+  // ================ Hidden Config static fields =====================
+  const requiredConfigFields = [
+    "campaign_id",
     "ads_opt",
     "content_mkt",
-    "sku",
-    "price",
-    "campaign_id",
     "landing_type",
+    "product",
   ];
-  // ================ end Hidden static fields =====================
-  //=== Check Hidden Fields
-  const notFoundHiddenFields = requiredHiddenFields.filter((field) => {
-    return !hiddenConfigFields[field]?.length;
+  // ================ end Hidden Config static fields =====================
+  //================ Check Hidden Config Fields
+  const notFoundHiddenFields = requiredConfigFields.filter((field) => {
+    const val = hiddenConfigFields[field];
+    if (typeof val === "object") {
+      return Array.isArray(val) ? !val.length : false;
+    }
+    return !val?.toString().length;
   });
-
   if (notFoundHiddenFields.length > 0) {
     alert(`ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`);
     return false;
   }
-
-  document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
-    element.value = JSON.stringify(hiddenConfigFields);
-  });
+  // ================ End Check Hidden Config Fields
+  // ================ Check Product Config =====================
+  const productSetting = hiddenConfigFields["product"];
+  if (!productSetting) {
+    alert(`ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`);
+    return false;
+  }
+  const errorProducts = validateProductItems(productSetting, [
+    "sku",
+    "price",
+    "discountCode",
+  ]);
+  if (errorProducts.length > 0) {
+    alert("Incorrect Product Settings : " + errorProducts.join(", "));
+    return false;
+  }
+  // ================ End Check Product Config =====================
+  // ================ Check Orderbump Config if found =====================
+  const orderbumpSetting = hiddenConfigFields["orderbump"];
+  if (orderbumpSetting) {
+    const errorOrderbump = validateProductItems(orderbumpSetting, [
+      "sku",
+      "price",
+    ]);
+    if (errorOrderbump.length > 0) {
+      alert("Incorrect Orderbump Settings : " + errorOrderbump.join(", "));
+      return false;
+    }
+  }
+  // ================ End Check Orderbump Config if found =====================
   return true;
+}
+
+function validateProductItems(data, fields = ["sku", "price"]) {
+  const items = Object.keys(data);
+  if (items.length === 0) {
+    return ["No data"];
+  }
+  const errProps = items.filter((key) => {
+    const prop = data[key];
+    const validType = typeof prop === "object" && !Array.isArray(prop);
+    if (!validType) return false;
+    const incorrectFields = fields.filter((name) => {
+      const val = prop[name];
+      if (name === "price") {
+        return !+val;
+      } else if (typeof val !== "string") {
+        return false;
+      }
+      return !val?.toString().length;
+    });
+    return !!incorrectFields.length;
+  });
+  return errProps;
 }
 
 function checkFieldsRequireFully(
@@ -368,18 +447,6 @@ function checkFieldsRequireFully(
     }
     if (hiddenField === "discountCode" && discountCode) {
       hiddenFieldConfig[hiddenField] = discountCode;
-    }
-    if (hiddenField === "course" || hiddenField === "sku") {
-      document
-        .querySelectorAll(`input[name="course"]`)
-        .forEach(function (element) {
-          element.value = hiddenFieldConfig[hiddenField];
-        });
-      document
-        .querySelectorAll(`input[name="sku"]`)
-        .forEach(function (element) {
-          element.value = hiddenFieldConfig[hiddenField];
-        });
     } else {
       document
         .querySelectorAll(`input[name="${hiddenField}"]`)
@@ -431,15 +498,15 @@ function appendUserAgent(PXID) {
 
 function clearDataLocalStorage(fields) {
   fields.map((field) => {
-    if (field != "hidden") localStorage.setItem(field, "");
+    localStorage.setItem(field, "");
   });
 }
 
-function validatePhone(phone, feildName) {
+function validatePhone(phone, fieldName) {
   if (!phone) return undefined;
   phone = phone.replace(/(\s+|-|\+66|^66|^0)/g, "");
   document
-    .querySelectorAll(`input[name="${feildName}"]`)
+    .querySelectorAll(`input[name="${fieldName}"]`)
     .forEach(function (element) {
       element.value = phone;
     });
@@ -505,7 +572,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-function validateEmail(email, feildName) {
+function validateEmail(email, fieldName) {
   if (!email) return undefined;
   const regex =
     /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
@@ -515,7 +582,7 @@ function validateEmail(email, feildName) {
   }
 
   document
-    .querySelectorAll(`input[name="${feildName}"]`)
+    .querySelectorAll(`input[name="${fieldName}"]`)
     .forEach(function (element) {
       element.value = email;
     });
@@ -533,186 +600,224 @@ function correctName(name) {
 //==========================================================================================================================
 
 function listenerForm(fieldNames) {
+  //=========== set default package into package select option ============
+  initPackage();
+  initSKU();
+  document.body.addEventListener("change", (event) => {
+    if (event.target.name === "package") {
+      onPackageChange(event);
+    } else if (event.target.name === "sku_select") {
+      onSKUSelectChange(event);
+    }
+  });
+  document.addEventListener(
+    "submit",
+    (event) => onSubmitForm(fieldNames, event),
+    true
+  );
+}
+
+function initPackage() {
+  const defaultPackage = document.querySelector('input[name="defaultPackage"]');
+  if (!defaultPackage) {
+    return;
+  }
   const PACKAGE_INDEX = {
-    sku: 0,
+    course: 0,
     price: 1,
     discount: 2,
   };
+  const _defaultPackage = defaultPackage.value.split("/");
+  document
+    .querySelectorAll('select[name="package"]')
+    .forEach(function (element) {
+      element.value = defaultPackage.value;
+    });
+  document
+    .querySelectorAll('input[name="discountCode"]')
+    .forEach(function (element) {
+      element.value = _defaultPackage[PACKAGE_INDEX.discount] || "";
+    });
+  document.querySelectorAll('input[name="course"]').forEach(function (element) {
+    element.value = _defaultPackage[PACKAGE_INDEX.course];
+  });
+  document.querySelectorAll('input[name="price"]').forEach(function (element) {
+    element.value = _defaultPackage[PACKAGE_INDEX.price];
+  });
   //=========== set default package into package select option ============
-  const defaultPackage = document.querySelector('input[name="defaultPackage"]');
-  if (defaultPackage) {
-    const _defaultPackage = defaultPackage.value.split("/");
-    document
-      .querySelectorAll('select[name="package"]')
-      .forEach(function (element) {
-        element.value = defaultPackage.value;
-      });
-    document
-      .querySelectorAll('input[name="discountCode"]')
-      .forEach(function (element) {
-        element.value = _defaultPackage[PACKAGE_INDEX.discount] || "";
-      });
-    document
-      .querySelectorAll('input[name="course"]')
-      .forEach(function (element) {
-        element.value = _defaultPackage[PACKAGE_INDEX.sku];
-      });
-    document.querySelectorAll('input[name="sku"]').forEach(function (element) {
-      element.value = _defaultPackage[PACKAGE_INDEX.sku];
+}
+function initSKU() {
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (!(hiddenConfig && hiddenConfig["product"])) return;
+  const productSetup = Object.entries(hiddenConfig["product"]);
+  if (productSetup.length === 0) return;
+  const [option, product] = productSetup[0];
+  document.querySelectorAll('select[name="sku_select"]').forEach((element) => {
+    element.value = option;
+  });
+  document.querySelectorAll('input[name="discountCode"]').forEach((element) => {
+    element.value = product["discountCode"] || "";
+  });
+  document.querySelectorAll('input[name="sku"]').forEach((element) => {
+    element.value = product["sku"] || "undefined";
+  });
+  document.querySelectorAll('input[name="price"]').forEach((element) => {
+    element.value = product["price"] || "10";
+  });
+}
+function onPackageChange(event) {
+  const PACKAGE_INDEX = {
+    course: 0,
+    price: 1,
+    discount: 2,
+  };
+  //========= package select option on change into other package select option =============
+  document
+    .querySelectorAll('select[name="package"]')
+    .forEach(function (element) {
+      element.value = event.target.value;
     });
-    document
-      .querySelectorAll('input[name="price"]')
-      .forEach(function (element) {
-        element.value = _defaultPackage[PACKAGE_INDEX.price];
-      });
-
-    //=========== set default package into package select option ============
-
-    document.body.addEventListener("change", function (event) {
-      //========= package select option on change into other package select option =============
-      if (event.target.name === "package") {
-        document
-          .querySelectorAll('select[name="package"]')
-          .forEach(function (element) {
-            element.value = event.target.value;
-          });
-        const _package = event.target.value.split("/");
-        document
-          .querySelectorAll('input[name="discountCode"]')
-          .forEach(function (element) {
-            element.value = _package[PACKAGE_INDEX.discount] || "";
-          });
-        document
-          .querySelectorAll('input[name="course"]')
-          .forEach(function (element) {
-            element.value = _package[PACKAGE_INDEX.sku] || "";
-          });
-        document
-          .querySelectorAll('input[name="sku"]')
-          .forEach(function (element) {
-            element.value = _package[PACKAGE_INDEX.sku] || "";
-          });
-        document
-          .querySelectorAll('input[name="price"]')
-          .forEach(function (element) {
-            element.value = _package[PACKAGE_INDEX.price] || "";
-          });
-      }
-      //========= package select option on change into other package select option =============
+  const _package = event.target.value.split("/");
+  document
+    .querySelectorAll('input[name="discountCode"]')
+    .forEach(function (element) {
+      element.value = _package[PACKAGE_INDEX.discount] || "";
     });
+  document.querySelectorAll('input[name="course"]').forEach(function (element) {
+    element.value = _package[PACKAGE_INDEX.course] || "";
+  });
+  document.querySelectorAll('input[name="price"]').forEach(function (element) {
+    element.value = _package[PACKAGE_INDEX.price] || "";
+  });
+  //========= package select option on change into other package select option =============
+}
+function onSKUSelectChange(event) {
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (!(hiddenConfig && hiddenConfig["product"])) return;
+  const productSetup = Object.entries(hiddenConfig["product"]);
+  if (productSetup.length === 0) return;
+  const [option, product] = productSetup.find(
+    ([key, value]) => key === event.target.value
+  );
+  document.querySelectorAll('select[name="sku_select"]').forEach((element) => {
+    element.value = option;
+  });
+  document.querySelectorAll('input[name="discountCode"]').forEach((element) => {
+    element.value = product["discountCode"] || "";
+  });
+  document.querySelectorAll('input[name="sku"]').forEach((element) => {
+    element.value = product["sku"] || "undefined";
+  });
+  document.querySelectorAll('input[name="price"]').forEach((element) => {
+    element.value = product["price"] || "10";
+  });
+}
+function onSubmitForm(fieldNames, event) {
+  console.log("Action: Submit");
+  const formData = new FormData(event.target);
+  const formProps = Object.fromEntries(formData);
+  const block = blockSpam(formProps);
+  if (!block) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    alert("blocked user spam");
+    return block;
   }
 
-  document.addEventListener(
-    "submit",
-    (event) => {
-      console.log("Action: Submit");
-      const formData = new FormData(event.target);
-      const formProps = Object.fromEntries(formData);
-      const block = blockSpam(formProps);
-      if (!block) {
+  delete formProps.defaultPackage;
+  delete formProps.package;
+
+  // ===================== Start = > set localStorage =====================
+  for (const fieldName of fieldNames) {
+    if (fieldName === "fullname") {
+      const name = correctName(formProps[fieldName]);
+      localStorage.setItem(fieldName, name);
+    } else if (fieldName === "email") {
+      const email = validateEmail(formProps[fieldName], fieldName);
+      if (!email) {
+        alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
         event.preventDefault();
         event.stopImmediatePropagation();
         event.stopPropagation();
-        alert("blocked user spam");
-        return block;
+        clearDataLocalStorage(fieldNames.filter((field) => field != "hidden"));
+        return false;
       }
-
-      delete formProps.defaultPackage;
-      delete formProps.package;
-
-      // ===================== Start = > set localStorage =====================
-      for (const fieldName of fieldNames) {
-        if (fieldName === "fullname") {
-          const name = correctName(formProps[fieldName]);
-          localStorage.setItem(fieldName, name);
-        } else if (fieldName === "email") {
-          const email = validateEmail(formProps[fieldName], fieldName);
-          if (!email) {
-            alert("กรุณากรอกอีเมล์ให้ถูกต้อง");
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            event.stopPropagation();
-            clearDataLocalStorage(fieldNames);
-            return false;
-          }
-          localStorage.setItem(fieldName, email);
-        } else if (fieldName === "phone") {
-          const phone = validatePhone(formProps[fieldName], fieldName);
-          if (!phone) {
-            alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            event.stopPropagation();
-            clearDataLocalStorage(fieldNames);
-            return false;
-          }
-          localStorage.setItem(fieldName, `0${phone}`);
-        } else if (fieldName === "course") {
-          if (
-            formProps.orderbump &&
-            formProps.orderbumpdetail &&
-            !fieldNames.includes("orderbump", "orderbumpdetail")
-          ) {
-            formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
-          }
-          localStorage.setItem(fieldName, formProps[fieldName]);
-        } else if (fieldName === "params") {
-          const urlSearchParams = new URLSearchParams(window.location.search);
-          const params = Object.fromEntries(urlSearchParams.entries());
-          localStorage.setItem(fieldName, JSON.stringify(params));
-        } else {
-          localStorage.setItem(fieldName, formProps[fieldName] || "");
-        }
+      localStorage.setItem(fieldName, email);
+    } else if (fieldName === "phone") {
+      const phone = validatePhone(formProps[fieldName], fieldName);
+      if (!phone) {
+        alert("กรุณากรอกข้อมูลสำหรับติดต่อให้ถูกต้อง");
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+        clearDataLocalStorage(fieldNames.filter((field) => field != "hidden"));
+        return false;
       }
-      // ===================== End = > set localStorage =====================
-
-      // =============== Add required fields for LINE landing ===============
-      localStorage.setItem("landing_url", formProps["landing_url"] || "");
-
-      // =============== Hidden Field support for forget setting other fields ===============
-      const hiddenConfig = getHiddenFromLocalStorage();
-      if (hiddenConfig) {
-        try {
-          for (const [fieldName, val] of Object.entries(hiddenConfig)) {
-            if (fieldName === "ads_opt") {
-              localStorage.setItem("mkter", val);
-            } else if (fieldName === "params") {
-              const urlSearchParams = new URLSearchParams(
-                window.location.search
-              );
-              const params = Object.fromEntries(urlSearchParams.entries());
-              localStorage.setItem(fieldName, JSON.stringify(params));
-            } else {
-              localStorage.setItem(fieldName, formProps[fieldName] || "");
-            }
-          }
-          // Add courses
-          const courses = [];
-          if (hiddenConfig["course"]) {
-            courses.push(...hiddenConfig["course"].split(","));
-            if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
-              courses.push(...hiddenConfig["orderbumpdetail"].split(","));
-            }
-          } else if (hiddenConfig["sku"]) {
-            courses.push(...hiddenConfig["sku"].split(","));
-            if (
-              hiddenConfig["orderbump_choice"] &&
-              hiddenConfig["orderbump_sku"]
-            ) {
-              courses.push(...hiddenConfig["orderbump_sku"].split(","));
-            }
-          }
-          console.log("courses: " + JSON.stringify(courses));
-          // clean courses data
-          const trimCourses = courses.map((item) => item?.trim());
-          localStorage.setItem("course", trimCourses.join(","));
-        } catch (e) {
-          console.error(e);
-        }
+      localStorage.setItem(fieldName, `0${phone}`);
+    } else if (fieldName === "course") {
+      if (
+        formProps.orderbump &&
+        formProps.orderbumpdetail &&
+        !fieldNames.includes("orderbump", "orderbumpdetail")
+      ) {
+        formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
       }
-    },
-    true
-  );
+      localStorage.setItem(fieldName, formProps[fieldName]);
+    } else if (fieldName === "params") {
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      localStorage.setItem(fieldName, JSON.stringify(params));
+    } else {
+      localStorage.setItem(fieldName, formProps[fieldName] || "");
+    }
+  }
+  // ===================== End = > set localStorage =====================
+
+  // =============== Add required fields for LINE landing ===============
+  localStorage.setItem("landing_url", formProps["landing_url"] || "");
+
+  // =============== Hidden Field support for forget setting other fields ===============
+  const hiddenConfig = getHiddenFromLocalStorage();
+  console.log("hiddenConfig: " + hiddenConfig);
+  if (hiddenConfig) {
+    setupHiddenConfigAfterSubmit();
+  }
+}
+function setupHiddenConfigAfterSubmit() {
+  console.log("Setting Hidden Config");
+  try {
+    for (const [fieldName, val] of Object.entries(hiddenConfig)) {
+      if (fieldName === "ads_opt") {
+        localStorage.setItem("mkter", val);
+      } else if (fieldName === "params") {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        localStorage.setItem(fieldName, JSON.stringify(params));
+      } else {
+        localStorage.setItem(fieldName, formProps[fieldName] || "");
+      }
+    }
+    // Add courses
+    const courses = [];
+    if (hiddenConfig["course"]) {
+      courses.push(...hiddenConfig["course"].split(","));
+      if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
+        courses.push(...hiddenConfig["orderbumpdetail"].split(","));
+      }
+    } else if (hiddenConfig["sku"]) {
+      courses.push(...hiddenConfig["sku"].split(","));
+      if (hiddenConfig["orderbump_select"] && hiddenConfig["orderbump_sku"]) {
+        courses.push(...hiddenConfig["orderbump_sku"].split(","));
+      }
+    }
+    console.log("courses: " + JSON.stringify(courses));
+    // clean courses data
+    const trimCourses = courses.map((item) => item?.trim());
+    localStorage.setItem("course", trimCourses.join(","));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 // use in wordpress
@@ -978,7 +1083,7 @@ function getDataFromLocalStorage(localStorageItems) {
         dataFromLocalStorage["course"] = val;
       } else if (key === "orderbump_sku") {
         dataFromLocalStorage["orderbumpdetail"] = val;
-      } else if (key === "orderbump_choice") {
+      } else if (key === "orderbump_select") {
         dataFromLocalStorage["orderbump"] = val;
       }
     }
