@@ -369,13 +369,25 @@ function checkFieldsRequireFully(
     if (hiddenField === "discountCode" && discountCode) {
       hiddenFieldConfig[hiddenField] = discountCode;
     }
-    document
-      .querySelectorAll(`input[name="${hiddenField}"]`)
-      .forEach(function (element) {
-        element.value = hiddenFieldConfig[hiddenField];
-      });
+    if (hiddenField === "course" || hiddenField === "sku") {
+      document
+        .querySelectorAll(`input[name="course"]`)
+        .forEach(function (element) {
+          element.value = hiddenFieldConfig[hiddenField];
+        });
+      document
+        .querySelectorAll(`input[name="sku"]`)
+        .forEach(function (element) {
+          element.value = hiddenFieldConfig[hiddenField];
+        });
+    } else {
+      document
+        .querySelectorAll(`input[name="${hiddenField}"]`)
+        .forEach(function (element) {
+          element.value = hiddenFieldConfig[hiddenField];
+        });
+    }
   }
-
   document.querySelectorAll(`input[name="hidden"]`).forEach(function (element) {
     element.value = JSON.stringify(hiddenFieldConfig);
   });
@@ -521,11 +533,15 @@ function correctName(name) {
 //==========================================================================================================================
 
 function listenerForm(fieldNames) {
+  const PACKAGE_INDEX = {
+    sku: 0,
+    price: 1,
+    discount: 2,
+  };
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
     const _defaultPackage = defaultPackage.value.split("/");
-
     document
       .querySelectorAll('select[name="package"]')
       .forEach(function (element) {
@@ -534,17 +550,20 @@ function listenerForm(fieldNames) {
     document
       .querySelectorAll('input[name="discountCode"]')
       .forEach(function (element) {
-        element.value = _defaultPackage[2] || "";
+        element.value = _defaultPackage[PACKAGE_INDEX.discount] || "";
       });
     document
       .querySelectorAll('input[name="course"]')
       .forEach(function (element) {
-        element.value = _defaultPackage[0];
+        element.value = _defaultPackage[PACKAGE_INDEX.sku];
       });
+    document.querySelectorAll('input[name="sku"]').forEach(function (element) {
+      element.value = _defaultPackage[PACKAGE_INDEX.sku];
+    });
     document
       .querySelectorAll('input[name="price"]')
       .forEach(function (element) {
-        element.value = _defaultPackage[1];
+        element.value = _defaultPackage[PACKAGE_INDEX.price];
       });
 
     //=========== set default package into package select option ============
@@ -558,10 +577,26 @@ function listenerForm(fieldNames) {
             element.value = event.target.value;
           });
         const _package = event.target.value.split("/");
-        document.querySelector('input[name="discountCode"]').value =
-          _package[2] || "";
-        document.querySelector('input[name="course"]').value = _package[0];
-        document.querySelector('input[name="price"]').value = _package[1];
+        document
+          .querySelectorAll('input[name="discountCode"]')
+          .forEach(function (element) {
+            element.value = _package[PACKAGE_INDEX.discount] || "";
+          });
+        document
+          .querySelectorAll('input[name="course"]')
+          .forEach(function (element) {
+            element.value = _package[PACKAGE_INDEX.sku] || "";
+          });
+        document
+          .querySelectorAll('input[name="sku"]')
+          .forEach(function (element) {
+            element.value = _package[PACKAGE_INDEX.sku] || "";
+          });
+        document
+          .querySelectorAll('input[name="price"]')
+          .forEach(function (element) {
+            element.value = _package[PACKAGE_INDEX.price] || "";
+          });
       }
       //========= package select option on change into other package select option =============
     });
