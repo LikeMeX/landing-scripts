@@ -810,13 +810,23 @@ function onSubmitForm(fieldNames, event) {
       localStorage.setItem(fieldName, `0${phone}`);
     } else if (fieldName === "course") {
       if (
-        formProps.orderbump &&
-        formProps.orderbumpdetail &&
+        formProps?.orderbump &&
+        formProps?.orderbumpdetail &&
         !fieldNames.includes("orderbump", "orderbumpdetail")
       ) {
         formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
       }
       localStorage.setItem(fieldName, formProps[fieldName]);
+    } else if (fieldName === "sku") {
+      const courses = [];
+      const sku = formProps["sku"] || "";
+      const orderbump_sku = formProps["orderbump_sku"] || "";
+      courses.push(...sku.split(","));
+      courses.push(...orderbump_sku.split(","));
+      console.log("courses: " + JSON.stringify(courses));
+      // clean courses data
+      const trimCourses = courses.map((item) => item?.trim());
+      localStorage.setItem("course", trimCourses.join(","));
     } else if (fieldName === "params") {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
@@ -850,22 +860,22 @@ function setupHiddenConfigAfterSubmit() {
       }
     }
     // Add courses
-    const courses = [];
-    if (hiddenConfig["course"]) {
-      courses.push(...hiddenConfig["course"].split(","));
-      if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
-        courses.push(...hiddenConfig["orderbumpdetail"].split(","));
-      }
-    } else if (hiddenConfig["sku"]) {
-      courses.push(...hiddenConfig["sku"].split(","));
-      if (hiddenConfig["orderbump_select"] && hiddenConfig["orderbump_sku"]) {
-        courses.push(...hiddenConfig["orderbump_sku"].split(","));
-      }
-    }
-    console.log("courses: " + JSON.stringify(courses));
-    // clean courses data
-    const trimCourses = courses.map((item) => item?.trim());
-    localStorage.setItem("course", trimCourses.join(","));
+    // const courses = [];
+    // if (hiddenConfig["course"]) {
+    //   courses.push(...hiddenConfig["course"].split(","));
+    //   if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
+    //     courses.push(...hiddenConfig["orderbumpdetail"].split(","));
+    //   }
+    // } else if (hiddenConfig["sku"]) {
+    //   courses.push(...hiddenConfig["sku"].split(","));
+    //   if (hiddenConfig["orderbump_select"] && hiddenConfig["orderbump_sku"]) {
+    //     courses.push(...hiddenConfig["orderbump_sku"].split(","));
+    //   }
+    // }
+    // console.log("courses: " + JSON.stringify(courses));
+    // // clean courses data
+    // const trimCourses = courses.map((item) => item?.trim());
+    // localStorage.setItem("course", trimCourses.join(","));
   } catch (e) {
     console.error(e);
   }
