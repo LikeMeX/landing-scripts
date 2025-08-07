@@ -831,13 +831,13 @@ function onSubmitForm(fieldNames, event) {
   localStorage.setItem("landing_url", formProps["landing_url"] || "");
 
   // =============== Hidden Field support for forget setting other fields ===============
-  const hiddenConfig = getHiddenFromLocalStorage();
-  console.log("hiddenConfig: " + hiddenConfig);
-  if (hiddenConfig) {
-    setupHiddenConfigAfterSubmit();
-  }
+  setupHiddenConfigAfterSubmit();
 }
 function setupHiddenConfigAfterSubmit() {
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (!hiddenConfig) {
+    return;
+  }
   console.log("Setting Hidden Config");
   try {
     for (const [fieldName, val] of Object.entries(hiddenConfig)) {
