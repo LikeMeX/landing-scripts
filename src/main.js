@@ -208,7 +208,10 @@ function init(arguments, callback) {
     element.value = hiddenConfigStr;
   });
   //==================== End =>  set localstorage hidden ====================
-  if (callback && typeof callback === "function") callback();
+  if (callback && typeof callback === "function") {
+    console.log("init callback called!!!");
+    callback();
+  }
   return {
     userAgent,
     dealId,
@@ -608,6 +611,7 @@ function correctName(name) {
 //==========================================================================================================================
 
 function listenerForm(fieldNames) {
+  console.log("Form Listener activated!!!");
   initPackage();
   setDefaultProduct();
   document.body.addEventListener("change", (event) => {
