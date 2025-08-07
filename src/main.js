@@ -596,10 +596,12 @@ function validateEmail(email, fieldName) {
 }
 
 function correctName(name) {
-  name = name
-    .replace(/^(นาย|นางสาว|น.ส.|ด.ช.|ด.ญ.|นาง|คุณ|เด็กชาย|เด็กหญิง)/g, "")
-    .replace(/\s\s+/g, " ")
-    .trim();
+  if (typeof name === "string") {
+    name = name
+      .replace(/^(นาย|นางสาว|น.ส.|ด.ช.|ด.ญ.|นาง|คุณ|เด็กชาย|เด็กหญิง)/g, "")
+      .replace(/\s\s+/g, " ")
+      .trim();
+  }
   return name;
 }
 
