@@ -220,8 +220,20 @@ function init(arguments, callback) {
 
 function clearHiddenFields() {
   // ================ Clear Form hidden fields =====================
-  document.querySelectorAll(`input[type="hidden"]`).forEach((element) => {
-    element.value = "";
+  const hiddenFields = [
+    "sku",
+    "price",
+    "discountCode",
+    "orderbump_sku",
+    "orderbump_price",
+    "hidden",
+  ];
+  hiddenFields.forEach((fieldName) => {
+    document
+      .querySelectorAll(`input[name="${fieldName}"]`)
+      .forEach((element) => {
+        element.value = "";
+      });
   });
   // ================ End Clear Form hidden fields =====================
 }
