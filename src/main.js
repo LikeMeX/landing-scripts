@@ -356,7 +356,7 @@ function checkFieldsRequireFully(
 ) {
   console.log("Check Settings ver.1");
   // ================ static fields =====================
-  const different = [
+  const addressFields = [
     "search",
     "address",
     "sub_district",
@@ -378,11 +378,15 @@ function checkFieldsRequireFully(
     defaultFields = defaultFieldsWith;
   } else {
     defaultFields = [...defaultFields, ...defaultHiddenFields];
-    defaultFields = defaultFields.filter((item) => !different.includes(item));
+    defaultFields = defaultFields.filter(
+      (item) => !addressFields.includes(item)
+    );
   }
 
   if (landingPageType === "YR") {
-    defaultFields = defaultFields.filter((item) => !different.includes(item));
+    defaultFields = defaultFields.filter(
+      (item) => !addressFields.includes(item)
+    );
   }
   for (const defaultField of defaultFields) {
     if (!document.querySelectorAll(`input[name="${defaultField}"]`).length) {
@@ -635,7 +639,11 @@ function listenerForm(fieldNames) {
       onOrderbumpSelectChange(event);
     }
   });
-  document.addEventListener("submit", (event) => onSubmitForm(event), true);
+  document.addEventListener(
+    "submit",
+    (event) => onSubmitForm(fieldNames, event),
+    true
+  );
 }
 
 //=========== set package into package select option ============
@@ -777,7 +785,7 @@ function setOrderbumpElements(checked, optionValue, product) {
     });
 }
 //========= End set orderbump into product select option =============
-function onSubmitForm(event) {
+function onSubmitForm(fieldNames, event) {
   console.log("Action: Submit");
   const formData = new FormData(event.target);
   const formProps = Object.fromEntries(formData);
@@ -793,11 +801,21 @@ function onSubmitForm(event) {
   delete formProps.defaultPackage;
   delete formProps.package;
 
-  const fieldNames = Object.keys(formProps);
-  // ===================== Start = > set localStorage =====================
-  for (const fieldName of fieldNames) {
+  const defaultFields = getDefaultStorageFields();
+  const localStorageFields = [
+    ...new Set([...defaultFields, ...fieldNames]),
+  ].filter((fieldNames) => !!fieldNames);
+
+  const formFields = Object.keys(formProps);
+  // ===================== Start = > set form fields to localStorage =====================
+  for (const fieldName of formFields) {
     if (fieldName === "fullname") {
       const name = correctName(formProps[fieldName]);
+      localStorage.setItem(fieldName, name);
+    } else if (fieldName === "firstname") {
+      const firstname = formProps["firstname"];
+      const lastname = formProps["lastname"] || "";
+      const name = correctName([firstname, lastname].join(" "));
       localStorage.setItem(fieldName, name);
     } else if (fieldName === "email") {
       const email = validateEmail(formProps[fieldName], fieldName);
@@ -822,29 +840,18 @@ function onSubmitForm(event) {
       }
       localStorage.setItem(fieldName, `0${phone}`);
     } else if (fieldName === "course") {
-      if (
-        formProps?.orderbump &&
-        formProps?.orderbumpdetail &&
-        !fieldNames.includes("orderbump", "orderbumpdetail")
-      ) {
-        formProps[fieldName] += `,${formProps.orderbumpdetail.trim()}`;
-      }
-      localStorage.setItem(fieldName, formProps[fieldName]);
+      const sku = formProps["orderbump"] || "";
+      const orderbump_sku = formProps["orderbumpdetail"] || "";
+      localStorage.setItem("course", getCourses(sku, orderbump_sku));
     } else if (fieldName === "sku") {
-      const courses = [];
       const sku = formProps["sku"] || "";
       const orderbump_sku = formProps["orderbump_sku"] || "";
-      courses.push(...sku.split(","));
-      courses.push(...orderbump_sku.split(","));
-      console.log("courses: " + JSON.stringify(courses));
-      // clean courses data
-      const trimCourses = courses.map((item) => item?.trim());
-      localStorage.setItem("course", trimCourses.join(","));
+      localStorage.setItem("course", getCourses(sku, orderbump_sku));
     } else if (fieldName === "params") {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       localStorage.setItem(fieldName, JSON.stringify(params));
-    } else {
+    } else if (localStorageFields.includes(fieldName)) {
       localStorage.setItem(fieldName, formProps[fieldName] || "");
     }
   }
@@ -854,9 +861,19 @@ function onSubmitForm(event) {
   localStorage.setItem("landing_url", formProps["landing_url"] || "");
 
   // =============== Hidden Field support for forget setting other fields ===============
-  setupHiddenConfigAfterSubmit();
+  setupHiddenConfigAfterSubmit(localStorageFields);
 }
-function setupHiddenConfigAfterSubmit() {
+function getCourses(sku, orderbump_sku) {
+  const courses = [];
+  courses.push(...sku.split(","));
+  courses.push(...orderbump_sku.split(","));
+  // clean courses data : remove empty and trim
+  const cleanCourses = courses
+    .filter((item) => !!item)
+    .map((item) => item.trim());
+  return cleanCourses.join(",");
+}
+function setupHiddenConfigAfterSubmit(localStorageFields) {
   const hiddenConfig = getHiddenFromLocalStorage();
   if (!hiddenConfig) {
     return;
@@ -870,25 +887,10 @@ function setupHiddenConfigAfterSubmit() {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         localStorage.setItem(fieldName, JSON.stringify(params));
+      } else if (localStorageFields.includes(fieldName)) {
+        localStorage.setItem(fieldName, val);
       }
     }
-    // Add courses
-    // const courses = [];
-    // if (hiddenConfig["course"]) {
-    //   courses.push(...hiddenConfig["course"].split(","));
-    //   if (hiddenConfig["orderbump"] && hiddenConfig["orderbumpdetail"]) {
-    //     courses.push(...hiddenConfig["orderbumpdetail"].split(","));
-    //   }
-    // } else if (hiddenConfig["sku"]) {
-    //   courses.push(...hiddenConfig["sku"].split(","));
-    //   if (hiddenConfig["orderbump_select"] && hiddenConfig["orderbump_sku"]) {
-    //     courses.push(...hiddenConfig["orderbump_sku"].split(","));
-    //   }
-    // }
-    // console.log("courses: " + JSON.stringify(courses));
-    // // clean courses data
-    // const trimCourses = courses.map((item) => item?.trim());
-    // localStorage.setItem("course", trimCourses.join(","));
   } catch (e) {
     console.error(e);
   }
@@ -988,25 +990,7 @@ async function submitPayment() {
     return Promise.reject(err);
   }
   isSubmitPayment = true;
-  const fieldNames = [
-    "deal_id",
-    "email",
-    "fullname",
-    "phone",
-    "price",
-    "discountCode",
-    "course",
-    "orderbump",
-    "orderbumpdetail",
-    "type",
-    "campaign",
-    "mkter",
-    "params",
-    "px",
-    "redirect_url",
-    "callback_url",
-    "landing_url",
-  ];
+  const fieldNames = getDefaultStorageFields();
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
   const affId = getAffiliateIdFromLocalStorage();
@@ -1135,6 +1119,27 @@ async function LineRedirect(cartNo) {
   }, 1500);
 }
 
+function getDefaultStorageFields() {
+  return [
+    "deal_id",
+    "email",
+    "fullname",
+    "phone",
+    "price",
+    "discountCode",
+    "course",
+    "orderbump",
+    "orderbumpdetail",
+    "type",
+    "campaign",
+    "mkter",
+    "params",
+    "px",
+    "redirect_url",
+    "callback_url",
+    "landing_url",
+  ];
+}
 function getDataFromLocalStorage(localStorageItems) {
   const dataFromLocalStorage = {};
   for (const localStorageItem of localStorageItems) {
