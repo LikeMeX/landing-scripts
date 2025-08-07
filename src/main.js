@@ -635,11 +635,7 @@ function listenerForm(fieldNames) {
       onOrderbumpSelectChange(event);
     }
   });
-  document.addEventListener(
-    "submit",
-    (event) => onSubmitForm(fieldNames, event),
-    true
-  );
+  document.addEventListener("submit", (event) => onSubmitForm(event), true);
 }
 
 //=========== set package into package select option ============
@@ -781,7 +777,7 @@ function setOrderbumpElements(checked, optionValue, product) {
     });
 }
 //========= End set orderbump into product select option =============
-function onSubmitForm(fieldNames, event) {
+function onSubmitForm(event) {
   console.log("Action: Submit");
   const formData = new FormData(event.target);
   const formProps = Object.fromEntries(formData);
@@ -797,6 +793,7 @@ function onSubmitForm(fieldNames, event) {
   delete formProps.defaultPackage;
   delete formProps.package;
 
+  const fieldNames = Object.keys(formProps);
   // ===================== Start = > set localStorage =====================
   for (const fieldName of fieldNames) {
     if (fieldName === "fullname") {
