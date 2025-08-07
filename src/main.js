@@ -847,8 +847,6 @@ function setupHiddenConfigAfterSubmit() {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         localStorage.setItem(fieldName, JSON.stringify(params));
-      } else {
-        localStorage.setItem(fieldName, formProps[fieldName] || "");
       }
     }
     // Add courses
