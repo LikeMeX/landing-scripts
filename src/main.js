@@ -192,6 +192,10 @@ function init(arguments, callback) {
   // ====================
 
   //==================== Start => set localstorage hidden ====================
+  window.localStorage.setItem("form_version", version);
+  if (version > 1) {
+    clearHiddenFields();
+  }
   const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig, {
     dealId: dealId,
     px: userAgent,
@@ -209,6 +213,14 @@ function init(arguments, callback) {
     userAgent,
     dealId,
   };
+}
+
+function clearHiddenFields() {
+  // ================ Clear Form hidden fields =====================
+  document.querySelectorAll(`input[type="hidden"]`).forEach((element) => {
+    element.value = "";
+  });
+  // ================ End Clear Form hidden fields =====================
 }
 
 function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
@@ -594,14 +606,15 @@ function correctName(name) {
 //==========================================================================================================================
 
 function listenerForm(fieldNames) {
-  //=========== set default package into package select option ============
   initPackage();
-  initSKU();
+  setDefaultProduct();
   document.body.addEventListener("change", (event) => {
     if (event.target.name === "package") {
       onPackageChange(event);
     } else if (event.target.name === "sku_select") {
-      onSKUSelectChange(event);
+      onProductSelectChange(event);
+    } else if (event.target.name === "orderbump_select") {
+      onOrderbumpSelectChange(event);
     }
   });
   document.addEventListener(
@@ -611,67 +624,29 @@ function listenerForm(fieldNames) {
   );
 }
 
+//=========== set package into package select option ============
 function initPackage() {
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
-  if (!defaultPackage) {
-    return;
+  if (defaultPackage) {
+    const _defaultPackage = defaultPackage.value.split("/");
+    setPackageElements(defaultPackage.value, _defaultPackage);
   }
-  const PACKAGE_INDEX = {
-    course: 0,
-    price: 1,
-    discount: 2,
-  };
-  const _defaultPackage = defaultPackage.value.split("/");
-  document
-    .querySelectorAll('select[name="package"]')
-    .forEach(function (element) {
-      element.value = defaultPackage.value;
-    });
-  document
-    .querySelectorAll('input[name="discountCode"]')
-    .forEach(function (element) {
-      element.value = _defaultPackage[PACKAGE_INDEX.discount] || "";
-    });
-  document.querySelectorAll('input[name="course"]').forEach(function (element) {
-    element.value = _defaultPackage[PACKAGE_INDEX.course];
-  });
-  document.querySelectorAll('input[name="price"]').forEach(function (element) {
-    element.value = _defaultPackage[PACKAGE_INDEX.price];
-  });
-  //=========== set default package into package select option ============
-}
-function initSKU() {
-  const hiddenConfig = getHiddenFromLocalStorage();
-  if (!(hiddenConfig && hiddenConfig["product"])) return;
-  const productSetup = Object.entries(hiddenConfig["product"]);
-  if (productSetup.length === 0) return;
-  const [option, product] = productSetup[0];
-  document.querySelectorAll('select[name="sku_select"]').forEach((element) => {
-    element.value = option;
-  });
-  document.querySelectorAll('input[name="discountCode"]').forEach((element) => {
-    element.value = product["discountCode"] || "";
-  });
-  document.querySelectorAll('input[name="sku"]').forEach((element) => {
-    element.value = product["sku"] || "undefined";
-  });
-  document.querySelectorAll('input[name="price"]').forEach((element) => {
-    element.value = product["price"] || "10";
-  });
 }
 function onPackageChange(event) {
+  const _package = event.target.value.split("/");
+  setPackageElements(event.target.value, _package);
+}
+function setPackageElements(optionValue, _package) {
   const PACKAGE_INDEX = {
     course: 0,
     price: 1,
     discount: 2,
   };
-  //========= package select option on change into other package select option =============
   document
     .querySelectorAll('select[name="package"]')
     .forEach(function (element) {
-      element.value = event.target.value;
+      element.value = optionValue;
     });
-  const _package = event.target.value.split("/");
   document
     .querySelectorAll('input[name="discountCode"]')
     .forEach(function (element) {
@@ -683,18 +658,39 @@ function onPackageChange(event) {
   document.querySelectorAll('input[name="price"]').forEach(function (element) {
     element.value = _package[PACKAGE_INDEX.price] || "";
   });
-  //========= package select option on change into other package select option =============
 }
-function onSKUSelectChange(event) {
+//========= End set package into package select option =============
+//========= set product into product select option =============
+function setDefaultProduct() {
   const hiddenConfig = getHiddenFromLocalStorage();
-  if (!(hiddenConfig && hiddenConfig["product"])) return;
-  const productSetup = Object.entries(hiddenConfig["product"]);
+  if (!hiddenConfig?.product) return;
+  const productSetup = Object.entries(hiddenConfig.product);
   if (productSetup.length === 0) return;
-  const [option, product] = productSetup.find(
+  const defaultIndex = Math.max(
+    productSetup.findIndex(([index, item]) => !!item?.default),
+    0
+  );
+  const [option, product] = productSetup[defaultIndex];
+  setProductElements(option, product);
+}
+function onProductSelectChange(event) {
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (!hiddenConfig?.product) return;
+  const productSetup = Object.entries(hiddenConfig.product);
+  if (productSetup.length === 0) return;
+  const foundEntry = productSetup.find(
     ([key, value]) => key === event.target.value
   );
+  if (foundEntry) {
+    const [option, product] = foundEntry;
+    setProductElements(option, product);
+  } else {
+    setDefaultProduct();
+  }
+}
+function setProductElements(optionValue, product) {
   document.querySelectorAll('select[name="sku_select"]').forEach((element) => {
-    element.value = option;
+    element.value = optionValue;
   });
   document.querySelectorAll('input[name="discountCode"]').forEach((element) => {
     element.value = product["discountCode"] || "";
@@ -706,6 +702,67 @@ function onSKUSelectChange(event) {
     element.value = product["price"] || "10";
   });
 }
+//========= End set product into product select option =============
+//========= set orderbump into product select option =============
+function setDefaultOrderbump() {
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (!hiddenConfig?.orderbump) return;
+  const orderbumpSetup = Object.entries(hiddenConfig.orderbump);
+  if (orderbumpSetup.length === 0) return;
+  const defaultIndex = Math.max(
+    orderbumpSetup.findIndex(([index, item]) => !!item?.default),
+    0
+  );
+  const [option, product] = orderbumpSetup[defaultIndex];
+  setOrderbumpElements(true, option, product);
+}
+function onOrderbumpSelectChange(event) {
+  const hiddenConfig = getHiddenFromLocalStorage();
+  if (!hiddenConfig?.orderbump) return;
+  const productSetup = Object.entries(hiddenConfig.orderbump);
+  if (productSetup.length === 0) return;
+  const inputType = event.target.type;
+  const inputValue = event.target.value;
+  if (inputType === "checkbox") {
+    const inputCheck = event.target.checked;
+    if (inputCheck) {
+      setDefaultOrderbump();
+    } else {
+      setOrderbumpElements(false, "", {});
+    }
+  } else {
+    const foundEntry = productSetup.find(([key, value]) => key === inputValue);
+    if (foundEntry) {
+      const [option, product] = foundEntry;
+      setOrderbumpElements(true, option, product);
+    } else {
+      setOrderbumpElements(false, "", {});
+    }
+  }
+}
+function setOrderbumpElements(checked, optionValue, product) {
+  document
+    .querySelectorAll('select[name="orderbump_select"]')
+    .forEach((element) => {
+      element.value = optionValue;
+    });
+  document
+    .querySelectorAll('input[type="checkbox"][name="orderbump_select"]')
+    .forEach((element) => {
+      element.checked = checked;
+    });
+  document
+    .querySelectorAll('input[name="orderbump_sku"]')
+    .forEach((element) => {
+      element.value = product["sku"] || "";
+    });
+  document
+    .querySelectorAll('input[name="orderbump_price"]')
+    .forEach((element) => {
+      element.value = product["price"] || "0";
+    });
+}
+//========= End set orderbump into product select option =============
 function onSubmitForm(fieldNames, event) {
   console.log("Action: Submit");
   const formData = new FormData(event.target);
