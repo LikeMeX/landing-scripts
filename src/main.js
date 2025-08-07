@@ -730,7 +730,7 @@ function onOrderbumpSelectChange(event) {
     if (inputCheck) {
       setDefaultOrderbump();
     } else {
-      setOrderbumpElements(false, "", {});
+      setOrderbumpElements(false, "-", {});
     }
   } else {
     const foundEntry = productSetup.find(([key, value]) => key === inputValue);
@@ -738,7 +738,7 @@ function onOrderbumpSelectChange(event) {
       const [option, product] = foundEntry;
       setOrderbumpElements(true, option, product);
     } else {
-      setOrderbumpElements(false, "", {});
+      setOrderbumpElements(false, "-", {});
     }
   }
 }
