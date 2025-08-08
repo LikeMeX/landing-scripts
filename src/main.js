@@ -1015,10 +1015,11 @@ async function submitPayment() {
     }
   }
 
+  const typeConfig = dataFromLocalStorage["type"] || config["type"];
   const payload = {
     userId: undefined,
     redeem: true,
-    type: dataFromLocalStorage["type"],
+    type: typeConfig,
   };
 
   if (courses.length) {
@@ -1086,8 +1087,7 @@ async function submitPayment() {
       paymentSuccessRedirectUrl: redirectUrl,
     };
 
-    if (dataFromLocalStorage["type"] && dataFromLocalStorage["type"]?.length)
-      data.userdata.payload = payload;
+    if (typeConfig && typeConfig?.length) data.userdata.payload = payload;
 
     if (dataFromLocalStorage["callback_url"])
       data.paymentSuccessCallbackUrl = dataFromLocalStorage["callback_url"];
