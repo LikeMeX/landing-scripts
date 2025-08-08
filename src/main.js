@@ -1021,10 +1021,11 @@ async function submitPayment() {
   };
 
   if (courses.length) {
+    const qty = +dataFromLocalStorage["qty"] || 1;
     const cartItems = courses.map((product) => {
       return {
         product: product,
-        quantity: 1,
+        quantity: qty,
       };
     });
 
@@ -1032,9 +1033,27 @@ async function submitPayment() {
       "initial_sku"
     ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
 
+    const items = [{ sku: courses.join(","), qty }];
+    let special = undefined;
+    const config = getHiddenFromLocalStorage();
+    const specialConfig = config["special"];
+    if (specialConfig && typeof specialConfig === "object") {
+      const specialObj = Object.fromEntries(
+        Object.entries(specialConfig).filter(([, val]) => !!val)
+      );
+      if (specialObj && Object.keys(specialObj)?.length) {
+        special = { ...specialObj };
+      }
+    }
+    const orderData = JSON.stringify({
+      courses: items,
+      special,
+    });
+
     const redirectUrl = dataFromLocalStorage["redirect_url"]
       ? `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`
       : null;
+
     const data = {
       cartItems,
       userdata: {
@@ -1057,6 +1076,7 @@ async function submitPayment() {
         customField1: dataFromLocalStorage["deal_id"],
         customField2: dataFromLocalStorage["px"],
         customField3: dataFromLocalStorage["initial_sku"] || undefined,
+        customField4: orderData,
       },
       paymentSuccessRedirectUrl: redirectUrl,
     };
@@ -1134,10 +1154,11 @@ function getDefaultStorageFields() {
     "campaign",
     "mkter",
     "params",
-    "px",
     "redirect_url",
     "callback_url",
     "landing_url",
+    "px",
+    "qty",
   ];
 }
 function getDataFromLocalStorage(localStorageItems) {
@@ -1615,7 +1636,10 @@ window.addEventListener("datalayerpush", async (event) => {
     if (getAffiliateIdFromLocalStorage()) {
       await submitPayment();
     } else {
-      const dataFromLocalStorage = getDataFromLocalStorage(["landing_type"]);
+      const dataFromLocalStorage = getDataFromLocalStorage([
+        "landing_type",
+        "form_version",
+      ]);
       const landing_type = dataFromLocalStorage["landing_type"];
       if (
         landing_type &&
