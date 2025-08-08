@@ -239,7 +239,7 @@ function clearHiddenFields() {
 }
 
 function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
-  console.log("Check Settings ver.2");
+  console.log("====== Check Settings ver.2 ======");
   // ================ Form static fields =====================
   const addressFields = [
     "search",
@@ -274,7 +274,11 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
     return !document.querySelectorAll(`input[name="${formField}"]`).length;
   });
   if (notFoundFormFields.length > 0) {
-    alert(`ไม่พบ Field ${notFoundFormFields.join(", ")} ในฟอร์ม`);
+    console.log(
+      "%cinput " + `ไม่พบ Field ${notFoundFormFields.join(", ")} ในฟอร์ม`,
+      "color: red; font-size: larger;"
+    );
+    alert("Incorrect Market Settings");
     return false;
   }
   // ================ End Check Form field
@@ -296,19 +300,31 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
     return !val?.toString().length;
   });
   if (notFoundHiddenFields.length > 0) {
-    alert(`ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`);
+    console.log(
+      "%cinput " + `ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`,
+      "color: red; font-size: larger;"
+    );
+    alert("Incorrect Market Settings");
     return false;
   }
   // ================ End Check Hidden Config Fields
   // ================ Check Product Config =====================
   const productSetting = hiddenConfigFields["product"];
   if (!productSetting) {
-    alert(`ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`);
+    console.log(
+      "%cinput " + `ไม่พบ Product Setting ใน config`,
+      "color: red; font-size: larger;"
+    );
+    alert("Incorrect Market Settings");
     return false;
   }
   const errorProducts = validateProductItems(productSetting);
   if (errorProducts.length > 0) {
-    alert("Incorrect Product Settings : " + errorProducts.join(", "));
+    console.log(
+      "%cinput " + `Incorrect Product Settings : ${errorProducts.join(", ")}`,
+      "color: red; font-size: larger;"
+    );
+    alert("Incorrect Market Settings");
     return false;
   }
   // ================ End Check Product Config =====================
@@ -317,11 +333,31 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
   if (orderbumpSetting) {
     const errorOrderbump = validateProductItems(orderbumpSetting);
     if (errorOrderbump.length > 0) {
-      alert("Incorrect Orderbump Settings : " + errorOrderbump.join(", "));
+      console.log(
+        "%cinput " +
+          `Incorrect Orderbump Settings : ${errorOrderbump.join(", ")}`,
+        "color: red; font-size: larger;"
+      );
+      alert("Incorrect Market Settings");
       return false;
     }
   }
   // ================ End Check Orderbump Config if found =====================
+  // ================ End Check Marketer and Ads Operator config =====================
+  const content_mkt = hiddenConfigFields["content_mkt"];
+  const ads_opt = hiddenConfigFields["ads_opt"];
+  const emailRegex =
+    /^([a-zA-Z0-9]+)(([\w.+-]|)+)([a-zA-Z0-9])@\w+([.-]?\w+)([.]\w{2,3})+$/;
+  if (!emailRegex.test(content_mkt) || !emailRegex.test(ads_opt)) {
+    console.log(
+      "%cinput " + `Content Markter and Ads Operator must be email!!`,
+      "color: red; font-size: larger;"
+    );
+    alert("Incorrect Market Settings");
+    console.log();
+    return false;
+  }
+  // ================ End Check Marketer and Ads Operator config =====================
   return true;
 }
 
