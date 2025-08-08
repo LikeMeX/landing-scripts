@@ -883,10 +883,6 @@ function onSubmitForm(fieldNames, event) {
       const sku = formProps["sku"] || "";
       const orderbump_sku = formProps["orderbump_sku"] || "";
       localStorage.setItem("course", getCourses(sku, orderbump_sku));
-    } else if (fieldName === "params") {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlSearchParams.entries());
-      localStorage.setItem(fieldName, JSON.stringify(params));
     } else if (localStorageFields.includes(fieldName)) {
       localStorage.setItem(fieldName, formProps[fieldName] || "");
     }
@@ -895,6 +891,11 @@ function onSubmitForm(fieldNames, event) {
 
   // =============== Add required fields for LINE landing ===============
   localStorage.setItem("landing_url", formProps["landing_url"] || "");
+
+  // =============== Add params fields ===============
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(urlSearchParams.entries());
+  localStorage.setItem("params", JSON.stringify(params));
 
   // =============== Hidden Field support for forget setting other fields ===============
   setupHiddenConfigAfterSubmit(localStorageFields);
