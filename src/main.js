@@ -993,6 +993,7 @@ async function submitPayment() {
   const fieldNames = getDefaultStorageFields();
   const { ip } = await getIp();
   const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
+  const config = getHiddenFromLocalStorage();
   const affId = getAffiliateIdFromLocalStorage();
   const redirectQuery = new URLSearchParams({
     dealId: dataFromLocalStorage["deal_id"],
@@ -1035,7 +1036,6 @@ async function submitPayment() {
 
     const items = [{ sku: courses.join(","), qty }];
     let special = undefined;
-    const config = getHiddenFromLocalStorage();
     const specialConfig = config["special"];
     if (specialConfig && typeof specialConfig === "object") {
       const specialObj = Object.fromEntries(
@@ -1046,9 +1046,14 @@ async function submitPayment() {
       }
     }
     const orderData = JSON.stringify({
-      courses: items,
+      email: dataFromLocalStorage["email"],
+      items,
       special,
     });
+
+    const dealId = dataFromLocalStorage["deal_id"] || config["dealId"];
+    const campaign =
+      dataFromLocalStorage["campaign"] || config["campaign_id"] || "";
 
     const redirectUrl = dataFromLocalStorage["redirect_url"]
       ? `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`
@@ -1063,7 +1068,7 @@ async function submitPayment() {
       },
       cartTracking: {
         convertionId: conversion?.hash || "",
-        campaign: dataFromLocalStorage["campaign"] || "",
+        campaign: campaign,
         seller: affId ? AFFILIATE_CHANNEL : dataFromLocalStorage["mkter"] || "",
         channel: affId ? AFFILIATE_CHANNEL : "SGC",
         ...(affId ? { affiliateId: affId } : {}),
@@ -1073,7 +1078,7 @@ async function submitPayment() {
         utm_campaign: dataFromLocalStorage["params"]?.utm_campaign || "",
         utm_term: dataFromLocalStorage["params"]?.utm_term || "",
         utm_content: dataFromLocalStorage["params"]?.utm_content || "",
-        customField1: dataFromLocalStorage["deal_id"],
+        customField1: dealId,
         customField2: dataFromLocalStorage["px"],
         customField3: dataFromLocalStorage["initial_sku"] || undefined,
         customField4: orderData,
@@ -1097,6 +1102,11 @@ async function submitPayment() {
       setTimeout(function () {
         window.location.replace(url);
       }, 1500);
+    } else {
+      console.log(
+        "%cinput Failed to create cart!",
+        "color: red; font-weight: bold;"
+      );
     }
   }
 }
