@@ -197,7 +197,8 @@ function init(arguments, callback) {
     clearHiddenFields();
   }
   const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig, {
-    dealId: dealId,
+    deal_id: dealId,
+    course_type: arguments.landingPageType,
     px: userAgent,
     landing_url: window.location.href,
     aff: aff,
@@ -238,7 +239,11 @@ function clearHiddenFields() {
   // ================ End Clear Form hidden fields =====================
 }
 
-function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
+function checkFieldsRequireV2(
+  hiddenConfigFields = {},
+  formFields = [],
+  landingPageType
+) {
   console.log("====== Check Settings ver.2 ======");
   // ================ Form static fields =====================
   const addressFields = [
@@ -343,7 +348,7 @@ function checkFieldsRequireV2(hiddenConfigFields = {}, formFields = []) {
     }
   }
   // ================ End Check Orderbump Config if found =====================
-  // ================ End Check Marketer and Ads Operator config =====================
+  // ================ Check Marketer and Ads Operator config =====================
   const content_mkt = hiddenConfigFields["content_mkt"];
   const ads_opt = hiddenConfigFields["ads_opt"];
   const emailRegex =
