@@ -316,7 +316,7 @@ function genDealId() {
 function appendUserAgent(PXID) {
   const l = window.location;
   const customfieldLanding = {
-    px: PXID,
+    px: PXID?.trim(),
     agent: window.navigator.userAgent,
     landing: l.protocol + "//" + l.host + l.pathname,
   };
