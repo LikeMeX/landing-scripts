@@ -92,32 +92,32 @@ function getHiddenFromLocalStorage() {
     - isStopAffiliate: boolean
     - version: number
 **/
-function init(arguments, callback) {
+function init(args, callback) {
   isSubmitPayment = false;
-  const version = arguments?.version || 1;
+  const version = args?.version || 1;
   const isPass =
     version === 2
       ? checkFieldsRequireV2(
-          arguments?.hiddenFieldConfig,
-          arguments?.defaultFields,
-          arguments.landingPageType
+          args?.hiddenFieldConfig,
+          args?.defaultFields,
+          args.landingPageType
         )
       : checkFieldsRequireFully(
-          arguments?.hiddenFieldConfig,
-          arguments?.defaultFields,
-          arguments.landingPageType
+          args?.hiddenFieldConfig,
+          args?.defaultFields,
+          args.landingPageType
         );
 
   let aff = "";
-  if (!arguments?.isStopAffiliate) {
+  if (!args?.isStopAffiliate) {
     aff = initAffiliateScript();
   } else {
     window.localStorage.removeItem(AFFILIATE_KEY);
   }
   if (!isPass) return isPass;
-  const userAgent = appendUserAgent(arguments.PXID);
+  const userAgent = appendUserAgent(args.PXID);
   const dealId = genDealId();
-  clearDataLocalStorage(arguments.clearDataFields);
+  clearDataLocalStorage(args.clearDataFields);
 
   //==================== Start => edit channel_name ====================
   const urlParams = new URLSearchParams(window.location.search);
@@ -132,17 +132,21 @@ function init(arguments, callback) {
 
   //==================== Start => add user cookie landing ====================
   if (checkCookie("user")) {
-    const user = JSON.parse(decodeURIComponent(getCookie("user")));
-    document.getElementsByName("email").forEach((element) => {
-      element.value = user.email || "";
-    });
-    document.getElementsByName("fullname").forEach((element) => {
-      const fullName = [
-        (user.firstName || "").trim(),
-        (user.lastName || "").trim(),
-      ].join(" ");
-      element.value = fullName;
-    });
+    try {
+      const user = JSON.parse(decodeURIComponent(getCookie("user")));
+      document.getElementsByName("email").forEach((element) => {
+        element.value = user.email || "";
+      });
+      document.getElementsByName("fullname").forEach((element) => {
+        const fullName = [
+          (user.firstName || "").trim(),
+          (user.lastName || "").trim(),
+        ].join(" ");
+        element.value = fullName;
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
   //==================== End => add user cookie landing ====================
 
@@ -196,9 +200,9 @@ function init(arguments, callback) {
   if (version > 1) {
     clearHiddenFields();
   }
-  const hiddenConfig = Object.assign({}, arguments?.hiddenFieldConfig, {
+  const hiddenConfig = Object.assign({}, args?.hiddenFieldConfig, {
     deal_id: dealId,
-    course_type: arguments.landingPageType,
+    course_type: args.landingPageType,
     px: userAgent,
     landing_url: window.location.href,
     aff: aff,
