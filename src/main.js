@@ -1248,22 +1248,13 @@ function getDataFromLocalStorage(localStorageItems) {
 }
 
 async function createCart(cart) {
-  // var data = await fetchPost(
-  //   "https://pay-api.futureskill.co/api/cart/create",
-  //   cart,
-  //   {
-  //     "Content-Type": "application/json",
-  //     Authorization:
-  //       "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
-  //   }
-  // );
-  var data = await fetchPost(
-    "https://uat.futureskill.live/pay-api/cart/create",
+  const data = await fetchPost(
+    "https://pay-api.futureskill.co/api/cart/create",
     cart,
     {
       "Content-Type": "application/json",
       Authorization:
-        "Basic MjUwNjY2MDU4NTY5MDQ1ODg6cE5DV3E0YnRxU09Bb05zM1VEaHM=",
+        "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
     }
   );
   return data;
