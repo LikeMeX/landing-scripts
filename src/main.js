@@ -187,11 +187,9 @@ function init(args, callback) {
       "color: red; font-size: larger"
     );
   }
-  includeJqueryAddressScript();
-  console.log(
-    '%cinput "includeJqueryAddressScript" start.!',
-    "color: yellow; font-size: larger"
-  );
+
+  // includeJqueryAddressScript();
+
   //==================== End => add landing_url into all input landing_url elements
   // ====================
 
@@ -1287,6 +1285,10 @@ async function fetchPost(url, data, headers) {
 // ================================================================
 
 function includeJqueryAddressScript() {
+  console.log(
+    '%cinput "includeJqueryAddressScript" start.!',
+    "color: yellow; font-size: larger"
+  );
   const scriptJQL = document.createElement("script");
   scriptJQL.src =
     "https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/JQL.min.js";
