@@ -751,8 +751,8 @@ async function submitPayment(localStorageItems) {
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
-      // const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
-      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
+      const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
+      // const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
 
       setTimeout(function () {
         window.location.replace(urlLiff);
