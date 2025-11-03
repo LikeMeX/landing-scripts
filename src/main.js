@@ -732,7 +732,9 @@ async function submitPayment(localStorageItems) {
       };
 
       const sendEmailLine =
-        "https://futureskill.app.n8n.cloud/webhook/uat/line/email";
+        "https://futureskill.app.n8n.cloud/webhook/line/email";
+      // const sendEmailLine = "https://futureskill.app.n8n.cloud/webhook/uat/line/email";
+
       await fetchPost(
         sendEmailLine,
         {
@@ -748,7 +750,8 @@ async function submitPayment(localStorageItems) {
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
-      const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
+      //const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
+      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
 
       setTimeout(function () {
         window.location.replace(urlLiff);
@@ -777,6 +780,15 @@ function getDataFromLocalStorage(localStorageItems) {
 }
 async function createCart(cart) {
   var data = await fetchPost(
+    "https://pay-api.futureskill.co/api/cart/create",
+    cart,
+    {
+      "Content-Type": "application/json",
+      Authorization:
+        "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
+    }
+  );
+  /*var data = await fetchPost(
     "https://uat.futureskill.live/pay-api/cart/create",
     cart,
     {
@@ -784,7 +796,7 @@ async function createCart(cart) {
       Authorization:
         "Basic MjUwNjY2MDU4NTY5MDQ1ODg6cE5DV3E0YnRxU09Bb05zM1VEaHM=",
     }
-  );
+  );*/
   return data;
 }
 
