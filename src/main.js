@@ -731,9 +731,10 @@ async function submitPayment(localStorageItems) {
           : { discountCode: dataFromLocalStorage["discountCode"] }),
       };
 
+      /*const sendEmailLine =
+        "https://futureskill.app.n8n.cloud/webhook/line/email";*/
       const sendEmailLine =
-        "https://futureskill.app.n8n.cloud/webhook/line/email";
-      // const sendEmailLine = "https://futureskill.app.n8n.cloud/webhook/uat/line/email";
+        "https://futureskill.app.n8n.cloud/webhook/uat/line/email";
 
       await fetchPost(
         sendEmailLine,
@@ -750,8 +751,8 @@ async function submitPayment(localStorageItems) {
 
       const redirectQuery = new URLSearchParams(cartParams).toString();
 
-      //const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
-      const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
+      const urlLiff = `https://liff.line.me/2001020437-59oRp6nY?${redirectQuery}`;
+      //const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
 
       setTimeout(function () {
         window.location.replace(urlLiff);
