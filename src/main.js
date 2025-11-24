@@ -584,28 +584,46 @@ function validatePhone(phone, fieldName) {
 
 async function validateEmailWithZeroBounce(email) {
   if (!email) return false;
-  const api_key = "85b5a9d5f22746b4906a30a7a33fe7ff";
-  const response = await fetch(
-    `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
-  );
-  const responseData = await response.json();
-  if (responseData && responseData.status) {
-    switch (responseData.status) {
-      case "valid":
-        return true;
-      case "catch":
-        return true;
-      case "do_not_mail":
-        if (
-          responseData.sub_status === "role_based" ||
-          responseData.sub_status === "role_based_catch_all"
-        )
-          return true;
-        else return false;
-
-      default:
-        return false;
+  const api_key = "a1e92001ee1549908b7a48cd3b69c180";
+  console.log("email validation!!!");
+  try {
+    const response = await fetch(
+      `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      if (responseData && responseData.status) {
+        switch (responseData.status) {
+          case "valid":
+            return true;
+          case "catch":
+            return true;
+          case "do_not_mail":
+            if (
+              responseData.sub_status === "role_based" ||
+              responseData.sub_status === "role_based_catch_all"
+            )
+              return true;
+            else return false;
+          default:
+            return false;
+        }
+      }
+    } else {
+      console.error(`Error: ${response.status} - ${response.statusText}`);
+      if (response.status === 404) {
+        console.error("Resource not found.");
+      } else if (response.status === 401) {
+        console.error("Unauthorized access.");
+      } else if (response.status >= 500) {
+        console.error("Server error occurred.");
+      }
+      return false;
     }
+  } catch (error) {
+    // Handle network errors or other issues that prevent a response
+    console.error("Fetch error:", error);
+    return false;
   }
   return false;
 }
