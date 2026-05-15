@@ -640,6 +640,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+function validateName(_name) {
+  const name = correctName(_name);
+  if (!name) return undefined;
+  const regex =
+    /^[\p{L}\u0E00-\u0E7F]([ ,.'-]?[\p{L}\u0E00-\u0E7F]+)+([.]|(, Jr.))?$/u;
+  if (!regex.test(name)) {
+    return undefined;
+  }
+  return name;
+}
+
 function validateEmail(email, fieldName) {
   if (!email) return undefined;
   const regex =
@@ -853,13 +864,31 @@ function onSubmitForm(fieldNames, event) {
   // ===================== Start = > set form fields to localStorage =====================
   for (const fieldName of formFields) {
     if (fieldName === "fullname") {
-      const name = correctName(formProps[fieldName]);
+      const name = validateName(formProps[fieldName]);
+      if (!name) {
+        alert("กรุณากรอกชื่อให้ถูกต้อง และหลีกเลี่ยงตัวเลขหรืออักขระพิเศษ");
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+        clearDataLocalStorage(fieldNames.filter((field) => field != "hidden"));
+        return false;
+      }
       localStorage.setItem(fieldName, name);
     } else if (fieldName === "firstname") {
-      const firstname = formProps["firstname"];
+      const firstname = formProps["firstname"] || "";
       const lastname = formProps["lastname"] || "";
-      const name = correctName([firstname, lastname].join(" "));
-      localStorage.setItem(fieldName, name);
+      const name = validateName([`${firstname}`, `${lastname}`].join(" "));
+      if (!name) {
+        alert("กรุณากรอกชื่อให้ถูกต้อง และหลีกเลี่ยงตัวเลขหรืออักขระพิเศษ");
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+        clearDataLocalStorage(fieldNames.filter((field) => field != "hidden"));
+        return false;
+      }
+      localStorage.setItem("fullname", name);
+      localStorage.setItem("firstname", firstname);
+      localStorage.setItem("lastname", lastname);
     } else if (fieldName === "email") {
       const email = validateEmail(formProps[fieldName], fieldName);
       if (!email) {
