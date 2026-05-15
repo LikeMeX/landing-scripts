@@ -100,12 +100,12 @@ function init(args, callback) {
       ? checkFieldsRequireV2(
           args?.hiddenFieldConfig,
           args?.defaultFields,
-          args.landingPageType
+          args.landingPageType,
         )
       : checkFieldsRequireFully(
           args?.hiddenFieldConfig,
           args?.defaultFields,
-          args.landingPageType
+          args.landingPageType,
         );
 
   let aff = "";
@@ -159,7 +159,7 @@ function init(args, callback) {
   } else {
     console.log(
       '%cinput "deal_id" not define!',
-      "color: red; font-size: larger"
+      "color: red; font-size: larger",
     );
   }
   //==================== End => add deal_id into all input deal_id elements ====================
@@ -184,7 +184,7 @@ function init(args, callback) {
   } else {
     console.log(
       '%cinput "landing_url" not define!',
-      "color: red; font-size: larger"
+      "color: red; font-size: larger",
     );
   }
 
@@ -244,7 +244,7 @@ function clearHiddenFields() {
 function checkFieldsRequireV2(
   hiddenConfigFields = {},
   formFields = [],
-  landingPageType
+  landingPageType,
 ) {
   console.log("====== Check Settings ver.2 ======");
   // ================ Form static fields =====================
@@ -274,7 +274,7 @@ function checkFieldsRequireV2(
     ? [...defaultFormFields, ...formFields]
     : [...defaultFormFields];
   checkFormFields = checkFormFields.filter(
-    (item) => !addressFields.includes(item)
+    (item) => !addressFields.includes(item),
   );
   checkFormFields = [...new Set(checkFormFields)];
   const notFoundFormFields = checkFormFields.filter((formField) => {
@@ -283,7 +283,7 @@ function checkFieldsRequireV2(
   if (notFoundFormFields.length > 0) {
     console.log(
       "%cinput " + `ไม่พบ Field ${notFoundFormFields.join(", ")} ในฟอร์ม`,
-      "color: red; font-size: larger;"
+      "color: red; font-size: larger;",
     );
     alert("Incorrect Market Settings");
     return false;
@@ -309,7 +309,7 @@ function checkFieldsRequireV2(
   if (notFoundHiddenFields.length > 0) {
     console.log(
       "%cinput " + `ไม่พบ Field ${notFoundHiddenFields.join(", ")} ใน config`,
-      "color: red; font-size: larger;"
+      "color: red; font-size: larger;",
     );
     alert("Incorrect Market Settings");
     return false;
@@ -320,7 +320,7 @@ function checkFieldsRequireV2(
   if (!productSetting) {
     console.log(
       "%cinput " + `ไม่พบ Product Setting ใน config`,
-      "color: red; font-size: larger;"
+      "color: red; font-size: larger;",
     );
     alert("Incorrect Market Settings");
     return false;
@@ -329,7 +329,7 @@ function checkFieldsRequireV2(
   if (errorProducts.length > 0) {
     console.log(
       "%cinput " + `Incorrect Product Settings : ${errorProducts.join(", ")}`,
-      "color: red; font-size: larger;"
+      "color: red; font-size: larger;",
     );
     alert("Incorrect Market Settings");
     return false;
@@ -343,7 +343,7 @@ function checkFieldsRequireV2(
       console.log(
         "%cinput " +
           `Incorrect Orderbump Settings : ${errorOrderbump.join(", ")}`,
-        "color: red; font-size: larger;"
+        "color: red; font-size: larger;",
       );
       alert("Incorrect Market Settings");
       return false;
@@ -358,7 +358,7 @@ function checkFieldsRequireV2(
   if (!emailRegex.test(content_mkt) || !emailRegex.test(ads_opt)) {
     console.log(
       "%cinput " + `Content Markter and Ads Operator must be email!!`,
-      "color: red; font-size: larger;"
+      "color: red; font-size: larger;",
     );
     alert("Incorrect Market Settings");
     console.log();
@@ -395,7 +395,7 @@ function validateProductItems(data) {
 function checkFieldsRequireFully(
   hiddenFieldConfig,
   defaultFieldsWith = [],
-  landingPageType = "SGC"
+  landingPageType = "SGC",
 ) {
   console.log("Check Settings ver.1");
   // ================ static fields =====================
@@ -422,13 +422,13 @@ function checkFieldsRequireFully(
   } else {
     defaultFields = [...defaultFields, ...defaultHiddenFields];
     defaultFields = defaultFields.filter(
-      (item) => !addressFields.includes(item)
+      (item) => !addressFields.includes(item),
     );
   }
 
   if (landingPageType === "YR") {
     defaultFields = defaultFields.filter(
-      (item) => !addressFields.includes(item)
+      (item) => !addressFields.includes(item),
     );
   }
   for (const defaultField of defaultFields) {
@@ -464,7 +464,7 @@ function checkFieldsRequireFully(
       "upsell_detail",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
-      ([key]) => !optionalFieldsYR.includes(key)
+      ([key]) => !optionalFieldsYR.includes(key),
     );
     remainingFields = Object.fromEntries(filtered);
   } else {
@@ -489,7 +489,7 @@ function checkFieldsRequireFully(
       "upsell_detail",
     ];
     const filtered = Object.entries(hiddenFieldConfig).filter(
-      ([key]) => !optionalFieldsSGC.includes(key)
+      ([key]) => !optionalFieldsSGC.includes(key),
     );
     remainingFields = Object.fromEntries(filtered);
   }
@@ -500,7 +500,7 @@ function checkFieldsRequireFully(
   for (const hiddenField of Object.keys(hiddenFieldConfig)) {
     if (!document.querySelectorAll(`input[name="${hiddenField}"]`).length) {
       alert(
-        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Marketer Configuration หรือ Hidden Field`
+        `คุณไม่ได้ใส่ Field "${hiddenField}" ใน Marketer Configuration หรือ Hidden Field`,
       );
       return false;
     }
@@ -509,7 +509,7 @@ function checkFieldsRequireFully(
       !hiddenFieldConfig[hiddenField].length
     ) {
       alert(
-        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Marketer Configuration`
+        `คุณไม่ได้ใส่ค่าใน Field "${hiddenField}" ใน Marketer Configuration`,
       );
       return false;
     }
@@ -586,7 +586,7 @@ async function validateEmailWithZeroBounce(email) {
   if (!email) return false;
   const api_key = "85b5a9d5f22746b4906a30a7a33fe7ff";
   const response = await fetch(
-    `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`
+    `https://api.zerobounce.net/v2/validate?api_key=${api_key}&email=${email}`,
   );
   const responseData = await response.json();
   if (responseData && responseData.status) {
@@ -685,7 +685,7 @@ function listenerForm(fieldNames) {
   document.addEventListener(
     "submit",
     (event) => onSubmitForm(fieldNames, event),
-    true
+    true,
   );
 }
 
@@ -733,7 +733,7 @@ function setDefaultProduct() {
   if (productSetup.length === 0) return;
   const defaultIndex = Math.max(
     productSetup.findIndex(([index, item]) => !!item?.default),
-    0
+    0,
   );
   const [option, product] = productSetup[defaultIndex];
   setProductElements(option, product);
@@ -744,7 +744,7 @@ function onProductSelectChange(event) {
   const productSetup = Object.entries(hiddenConfig.product);
   if (productSetup.length === 0) return;
   const foundEntry = productSetup.find(
-    ([key, value]) => key === event.target.value
+    ([key, value]) => key === event.target.value,
   );
   if (foundEntry) {
     const [option, product] = foundEntry;
@@ -776,7 +776,7 @@ function setDefaultOrderbump() {
   if (orderbumpSetup.length === 0) return;
   const defaultIndex = Math.max(
     orderbumpSetup.findIndex(([index, item]) => !!item?.default),
-    0
+    0,
   );
   const [option, product] = orderbumpSetup[defaultIndex];
   setOrderbumpElements(true, option, product);
@@ -955,7 +955,7 @@ async function createPaymentWith(formData) {
     discountCode: formData["discountCode"] || "",
   };
   Object.keys(redirectQuery).forEach((key) =>
-    paymentSuccessRedirectUrl.searchParams.set(key, redirectQuery[key])
+    paymentSuccessRedirectUrl.searchParams.set(key, redirectQuery[key]),
   );
 
   const courses = formData["course"] ? formData["course"].split(",") : [];
@@ -1075,16 +1075,15 @@ async function submitPayment() {
       };
     });
 
-    dataFromLocalStorage[
-      "initial_sku"
-    ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
+    dataFromLocalStorage["initial_sku"] =
+      `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
 
     const items = [{ sku: courses.join(","), qty }];
     let special = undefined;
     const specialConfig = config["special"];
     if (specialConfig && typeof specialConfig === "object") {
       const specialObj = Object.fromEntries(
-        Object.entries(specialConfig).filter(([, val]) => !!val)
+        Object.entries(specialConfig).filter(([, val]) => !!val),
       );
       if (specialObj && Object.keys(specialObj)?.length) {
         special = { ...specialObj };
@@ -1149,14 +1148,15 @@ async function submitPayment() {
     } else {
       console.log(
         "%cinput Failed to create cart!",
-        "color: red; font-weight: bold;"
+        "color: red; font-weight: bold;",
       );
     }
   }
 }
 
 async function LineRedirect(cartNo) {
-  const dataFromLocalStorage = getDataFromLocalStorage(localStorageItems);
+  const fieldNames = getDefaultStorageFields();
+  const dataFromLocalStorage = getDataFromLocalStorage(fieldNames);
   const cartParams = {
     cartNo,
     deal_id: dataFromLocalStorage["deal_id"],
@@ -1184,7 +1184,7 @@ async function LineRedirect(cartNo) {
     },
     {
       "content-type": "application/json",
-    }
+    },
   );
   const redirectQuery = new URLSearchParams(cartParams).toString();
   const urlLiff = `https://liff.line.me/2001020437-ljNJ4095?${redirectQuery}`;
@@ -1220,7 +1220,7 @@ function getDataFromLocalStorage(localStorageItems) {
   for (const localStorageItem of localStorageItems) {
     if (localStorageItem === "params") {
       dataFromLocalStorage[localStorageItem] = JSON.parse(
-        localStorage.getItem(localStorageItem) || "{}"
+        localStorage.getItem(localStorageItem) || "{}",
       );
     } else {
       dataFromLocalStorage[localStorageItem] =
@@ -1253,7 +1253,7 @@ async function createCart(cart) {
       "Content-Type": "application/json",
       Authorization:
         "Basic ODIzMjAyMzI4NzczNjEwNzA6cWdsTzA1YVZkdVl2RHF5eVdhQ2w=",
-    }
+    },
   );
   return data;
 }
@@ -1266,7 +1266,7 @@ async function getIp() {
     .split("\n")
     .reduce(function (obj, pair) {
       pair = pair.split("=");
-      return (obj[pair[0]] = pair[1]), obj;
+      return ((obj[pair[0]] = pair[1]), obj);
     }, {});
   return data;
 }
@@ -1287,7 +1287,7 @@ async function fetchPost(url, data, headers) {
 function includeJqueryAddressScript() {
   console.log(
     '%cinput "includeJqueryAddressScript" start.!',
-    "color: yellow; font-size: larger"
+    "color: yellow; font-size: larger",
   );
   const scriptJQL = document.createElement("script");
   scriptJQL.src =
@@ -1325,7 +1325,7 @@ function includeJqueryAddressScript() {
 
   document.body.appendChild(scriptTypeahead).onload = () => {
     // script one
-    ($.Thailand = function (o) {
+    (($.Thailand = function (o) {
       "use strict";
       o = $.extend({}, $.Thailand.defaults, o);
       function n(e) {
@@ -1348,10 +1348,10 @@ function includeJqueryAddressScript() {
           }),
           e.map(function (i) {
             var o = 1;
-            3 === i.length && (o = 2),
+            (3 === i.length && (o = 2),
               i[o].map(function (n) {
                 n[o].map(function (a) {
-                  (a[o] = a[o] instanceof Array ? a[o] : [a[o]]),
+                  ((a[o] = a[o] instanceof Array ? a[o] : [a[o]]),
                     a[o].map(function (e) {
                       var t = {
                         district: r(a[0]),
@@ -1359,14 +1359,14 @@ function includeJqueryAddressScript() {
                         province: r(i[0]),
                         zipcode: e,
                       };
-                      2 === o &&
+                      (2 === o &&
                         ((t.district_code = a[1] || !1),
                         (t.amphoe_code = n[1] || !1),
                         (t.province_code = i[1] || !1)),
-                        c.push(t);
-                    });
+                        c.push(t));
+                    }));
                 });
-              });
+              }));
           }),
           c
         );
@@ -1389,7 +1389,6 @@ function includeJqueryAddressScript() {
             for (
               i = 0;
               h + i < p && n + i < d && e.charAt(h + i) === t.charAt(n + i);
-
             )
               i += 1;
             s < i && ((s = i), (r = h), (c = n));
@@ -1402,15 +1401,15 @@ function includeJqueryAddressScript() {
               (o += l(
                 e.substr(r + s, p - r - s),
                 t.substr(c + s, d - c - s),
-                !1
+                !1,
               ))),
           !1 === a
             ? o
             : e === t
-            ? 100
-            : d < p
-            ? Math.floor((o / p) * 100)
-            : Math.floor((o / d) * 100)
+              ? 100
+              : d < p
+                ? Math.floor((o / p) * 100)
+                : Math.floor((o / d) * 100)
         );
       };
       !(function (a) {
@@ -1427,7 +1426,7 @@ function includeJqueryAddressScript() {
             });
             break;
           case "zip":
-            o.zip_worker_path ||
+            (o.zip_worker_path ||
               $("script").each(function () {
                 var e = this.src.split("/");
                 "zip.js" === e.pop() &&
@@ -1444,24 +1443,24 @@ function includeJqueryAddressScript() {
                       e.getEntries(function (e) {
                         e[0].getData(new zip.BlobWriter(), function (e) {
                           var t = new FileReader();
-                          (t.onload = function () {
+                          ((t.onload = function () {
                             a(new JQL(n(JSON.parse(t.result))));
                           }),
-                            t.readAsText(e);
+                            t.readAsText(e));
                         });
                       });
-                    }
+                    },
                   );
                 }
               }),
               e.open("GET", o.database),
-              e.send();
+              e.send());
             break;
           default:
             throw new Error(
               'Unknown database type: "' +
                 o.database_type +
-                '". Please define database_type explicitly (json or zip)'
+                '". Please define database_type explicitly (json or zip)',
             );
         }
       })(function (i) {
@@ -1511,7 +1510,7 @@ function includeJqueryAddressScript() {
                   display: function (e) {
                     return e[this.$el.data("field")];
                   },
-                }
+                },
               )
               .parent()
               .find(".tt-dataset")
@@ -1549,7 +1548,7 @@ function includeJqueryAddressScript() {
                           })),
                           e
                         );
-                      })
+                      }),
                   )
                     .select("*")
                     .orderBy("likely desc")
@@ -1560,7 +1559,7 @@ function includeJqueryAddressScript() {
               display: function (e) {
                 return "";
               },
-            }
+            },
           ),
         o))
           -1 < a.indexOf("$") &&
@@ -1569,20 +1568,20 @@ function includeJqueryAddressScript() {
             o[a]
               .bind("typeahead:select typeahead:autocomplete", function (e, t) {
                 for (a in o)
-                  (n = a.replace("$", "")),
+                  ((n = a.replace("$", "")),
                     -1 < a.indexOf("$") &&
                       o.hasOwnProperty(a) &&
                       o[a] &&
                       t[n] &&
-                      o[a].typeahead("val", t[n]).trigger("change");
+                      o[a].typeahead("val", t[n]).trigger("change"));
                 "function" == typeof o.onDataFill &&
                   (delete t.likely, o.onDataFill(t));
               })
               .blur(function () {
                 this.value || $(this).parent().find(".tt-dataset").html("");
               });
-        "function" == typeof o.onLoad && o.onLoad(),
-          "function" == typeof o.onComplete && o.onComplete();
+        ("function" == typeof o.onLoad && o.onLoad(),
+          "function" == typeof o.onComplete && o.onComplete());
       });
     }),
       ($.Thailand.defaults = {
@@ -1604,7 +1603,7 @@ function includeJqueryAddressScript() {
       }),
       ($.Thailand.setup = function (e) {
         $.extend($.Thailand.defaults, e);
-      });
+      }));
 
     // script two
     $.Thailand.setup({
