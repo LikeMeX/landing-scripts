@@ -1129,7 +1129,7 @@ async function submitPayment() {
       dataFromLocalStorage["campaign"] || config["campaign_id"] || "";
 
     const redirectUrl = dataFromLocalStorage["redirect_url"]
-      ? `${dataFromLocalStorage["redirect_url"]}?${redirectQuery}`
+      ? `${dataFromLocalStorage["redirect_url"]}`
       : null;
 
     const data = {
