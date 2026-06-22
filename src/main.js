@@ -429,7 +429,7 @@ function correctName(name) {
 
 //==========================================================================================================================
 
-function listenerForm(feildNames) {
+function listenerForm(fieldNames) {
   //=========== set default package into package select option ============
   const defaultPackage = document.querySelector('input[name="defaultPackage"]');
   if (defaultPackage) {
@@ -494,7 +494,7 @@ function listenerForm(feildNames) {
       delete formProps.package;
 
       // ===================== Start = > set localStorage =====================
-      for (const fieldName of feildNames) {
+      for (const fieldName of fieldNames) {
         let fieldValue = formProps[fieldName];
         if (typeof fieldValue === "string" || fieldValue instanceof String) {
           fieldValue = fieldValue.trim();
@@ -509,7 +509,7 @@ function listenerForm(feildNames) {
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
           localStorage.setItem(fieldName, email);
@@ -520,7 +520,7 @@ function listenerForm(feildNames) {
             event.preventDefault();
             event.stopImmediatePropagation();
             event.stopPropagation();
-            clearDataLocalStorage(feildNames);
+            clearDataLocalStorage(fieldNames);
             return false;
           }
           localStorage.setItem(fieldName, `0${phone}`);
@@ -528,7 +528,7 @@ function listenerForm(feildNames) {
           if (
             formProps.orderbump &&
             formProps.orderbumpdetail &&
-            !feildNames.includes("orderbump", "orderbumpdetail")
+            !fieldNames.includes("orderbump", "orderbumpdetail")
           ) {
             fieldValue += `,${formProps.orderbumpdetail.trim()}`;
             formProps[fieldName] = fieldValue;
@@ -1248,6 +1248,8 @@ window.addEventListener("datalayerpush", async (event) => {
       "params",
       "type",
       "landing_url",
+      "free_sku",
+      "gift_item",
     ];
     await submitPayment(localStorageItems);
   }
