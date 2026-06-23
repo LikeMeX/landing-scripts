@@ -82,12 +82,12 @@ function init(args, callback) {
   }
 
   if (!isPass) return isPass;
-  const userAgent = appendUserAgent(args.PXID);
+  const urlParams = new URLSearchParams(window.location.search);
+  const userAgent = appendUserAgent(args.PXID, urlParams.get("test_event_code"));
   const dealId = genDealId();
   clearDataLocalStorage(args.clearDataFields);
 
   //==================== Start => edit channel_name ====================
-  const urlParams = new URLSearchParams(window.location.search);
   const channel_name = urlParams.get("channel_name");
   const channelNameElements = document.getElementsByName("channel_name");
   if (channel_name && channelNameElements.length) {
@@ -99,7 +99,7 @@ function init(args, callback) {
 
   //==================== Start => add user cookie landing ====================
   if (checkCookie("user")) {
-    const user = JSON.parse(decodeURIComponent(getCookie("user")));
+    const user = safeJsonParse(decodeURIComponent(getCookie("user")));
     document.getElementsByName("email").forEach((element) => {
       element.value = user.email || "";
     });
@@ -158,6 +158,14 @@ function init(args, callback) {
     userAgent,
     dealId,
   };
+}
+
+function safeJsonParse(jsonString) {
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    return {};
+  }
 }
 
 function checkFieldsRequireFully(
@@ -313,10 +321,8 @@ function genDealId() {
   return deal_id;
 }
 
-function appendUserAgent(PXID) {
+function appendUserAgent(PXID, test_event_code=undefined) {
   const l = window.location;
-  const urlParams = new URLSearchParams(window.location.search);
-  const test_event_code = urlParams.get("test_event_code")||undefined;
   const customfieldLanding = {
     px: PXID?.trim(),
     agent: window.navigator.userAgent,
@@ -555,7 +561,7 @@ function listenerForm(fieldNames) {
 async function createPaymentWith(formData) {
   const { ip } = await getIp();
   const affId = getAffiliateIdFromLocalStorage();
-  const pxMixed = appendUserAgent(formData["fb_pixel"]);
+  const pxMixed = appendUserAgent(formData["fb_pixel"],formData["test_event_code"]);
   const paymentSuccessRedirectUrl = new URL(formData["redirect_url"]);
   const redirectQuery = {
     dealId: formData["deal_id"] || "",
@@ -787,9 +793,7 @@ function getDataFromLocalStorage(localStorageItems) {
   const dataFromLocalStorage = {};
   for (const localStorageItem of localStorageItems) {
     if (localStorageItem === "params") {
-      dataFromLocalStorage[localStorageItem] = JSON.parse(
-        localStorage.getItem(localStorageItem) || "{}"
-      );
+      dataFromLocalStorage[localStorageItem] = safeJsonParse(localStorage.getItem(localStorageItem));
     } else {
       dataFromLocalStorage[localStorageItem] =
         localStorage.getItem(localStorageItem);
@@ -993,7 +997,7 @@ function includeJqueryAddressScript() {
                         e[0].getData(new zip.BlobWriter(), function (e) {
                           var t = new FileReader();
                           (t.onload = function () {
-                            a(new JQL(n(JSON.parse(t.result))));
+                            a(new JQL(n(safeJsonParse(t.result))));
                           }),
                             t.readAsText(e);
                         });
@@ -1087,7 +1091,7 @@ function includeJqueryAddressScript() {
                       })
                       .map(function (e) {
                         return (
-                          ((e = JSON.parse(e)).likely = [
+                          ((e = safeJsonParse(e)).likely = [
                             5 * l(t, e.district),
                             3 * l(t, e.amphoe.replace(/^เมือง/, "")),
                             l(t, e.province),
