@@ -327,7 +327,7 @@ function appendUserAgent(PXID, test_event_code=undefined) {
     px: PXID?.trim(),
     agent: window.navigator.userAgent,
     landing: l.protocol + "//" + l.host + l.pathname,
-    test_event_code: test_event_code,
+    test_event_code: test_event_code || undefined,
   };
   return JSON.stringify(customfieldLanding);
 }
