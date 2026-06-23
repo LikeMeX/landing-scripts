@@ -684,10 +684,11 @@ async function submitPayment(localStorageItems) {
       "initial_sku"
     ] = `${dataFromLocalStorage["course"]}|${dataFromLocalStorage["email"]}`;
 
-    let specialTracking = undefined;
+    let customField4 = undefined;
+    let extraTracking = {};
     let special = {};
     if(dataFromLocalStorage["email"]){
-      special["email"] = dataFromLocalStorage["email"];
+      extraTracking["email"] =  dataFromLocalStorage["email"] ;
     }
     if(dataFromLocalStorage["free_sku"]){
       special["free_sku"] = dataFromLocalStorage["free_sku"];
@@ -696,8 +697,11 @@ async function submitPayment(localStorageItems) {
       special["gift_item"] = dataFromLocalStorage["gift_item"];
     }
     if(Object.keys(special).length > 0){
+      extraTracking["special"]=special;
+    }
+    if(Object.keys(extraTracking).length > 0){
       try {
-        specialTracking = JSON.stringify(special);
+        customField4 = JSON.stringify(extraTracking);
       } catch (error) {
         console.error("Error parsing special object:", error);
       }
@@ -725,7 +729,7 @@ async function submitPayment(localStorageItems) {
         customField1: dataFromLocalStorage["deal_id"],
         customField2: dataFromLocalStorage["px"],
         customField3: dataFromLocalStorage["initial_sku"] || undefined,
-        customField4: specialTracking,
+        customField4: customField4,
       },
       paymentSuccessRedirectUrl: `${dataFromLocalStorage["redirect_url"]}`,
     };
